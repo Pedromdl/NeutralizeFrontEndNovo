@@ -1,0 +1,124 @@
+.sidebar {
+  background-color: #282829;
+  transition: width 0.3s ease;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 10px;
+}
+
+.sidebar.aberta {
+  width: 150px;
+}
+
+.sidebar.fechada {
+  width: 20px;
+}
+
+.botao-toggle-global {
+  position: fixed;
+  top: 30px;
+  left: 16px;
+  z-index: 1101; /* maior que a sidebar e o overlay */
+  background-color: #282829;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 18px;
+  cursor: pointer;
+  display: none;
+}
+
+/* Mobile: sidebar modal */
+@media (max-width: 768px) {
+   
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 250px;
+    background: #282829;
+    z-index: 1000;
+    transform: translateX(-100%);
+    box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+  }
+
+  .sidebar.aberta {
+    transform: translateX(0);
+  }
+
+  /* Overlay para escurecer o fundo */
+  .overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 900;
+  }
+  .botao-toggle-global {
+    display: block;
+  }
+}
+
+/* Botão de recolher */
+.botao-toggle {
+  background-color: transparent;
+  color: #edecea;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  align-self: center;
+}
+
+/* Oculta os textos do menu se quiser manter só os ícones quando fechado */
+.sidebar.fechada .menu li a {
+  font-size: 0;
+}
+
+.sidebar.fechada .menu li a::before {
+  font-size: 20px;
+  content: attr(data-icon);
+  margin-left: 5px;
+}
+
+.menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  margin-top: 10px;
+}
+
+.menu li {
+  margin-bottom: 8px;
+}
+
+.menu li a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  text-decoration: none;
+  color: #333;
+  background-color: #f5f5f5;
+  border-radius: 6px;
+  transition: background-color 0.3s, transform 0.1s;
+  font-weight: 500;
+  font-size: 15px;
+}
+
+.menu li a:hover {
+  background-color: #e0e0e0;
+  transform: translateX(4px);
+}
+
+.menu li a:active {
+  background-color: #d0d0d0;
+}
+
+.menu li a.ativo {
+  background-color: #cce5ff;
+  color: #003366;
+  font-weight: bold;
+}

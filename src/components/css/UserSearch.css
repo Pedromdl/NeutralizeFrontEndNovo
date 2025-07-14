@@ -1,0 +1,39 @@
+.user-search {
+  position: relative;
+  width: 100%;
+  display: flex;
+}
+
+.user-search input {
+  width: 100%;
+  padding: 8px;
+  border: 2px solid #ccc;
+  background: #edecea;
+  color: #000;
+  border-radius: 4px;
+}
+
+.dropdown {
+  position: absolute;
+  top: 38px;
+  left: 0;
+  right: 0;
+  background: #edecea;
+  border: 1px solid #ddd;
+  border-top: none;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  z-index: 10;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.dropdown li {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.dropdown li:hover {
+  background-color: #f0f0f0;
+}

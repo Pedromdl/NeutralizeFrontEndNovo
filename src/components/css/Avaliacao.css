@@ -1,0 +1,10 @@
+.card-avaliacao {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 1.5em;
+  background-color: white;
+  margin: 1em;
+  width: 100%;
+  transition: transform 0.2s;
+  text-align: left;
+}

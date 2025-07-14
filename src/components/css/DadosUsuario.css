@@ -1,0 +1,59 @@
+.dados-usuario {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  padding: 1rem;
+  font-size: 1rem;
+  color: #333;
+}
+
+.dados-usuario p,
+.dados-usuario .campo {
+  margin: 0;
+  background: #f9f9f9;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border-left: 4px solid #b7de42;
+  display: flex;
+  flex-direction: column;
+}
+
+.dados-usuario label {
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 0.25rem;
+}
+
+.dados-usuario input {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.botoes-edicao {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+.botoes-edicao button {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.botoes-edicao button:first-child {
+  background-color: #b7de42;
+  color: white;
+}
+
+.botoes-edicao button:last-child {
+  background-color: #e0e0e0;
+  color: #333;
+}

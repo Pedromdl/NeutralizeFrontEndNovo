@@ -1,0 +1,35 @@
+.secao-detalhe-container {
+  padding: 40px;
+  background-color: #f1f5f9;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+/* Evita o Card expandir com base no conteúdo interno */
+.card-wrapper {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Área do carrossel */
+.carrossel-container {
+  display: flex;
+  overflow-x: auto;
+  gap: 1rem;
+  padding: 1rem 0;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Cartões fixos com largura mínima */
+.card-carrossel {
+  min-width: 280px;
+  max-width: 280px;
+  flex-shrink: 0;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #f9f9f9;
+  box-sizing: border-box;
+}

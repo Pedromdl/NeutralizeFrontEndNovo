@@ -1,0 +1,54 @@
+.card-carrossel {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+  margin: 0 auto;
+  width: 100%;
+  max-width: 100vw;
+  box-sizing: border-box;
+  padding: 1rem;
+}
+
+.fixed-content {
+  margin-bottom: 1rem;
+}
+
+.carousel-content {
+  display: flex;
+  overflow-x: auto;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+
+.carrossel-item {
+  min-width: 260px;
+  max-width: 90vw; /* para não ultrapassar largura da tela no mobile */
+  flex-shrink: 0;
+  background: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.card-carrossel {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  /* outras propriedades */
+}
+
+@media (max-width: 480px) {
+  .carrossel-item {
+    min-width: 160px;  /* abaixa um pouco pra caber em celulares menores */
+    max-width: 75vw;
+    box-sizing: border-box;
+    margin-right: 8px; /* espaçamento lateral */
+  }
+  .card-carrossel {
+    max-width: 85vw;
+
+  }
+}
+

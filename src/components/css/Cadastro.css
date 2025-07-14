@@ -1,0 +1,68 @@
+.conteudo {
+  width: 100%;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.card h2 {
+  margin-bottom: 1.5rem;
+  font-size: 1.75rem;
+  color: #333;
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-group label {
+  display: flex;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: #444;
+}
+
+.form-input {
+  width: 100%;
+  height: 40px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+.form-input, .form-textarea {
+  box-sizing: border-box;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #b7de42;
+  box-shadow: 0 0 0 2px rgba(0,123,255,0.1);
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  background-color: #b7de42;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn:hover {
+  background-color: greenyellow;
+}
+
+.mensagem {
+  margin-top: 1rem;
+  font-weight: 500;
+  color: green;
+}
