@@ -10,6 +10,8 @@ import FiltroData from '../../components/FiltroData';
 import DadosUsuario from './DadosUsuario';
 import Orientacao from './Orientacao'
 import Avaliacoes from './Avaliacoes';
+import Sessoes from './Sessoes';
+
 
 
 function Usuarios() {
@@ -85,8 +87,10 @@ function Usuarios() {
           <Orientacao usuarioId={usuarioSelecionado.id} />
         );
       case 'Avaliações':
-       return <Avaliacoes usuarioId={usuarioSelecionado.id} />;
+        return <Avaliacoes usuarioId={usuarioSelecionado.id} />;
 
+      case 'Sessões':
+        return <Sessoes usuarioId={usuarioSelecionado.id} />;
 
       default:
         return null;
@@ -119,6 +123,9 @@ function Usuarios() {
                 <button onClick={() => setAbaAtiva('Avaliações')} className={abaAtiva === 'Avaliações' ? 'ativo' : ''}>
                   Avaliações
                 </button>
+                <button onClick={() => setAbaAtiva('Sessões')} className={abaAtiva === 'Sessões' ? 'ativo' : ''}>
+                Sessões
+              </button>
               </div>
             </Card>
           </>

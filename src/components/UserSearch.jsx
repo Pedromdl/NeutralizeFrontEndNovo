@@ -2,10 +2,15 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import './css/UserSearch.css';
 
-function UserSearch({ onSelect }) {
-  const [inputValue, setInputValue] = useState('');
+function UserSearch({ onSelect, modoModal = false, valorInicial = '' }) {
+  const [inputValue, setInputValue] = useState(valorInicial);
   const [resultados, setResultados] = useState([]);
   const [mostrarDropdown, setMostrarDropdown] = useState(false);
+
+  // Atualiza inputValue se valorInicial mudar (ex: abrir modal edição)
+  useEffect(() => {
+    setInputValue(valorInicial);
+  }, [valorInicial]);
 
   useEffect(() => {
     const buscarUsuarios = async () => {
@@ -16,7 +21,7 @@ function UserSearch({ onSelect }) {
       }
 
       try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/usuarios/`);
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/usuarios/`);
 
         const filtrados = res.data.filter(usuario =>
           usuario.nome.toLowerCase().includes(inputValue.toLowerCase())
@@ -40,13 +45,13 @@ function UserSearch({ onSelect }) {
     setInputValue(usuario.nome);
     setResultados([]);
     setMostrarDropdown(false);
- if (onSelect) {
-      onSelect(usuario); // <-- envia o usuário para o componente pai
+    if (onSelect) {
+      onSelect(usuario); // envia o usuário selecionado para o componente pai
     }
   };
 
   return (
-    <div className="user-search">
+    <div className={`user-search ${modoModal ? 'modal' : ''}`}>
       <input
         type="text"
         placeholder="Buscar usuário..."
@@ -54,6 +59,7 @@ function UserSearch({ onSelect }) {
         onChange={handleChange}
         onFocus={() => inputValue && setMostrarDropdown(true)}
         onBlur={() => setTimeout(() => setMostrarDropdown(false), 100)}
+        className={modoModal ? 'input-modal' : ''}
       />
       {mostrarDropdown && resultados.length > 0 && (
         <ul className="dropdown">

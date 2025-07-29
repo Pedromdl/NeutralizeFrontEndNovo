@@ -1,0 +1,30 @@
+/* Sessoes.css */
+
+.sessoes-lista {
+  padding: 1rem;
+}
+
+.sessoes-lista h3 {
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.sessoes-lista ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sessoes-lista li {
+  background-color: #f0f4f8;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.2s ease;
+}
+
+.sessoes-lista li:hover {
+  background-color: #e6ecf3;
+}

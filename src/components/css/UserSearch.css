@@ -4,6 +4,11 @@
   display: flex;
 }
 
+/* Modo modal: mais compacto */
+.user-search.modal {
+  margin: 0;
+}
+
 .user-search input {
   width: 100%;
   padding: 8px;
@@ -11,6 +16,14 @@
   background: #edecea;
   color: #000;
   border-radius: 4px;
+  font-size: 14px;
+}
+
+/* Input mais compacto no modo modal */
+.user-search.modal input {
+  padding: 6px;
+  font-size: 13px;
+  border-radius: 3px;
 }
 
 .dropdown {
@@ -32,6 +45,12 @@
 .dropdown li {
   padding: 8px;
   cursor: pointer;
+  font-size: 14px;
+}
+
+.user-search.modal .dropdown li {
+  padding: 6px 8px;
+  font-size: 13px;
 }
 
 .dropdown li:hover {
