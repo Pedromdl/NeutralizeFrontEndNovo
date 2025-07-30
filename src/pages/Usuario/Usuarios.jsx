@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import UserSearch from '../../components/UserSearch';
 import GraficoForca from '../../components/Dashboard/GraficoForca';
@@ -13,27 +14,45 @@ import Avaliacoes from './Avaliacoes';
 import Sessoes from './Sessoes';
 
 
-
 function Usuarios() {
+  const location = useLocation(); // 👈 E ISSO
   const [usuarioSelecionado, setUsuarioSelecionado] = useState(null);
   const [dataSelecionada, setDataSelecionada] = useState(null);
-  const [abaAtiva, setAbaAtiva] = useState('Dashboard'); // nova aba padrão
-
-  const atualizarUsuario = (novoUsuario) => {
-    setUsuarioSelecionado(novoUsuario);
-  };
+  const [abaAtiva, setAbaAtiva] = useState('');
 
   useEffect(() => {
-    const salvo = localStorage.getItem('usuarioSelecionado');
-    if (salvo) {
-      setUsuarioSelecionado(JSON.parse(salvo));
-    }
-  }, []);
+  const salvo = localStorage.getItem('usuarioSelecionado');
+  if (salvo) {
+    setUsuarioSelecionado(JSON.parse(salvo));
+  }
 
-  const handleSelecionaUsuario = (usuario) => {
-    setUsuarioSelecionado(usuario);
-    localStorage.setItem('usuarioSelecionado', JSON.stringify(usuario));
-  };
+  if (location.state?.pacienteId) {
+    fetch(`${import.meta.env.VITE_API_URL}/api/pacientes/${location.state.pacienteId}/`)
+      .then(res => res.json())
+      .then(data => {
+        setUsuarioSelecionado(data);
+        localStorage.setItem('usuarioSelecionado', JSON.stringify(data));
+      });
+  }
+
+  if (location.state?.aba) {
+    setAbaAtiva(location.state.aba);
+  } else {
+    const abaSalva = localStorage.getItem('abaAtiva');
+    if (abaSalva) {
+      setAbaAtiva(abaSalva);
+    }
+  }
+}, [location.state]);
+
+useEffect(() => {
+  localStorage.setItem('abaAtiva', abaAtiva);
+}, [abaAtiva]);
+
+const atualizarUsuario = (novoUsuario) => {
+  setUsuarioSelecionado(novoUsuario);
+  localStorage.setItem('usuarioSelecionado', JSON.stringify(novoUsuario));
+};
 
   const renderConteudoAba = () => {
     switch (abaAtiva) {
@@ -96,6 +115,11 @@ function Usuarios() {
         return null;
     }
   };
+
+  const handleSelecionaUsuario = (usuario) => {
+  setUsuarioSelecionado(usuario);
+  localStorage.setItem('usuarioSelecionado', JSON.stringify(usuario));
+};
 
   return (
     <div className="conteudo">

@@ -33,6 +33,21 @@ export default function Sessoes({ usuarioId }) {
 
   return (
     <Card title="Sessões do Paciente" size="al">
+      <button
+        onClick={() => navigate(`/sessoes/nova/${usuarioId}`)}
+        style={{
+          marginBottom: '1rem',
+          padding: '0.5rem 1rem',
+          backgroundColor: '#2563eb',
+          color: 'white',
+          border: 'none',
+          borderRadius: '6px',
+          cursor: 'pointer'
+        }}
+      >
+        + Nova Sessão
+      </button>
+
       {loading ? (
         <p>Carregando sessões...</p>
       ) : sessoes.length === 0 ? (
@@ -42,6 +57,8 @@ export default function Sessoes({ usuarioId }) {
           {sessoes.map(sessao => {
             const [year, month, day] = sessao.data.split('-');
             const dataFormatada = `${day}/${month}/${year}`;
+
+
             return (
               <li
                 key={sessao.id}
@@ -52,10 +69,13 @@ export default function Sessoes({ usuarioId }) {
                 }}
                 onClick={() => abrirSessao(sessao.id)}
               >
-                <strong>{`Sessão em ${dataFormatada}`}</strong> — {sessao.titulo}
+
+                <strong>{`Sessão em ${dataFormatada}`}</strong>
               </li>
             );
+
           })}
+
         </ul>
       )}
     </Card>
