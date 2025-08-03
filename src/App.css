@@ -30,9 +30,6 @@ body {
   height: 50%;
 }
 
-.conteudo {
-  padding: 20px;
-}
 
 .info-cards {
   display: flex;
@@ -167,7 +164,7 @@ body {
   width: 100%;
   max-width: 100%;
   margin-top: -25px;
-  padding: 40px;
+  padding: 60px;
   justify-content: flex-start;
   background-color: #f1f5f9;
   box-sizing: border-box;

@@ -6,8 +6,9 @@ import FormForca from '../components/Avaliacao/FormForca.jsx';
 import FormFuncao from '../components/Avaliacao/FormFuncao.jsx';
 import FormDor from '../components/Avaliacao/FormDor.jsx';
 // import FormEscalas from '../components/FormEscalas';
-import '../components/css/Avaliacao.css';
 import FormText from '../components/Avaliacao/FormText.jsx';
+import '../components/css/Avaliacao.css';
+
 
 
 function CadastrarDados() {
@@ -39,7 +40,7 @@ function CadastrarDados() {
   };
 
   return (
-    <div className="conteudo">
+    <div className="conteudo-avaliacao">
       <div className="card-avaliacao">
         <h2>Selecionar Paciente:</h2>
         <UserSearch

@@ -1,3 +1,16 @@
+.conteudo-avaliacao {
+  display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 100%;
+    margin-top: -25px;
+    padding: 60px;
+    justify-content: flex-start;
+    background-color: #f1f5f9;
+    box-sizing: border-box
+}
+
 .card-avaliacao {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   border-radius: 8px;
@@ -7,4 +20,22 @@
   width: 100%;
   transition: transform 0.2s;
   text-align: left;
+}
+
+.data-avaliacao-card {
+  max-width: 100%;
+  margin: 1em;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  background-color: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* título esquerda, input direita */
+}
+
+.data-avaliacao-card .form-label {
+  font-weight: bold; /* título negrito */
+  margin: 0;
 }
