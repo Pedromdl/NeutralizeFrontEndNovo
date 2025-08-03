@@ -67,34 +67,34 @@ export default function useFuncaoCalendario() {
     setModalAberto(true);
   };
 
-const handleDateClick = (info) => {
-  const dataHora = info.date;
-  const data = info.dateStr.split('T')[0];
-  const hora_inicio = info.dateStr.split('T')[1]?.slice(0, 5) || '08:00';
+  const handleDateClick = (info) => {
+    const dataHora = info.date;
+    const data = info.dateStr.split('T')[0];
+    const hora_inicio = info.dateStr.split('T')[1]?.slice(0, 5) || '08:00';
 
-  // Adiciona 1 hora à hora_inicio
-  const fim = new Date(dataHora.getTime() + 60 * 60 * 1000);
-  const hora_fim = fim.toTimeString().slice(0, 5);
+    // Adiciona 1 hora à hora_inicio
+    const fim = new Date(dataHora.getTime() + 60 * 60 * 1000);
+    const hora_fim = fim.toTimeString().slice(0, 5);
 
-  setForm({
-    id: null,
-    paciente: null,
-    paciente_nome: '',
-    tipo: '',
-    status: 'Pendente',
-    data,
-    hora_inicio,
-    hora_fim,
-    repetir: false,
-    frequencia: 'nenhuma',
-    repeticoes: 0,
-    responsavel: '',
-  });
+    setForm({
+      id: null,
+      paciente: null,
+      paciente_nome: '',
+      tipo: '',
+      status: 'Pendente',
+      data,
+      hora_inicio,
+      hora_fim,
+      repetir: false,
+      frequencia: 'nenhuma',
+      repeticoes: 0,
+      responsavel: '',
+    });
 
-  setEditando(true);
-  setEventoSelecionado(null);
-  setModalAberto(true);
-};
+    setEditando(true);
+    setEventoSelecionado(null);
+    setModalAberto(true);
+  };
 
   const fecharModal = () => {
     setModalAberto(false);
@@ -119,28 +119,28 @@ const handleDateClick = (info) => {
   };
 
   const handleInputChange = (e) => {
-  const { name, value, type, checked } = e.target;
+    const { name, value, type, checked } = e.target;
 
-  // Atualiza hora_fim automaticamente se hora_inicio for alterado
-  if (name === 'hora_inicio') {
-    const [hora, minuto] = value.split(':').map(Number);
-    const novaData = new Date();
-    novaData.setHours(hora + 1, minuto);
+    // Atualiza hora_fim automaticamente se hora_inicio for alterado
+    if (name === 'hora_inicio') {
+      const [hora, minuto] = value.split(':').map(Number);
+      const novaData = new Date();
+      novaData.setHours(hora + 1, minuto);
 
-    const novaHoraFim = novaData.toTimeString().slice(0, 5);
+      const novaHoraFim = novaData.toTimeString().slice(0, 5);
 
-    setForm(prev => ({
-      ...prev,
-      hora_inicio: value,
-      hora_fim: novaHoraFim,
-    }));
-  } else {
-    setForm(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
-  }
-};
+      setForm(prev => ({
+        ...prev,
+        hora_inicio: value,
+        hora_fim: novaHoraFim,
+      }));
+    } else {
+      setForm(prev => ({
+        ...prev,
+        [name]: type === 'checkbox' ? checked : value,
+      }));
+    }
+  };
 
   const salvarEdicao = async () => {
     try {
@@ -150,6 +150,7 @@ const handleDateClick = (info) => {
       };
 
       if (form.id) {
+        // Atualização
         await axios.put(`${import.meta.env.VITE_API_URL}/api/eventos/${form.id}/`, dadosParaEnviar);
         setEventos(prevEventos =>
           prevEventos.map(ev =>
@@ -169,26 +170,47 @@ const handleDateClick = (info) => {
           )
         );
       } else {
+        // Criação (POST) - ajustado para lidar com array de eventos (recorrências)
         const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/eventos/`, dadosParaEnviar);
-        const novoEvento = response.data;
+        const data = response.data;
 
-        setEventos(prev => [
-          ...prev,
-          {
-            id: novoEvento.id.toString(),
-            title: `${novoEvento.tipo} (${novoEvento.status}) - Paciente ${form.paciente_nome || novoEvento.paciente}`,
-            start: `${novoEvento.data}T${novoEvento.hora_inicio}`,
-            end: novoEvento.hora_fim ? `${novoEvento.data}T${novoEvento.hora_fim}` : undefined,
+        if (Array.isArray(data)) {
+          // Se retornar array, formata todos e adiciona
+          const eventosFormatados = data.map(ev => ({
+            id: ev.id.toString(),
+            title: `${ev.tipo} (${ev.status}) - Paciente ${form.paciente_nome || ev.paciente}`,
+            start: `${ev.data}T${ev.hora_inicio}`,
+            end: ev.hora_fim ? `${ev.data}T${ev.hora_fim}` : undefined,
             extendedProps: {
-              ...novoEvento,
+              ...ev,
               paciente_nome: form.paciente_nome,
             },
             color:
-              novoEvento.status === 'Realizado' ? '#b7de42' :
-                novoEvento.status === 'Confirmado' ? '#25CED1' :
+              ev.status === 'Realizado' ? '#b7de42' :
+                ev.status === 'Confirmado' ? '#25CED1' :
                   'grey',
-          },
-        ]);
+          }));
+          setEventos(prev => [...prev, ...eventosFormatados]);
+        } else {
+          // Se retornar um único evento
+          setEventos(prev => [
+            ...prev,
+            {
+              id: data.id.toString(),
+              title: `${data.tipo} (${data.status}) - Paciente ${form.paciente_nome || data.paciente}`,
+              start: `${data.data}T${data.hora_inicio}`,
+              end: data.hora_fim ? `${data.data}T${data.hora_fim}` : undefined,
+              extendedProps: {
+                ...data,
+                paciente_nome: form.paciente_nome,
+              },
+              color:
+                data.status === 'Realizado' ? '#b7de42' :
+                  data.status === 'Confirmado' ? '#25CED1' :
+                    'grey',
+            },
+          ]);
+        }
       }
 
       fecharModal();
