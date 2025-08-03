@@ -37,7 +37,6 @@ function GraficoEstabilidade({ usuarioId, dataSelecionada }) {
               Direito: direito,
               Data: item.data_avaliacao,
               Assimetria: Number(assimetria.toFixed(1)),
-              Resultado: item.resultado_unico || '',
               Observacao: item.observacao || ''   // <== adiciona aqui
             };
           });
@@ -72,8 +71,11 @@ function GraficoEstabilidade({ usuarioId, dataSelecionada }) {
           <p><em>Resultado: {payload[0].payload.Resultado}</em></p>
         )}
         {payload[0].payload.Observacao && (
-          <p><em>Observação: {payload[0].payload.Observacao}</em></p>
+          <p style={{ whiteSpace: 'pre-wrap' }}>
+            <em>Observação: {payload[0].payload.Observacao}</em>
+          </p>
         )}
+
         <p style={{ fontSize: '0.85rem', marginTop: 6, color: '#666' }}>
           Data da Avaliação: {dataAvaliacao}
         </p>
