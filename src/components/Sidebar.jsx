@@ -53,10 +53,16 @@ function Sidebar() {
               </NavLink>
             </li>
             <li>
+              <NavLink to="/agendamentos" className={({ isActive }) => (isActive ? 'ativo' : '')}>
+                📅 <span>Agenda</span>
+              </NavLink>
+            </li>
+            <li>
               <NavLink to="/configuracoes" className={({ isActive }) => (isActive ? 'ativo' : '')}>
                 ⚙️ <span>Configurações</span>
               </NavLink>
             </li>
+            
           </ul>
         )}
       </div>
