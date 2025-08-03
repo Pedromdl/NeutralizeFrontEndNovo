@@ -130,3 +130,31 @@
   font-weight: bold; /* título negrito */
   margin: 0;
 }
+
+.autocomplete-container {
+  position: relative;
+  width: 100%;
+}
+
+.autocomplete-list {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-top: none;
+  max-height: 150px;
+  overflow-y: auto;
+  width: 100%;
+  z-index: 10;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.autocomplete-list li {
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+.autocomplete-list li:hover {
+  background-color: #f0f0f0;
+}

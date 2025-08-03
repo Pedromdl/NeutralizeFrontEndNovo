@@ -28,7 +28,7 @@ function GraficoForca({ usuarioId, dataSelecionada }) {
             const assimetria = Math.abs(esquerdo - direito) / Math.max(esquerdo, direito) * 100;
 
             return {
-              musculatura: item.musculatura,
+              movimento_forca: item.movimento_forca_nome,
               Esquerdo: esquerdo,
               Direito: direito,
               Data: item.data_avaliacao,
@@ -76,7 +76,7 @@ function GraficoForca({ usuarioId, dataSelecionada }) {
         margin={{ top: 5, right: 5, left: 5, bottom: 5 }}
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="musculatura" />
+        <XAxis dataKey="movimento_forca" />
         <YAxis yAxisId="left" label={{ value: "Força (kg)", angle: -90, position: "insideLeft" }} />
         <YAxis
           yAxisId="right"

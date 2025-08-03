@@ -1,0 +1,33 @@
+.conteudo-configuracoes {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 100%;
+    margin-top: -25px;
+    padding: 40px;
+    justify-content: flex-start;
+    background-color: #f1f5f9;
+    box-sizing: border-box;
+}
+
+.coluna-botoes {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.coluna-esquerda {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+}
+
+.coluna-direita {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+
+

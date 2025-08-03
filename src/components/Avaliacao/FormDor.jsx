@@ -3,7 +3,15 @@ import axios from 'axios';
 import '../css/FormMobilidade.css';
 
 function FormDor({ pacienteId, dataAvaliacao }) {
-  const [formularios, setFormularios] = useState([{ teste: '', resultado: '', observacao: '' }]);
+  const localStorageKey = `formDor-${pacienteId}`;
+
+  const [formularios, setFormularios] = useState(() => {
+    const salvo = localStorage.getItem(localStorageKey);
+    return salvo
+      ? JSON.parse(salvo)
+      : [{ teste: '', resultado: '', observacao: '' }];
+  });
+
   const [testesDisponiveis, setTestesDisponiveis] = useState([]);
 
   useEffect(() => {
@@ -12,6 +20,10 @@ function FormDor({ pacienteId, dataAvaliacao }) {
       .catch(err => console.error('Erro ao buscar testes:', err));
   }, []);
 
+  // Salva no localStorage a cada alteração do formulário
+  useEffect(() => {
+    localStorage.setItem(localStorageKey, JSON.stringify(formularios));
+  }, [formularios, localStorageKey]);
 
   const handleChange = (index, e) => {
     const novos = [...formularios];
@@ -32,6 +44,12 @@ function FormDor({ pacienteId, dataAvaliacao }) {
     setFormularios(novos);
   };
 
+  // Função para resetar formulário e localStorage
+  const resetarFormulario = () => {
+    setFormularios([{ teste: '', resultado: '', observacao: '' }]);
+    localStorage.removeItem(localStorageKey);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -50,9 +68,7 @@ function FormDor({ pacienteId, dataAvaliacao }) {
       ));
 
       alert('Todos os testes de dor foram salvos com sucesso!');
-      setFormularios([
-        { teste: '', resultado: '', observacao: '' }
-      ]);
+      resetarFormulario();
     } catch (err) {
       alert('Erro ao salvar testes de dor');
       console.error(err);
@@ -66,19 +82,18 @@ function FormDor({ pacienteId, dataAvaliacao }) {
         {formularios.map((form, index) => (
           <div key={index} className="form-mobilidade-container">
             <label className="form-label">Nome do Teste</label>
-           <select
-            name="teste"
-            value={form.teste}
-            onChange={(e) => handleChange(index, e)}
-            className="form-input"
-            required
-          >
-            <option value="">Selecione o teste</option>
-            {testesDisponiveis.map(t => (
-              <option key={t.id} value={t.id}>{t.nome}</option>
-            ))}
-          </select>
-
+            <select
+              name="teste"
+              value={form.teste}
+              onChange={(e) => handleChange(index, e)}
+              className="form-input"
+              required
+            >
+              <option value="">Selecione o teste</option>
+              {testesDisponiveis.map(t => (
+                <option key={t.id} value={t.id}>{t.nome}</option>
+              ))}
+            </select>
 
             <div className="form-lados">
               <div>
@@ -111,10 +126,25 @@ function FormDor({ pacienteId, dataAvaliacao }) {
         ))}
 
         <div style={{ width: '100%', display: 'flex', justifyContent: 'right', marginTop: '1rem' }}>
-          <button type="button" onClick={adicionarFormulario} className="btn-adicionar" style={{ marginRight: '1rem' }}>
+          <button
+            type="button"
+            onClick={resetarFormulario}
+            className="btn-resetar"
+            style={{ marginRight: '1rem', backgroundColor: '#f44336', color: 'white' }}
+          >
+            Resetar
+          </button>
+          <button
+            type="button"
+            onClick={adicionarFormulario}
+            className="btn-adicionar"
+            style={{ marginRight: '1rem' }}
+          >
             + Adicionar Teste
           </button>
-          <button type="submit" className="btn-salvar">Salvar Todos</button>
+          <button type="submit" className="btn-salvar">
+            Salvar Todos
+          </button>
         </div>
       </form>
     </div>

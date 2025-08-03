@@ -11,27 +11,50 @@ import FormText from '../components/Avaliacao/FormText.jsx';
 
 
 function CadastrarDados() {
-  const [pacienteSelecionado, setPacienteSelecionado] = useState(null);
-  const [dataAvaliacao, setDataAvaliacao] = useState(() => {
-    const hoje = new Date().toISOString().slice(0, 10);
-    return hoje;
+
+  const [resetKey, setResetKey] = useState(0);
+
+  // Paciente
+  const [pacienteSelecionado, setPacienteSelecionado] = useState(() => {
+    const salvo = localStorage.getItem('avaliacao_pacienteSelecionado');
+    return salvo ? JSON.parse(salvo) : null;
   });
 
+  const handleSelecionarPaciente = (paciente) => {
+  setPacienteSelecionado(paciente);
+  localStorage.setItem('avaliacao_pacienteSelecionado', JSON.stringify(paciente));
+  setResetKey(k => k + 1);  // incrementa para sinalizar reset
+};
+
+  // Data
+  const [dataAvaliacao, setDataAvaliacao] = useState(() => {
+    const salvo = localStorage.getItem('avaliacao_dataAvaliacao');
+    return salvo || new Date().toISOString().slice(0, 10);
+  });
+
+  const handleDataChange = (e) => {
+    const novaData = e.target.value;
+    setDataAvaliacao(novaData);
+    localStorage.setItem('avaliacao_dataAvaliacao', novaData);
+  };
 
   return (
     <div className="conteudo">
       <div className="card-avaliacao">
         <h2>Selecionar Paciente:</h2>
-        <UserSearch onSelect={setPacienteSelecionado} />
-      </div>
-      
+        <UserSearch
+          onSelect={handleSelecionarPaciente}
+          valorInicial={pacienteSelecionado?.nome || ''}
+        />      
+        </div>
+
       <div className="data-avaliacao-card">
         <label htmlFor="dataAvaliacao" className="form-label">Data da Avaliação</label>
         <input
           id="dataAvaliacao"
           type="date"
           value={dataAvaliacao}
-          onChange={(e) => setDataAvaliacao(e.target.value)}
+          onChange={handleDataChange}
           className="form-input"
         />
       </div>
@@ -41,7 +64,7 @@ function CadastrarDados() {
           <FormText pacienteId={pacienteSelecionado.id} dataAvaliacao={dataAvaliacao} />
           <FormMobilidade pacienteId={pacienteSelecionado.id} dataAvaliacao={dataAvaliacao} />
           <FormForca pacienteId={pacienteSelecionado.id} dataAvaliacao={dataAvaliacao} />
-          <FormFuncao pacienteId={pacienteSelecionado.id} dataAvaliacao={dataAvaliacao} />
+          <FormFuncao pacienteId={pacienteSelecionado.id} dataAvaliacao={dataAvaliacao} resetKey={resetKey} />
           <FormDor pacienteId={pacienteSelecionado.id} dataAvaliacao={dataAvaliacao} />
         </>
       )}

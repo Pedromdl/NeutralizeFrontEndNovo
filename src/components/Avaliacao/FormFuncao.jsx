@@ -3,7 +3,15 @@ import axios from 'axios';
 import '../css/FormMobilidade.css';
 
 function FormFuncao({ pacienteId, dataAvaliacao }) {
-  const [formularios, setFormularios] = useState([{ teste: '', lado_esquerdo: '', lado_direito: '', observacao: '' }]);
+  const localStorageKey = `formFuncao-${pacienteId}`;
+
+  const [formularios, setFormularios] = useState(() => {
+    const salvo = localStorage.getItem(localStorageKey);
+    return salvo
+      ? JSON.parse(salvo)
+      : [{ teste: '', lado_esquerdo: '', lado_direito: '', observacao: '' }];
+  });
+
   const [testesDisponiveis, setTestesDisponiveis] = useState([]);
 
   useEffect(() => {
@@ -12,6 +20,10 @@ function FormFuncao({ pacienteId, dataAvaliacao }) {
       .catch(err => console.error('Erro ao buscar testes:', err));
   }, []);
 
+  // Atualiza localStorage a cada alteração do formulário
+  useEffect(() => {
+    localStorage.setItem(localStorageKey, JSON.stringify(formularios));
+  }, [formularios, localStorageKey]);
 
   const handleChange = (index, e) => {
     const novos = [...formularios];
@@ -22,7 +34,7 @@ function FormFuncao({ pacienteId, dataAvaliacao }) {
   const adicionarFormulario = () => {
     setFormularios([
       ...formularios,
-      { testeNome: '', lado_esquerdo: '', lado_direito: '', observacao: '' }
+      { teste: '', lado_esquerdo: '', lado_direito: '', observacao: '' }
     ]);
   };
 
@@ -30,6 +42,12 @@ function FormFuncao({ pacienteId, dataAvaliacao }) {
     const novos = [...formularios];
     novos.splice(index, 1);
     setFormularios(novos);
+  };
+
+  // Função para resetar formulário e localStorage
+  const resetarFormulario = () => {
+    setFormularios([{ teste: '', lado_esquerdo: '', lado_direito: '', observacao: '' }]);
+    localStorage.removeItem(localStorageKey);
   };
 
   const handleSubmit = async (e) => {
@@ -47,13 +65,11 @@ function FormFuncao({ pacienteId, dataAvaliacao }) {
       console.log('Enviando dados:', dados);
 
       await Promise.all(dados.map(d =>
-        axios.post('http://localhost:8000/api/testefuncao/', d)
+        axios.post(`${import.meta.env.VITE_API_URL}/api/testefuncao/`, d)
       ));
 
       alert('Todos os testes de função foram salvos com sucesso!');
-      setFormularios([
-        { teste: '', lado_esquerdo: '', lado_direito: '', observacao: '' }
-      ]);
+      resetarFormulario();
     } catch (err) {
       alert('Erro ao salvar testes de função');
       console.error(err);
@@ -67,19 +83,18 @@ function FormFuncao({ pacienteId, dataAvaliacao }) {
         {formularios.map((form, index) => (
           <div key={index} className="form-mobilidade-container">
             <label className="form-label">Nome do Teste</label>
-           <select
-            name="teste"
-            value={form.teste}
-            onChange={(e) => handleChange(index, e)}
-            className="form-input"
-            required
-          >
-            <option value="">Selecione o teste</option>
-            {testesDisponiveis.map(t => (
-              <option key={t.id} value={t.id}>{t.nome}</option>
-            ))}
-          </select>
-
+            <select
+              name="teste"
+              value={form.teste}
+              onChange={(e) => handleChange(index, e)}
+              className="form-input"
+              required
+            >
+              <option value="">Selecione o teste</option>
+              {testesDisponiveis.map(t => (
+                <option key={t.id} value={t.id}>{t.nome}</option>
+              ))}
+            </select>
 
             <div className="form-lados">
               <div>
@@ -122,10 +137,25 @@ function FormFuncao({ pacienteId, dataAvaliacao }) {
         ))}
 
         <div style={{ width: '100%', display: 'flex', justifyContent: 'right', marginTop: '1rem' }}>
-          <button type="button" onClick={adicionarFormulario} className="btn-adicionar" style={{ marginRight: '1rem' }}>
+          <button
+            type="button"
+            onClick={resetarFormulario}
+            className="btn-resetar"
+            style={{ marginRight: '1rem', backgroundColor: '#f44336', color: 'white' }}
+          >
+            Resetar
+          </button>
+          <button
+            type="button"
+            onClick={adicionarFormulario}
+            className="btn-adicionar"
+            style={{ marginRight: '1rem' }}
+          >
             + Adicionar Teste
           </button>
-          <button type="submit" className="btn-salvar">Salvar Todos</button>
+          <button type="submit" className="btn-salvar">
+            Salvar Todos
+          </button>
         </div>
       </form>
     </div>

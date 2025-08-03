@@ -27,7 +27,7 @@ function GraficoMobilidade({ usuarioId, dataSelecionada }) { // <-- recebe dataS
             const assimetria = Math.abs(esquerdo - direito) / Math.max(esquerdo, direito) * 100;
 
             return {
-              Movimento: item.nome,
+              Movimento: item.nome_teste,
               Esquerdo: esquerdo,
               Direito: direito,
               Data: item.data_avaliacao,

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import UserSearch from '../../components/UserSearch';
+import GraficoProgresso from './GraficoProgresso';
 import GraficoForca from '../../components/Dashboard/GraficoForca';
 import GraficoMobilidade from '../../components/Dashboard/GraficoMobilidade';
 import GraficoTesteFuncao from '../../components/Dashboard/GraficoTestesFuncao';
@@ -19,6 +20,7 @@ function Usuarios() {
   const [usuarioSelecionado, setUsuarioSelecionado] = useState(null);
   const [dataSelecionada, setDataSelecionada] = useState(null);
   const [abaAtiva, setAbaAtiva] = useState('');
+  
 
   useEffect(() => {
   const salvo = localStorage.getItem('usuarioSelecionado');
@@ -110,6 +112,9 @@ const atualizarUsuario = (novoUsuario) => {
 
       case 'Sessões':
         return <Sessoes usuarioId={usuarioSelecionado.id} />;
+
+      case 'Progressão':
+        return <GraficoProgresso usuarioId={usuarioSelecionado.id} />;
 
       default:
         return null;

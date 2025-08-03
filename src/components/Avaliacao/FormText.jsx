@@ -7,6 +7,7 @@ import '../css/FormMobilidade.css';
 function FormText({ pacienteId, dataAvaliacao }) {
   const [formularios, setFormularios] = useState([{ titulo: '', descricao: '' }]);
   const [textosPreDefinidos, setTextosPreDefinidos] = useState([]);
+  const storageKey = `anamnese_${pacienteId}_${dataAvaliacao}`;
 
   // Buscar textos pré-definidos do backend ao montar componente
   useEffect(() => {
@@ -16,7 +17,18 @@ function FormText({ pacienteId, dataAvaliacao }) {
         console.error('Erro ao buscar textos pré-definidos:', err);
         setTextosPreDefinidos([]);
       });
-  }, []);
+
+    // Carregar do localStorage
+    const salvo = localStorage.getItem(storageKey);
+    if (salvo) {
+      setFormularios([{ titulo: '', descricao: salvo }]);
+    }
+  }, [storageKey]);
+
+  // Salva no localStorage a cada alteração da descrição
+  useEffect(() => {
+    localStorage.setItem(storageKey, formularios[0].descricao || '');
+  }, [formularios, storageKey]);
 
   const handleDescricaoChange = (index, valor) => {
     const novos = [...formularios];
@@ -32,19 +44,26 @@ function FormText({ pacienteId, dataAvaliacao }) {
     setFormularios(novos);
   };
 
+  // Função para resetar formulário e localStorage
+  const resetarFormulario = () => {
+    setFormularios([{ titulo: '', descricao: '' }]);
+    localStorage.removeItem(storageKey);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const dado = {
         paciente: pacienteId,
         conteudo_html: formularios[0].descricao,
-        data_avaliacao: dataAvaliacao, // <- agora enviado junto
+        data_avaliacao: dataAvaliacao,
       };
 
       await axios.post(`${import.meta.env.VITE_API_URL}/api/anamnese/`, dado);
+      localStorage.removeItem(storageKey);
 
       alert('Anamnese salva com sucesso!');
-      setFormularios([{ titulo: '', descricao: '' }]);
+      resetarFormulario();
     } catch (err) {
       alert('Erro ao salvar anamnese');
       console.error(err);
@@ -85,8 +104,15 @@ function FormText({ pacienteId, dataAvaliacao }) {
             />
           </div>
         ))}
-        <br></br>
-        <div style={{ width: '100%', display: 'flex', justifyContent: 'right', marginTop: '1rem' }}>
+        <div style={{ width: '100%', display: 'flex', justifyContent: 'right', marginTop: '50px' }}>
+          <button
+            type="button"
+            onClick={resetarFormulario}
+            className="btn-resetar"
+            style={{ marginRight: '1rem', backgroundColor: '#f44336', color: 'white' }}
+          >
+            Resetar
+          </button>
           <button type="submit" className="btn-salvar">
             Salvar
           </button>

@@ -1,0 +1,59 @@
+/* Login.css */
+.logo {
+  display: block;
+  max-width: 250px; /* limita a largura */
+  height: auto; /* mantém proporção */
+  margin: 0 auto 1rem auto; /* centraliza e dá margem embaixo */
+}
+
+
+.login-conteudo {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f5f7fa;
+}
+
+.card-login {
+  background: white;
+  padding: 2rem 3rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+  width: 350px;
+  text-align: center;
+}
+
+.card h2 {
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.card-login form input {
+  width: 90%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 1rem;
+}
+
+.card-login form button {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #4CAF50; /* verde */
+  border: none;
+  color: white;
+  font-weight: bold;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.card form button:hover {
+  background-color: #45a049;
+}
+
+.card p {
+  margin-top: 1rem;
+}

@@ -3,7 +3,7 @@ import './css/Sidebar.css';
 import { NavLink } from 'react-router-dom';
 
 function Sidebar() {
-  const [aberto, setAberto] = useState(false);
+  const [aberto, setAberto] = useState(true);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   // Detectar resize para saber se é mobile

@@ -1,11 +1,37 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../css/FormMobilidade.css';
 
 function FormMobilidade({ pacienteId, dataAvaliacao }) {
-  const [formularios, setFormularios] = useState([
-    { nome: '', lado_esquerdo: '', lado_direito: '', observacao: '' }
-  ]);
+  const localStorageKey = `mobilidadeForm-${pacienteId}`;
+
+  const [formularios, setFormularios] = useState(() => {
+    const salvo = localStorage.getItem(localStorageKey);
+    return salvo
+      ? JSON.parse(salvo)
+      : [{ nome: '', lado_esquerdo: '', lado_direito: '', observacao: '' }];
+  });
+
+  const [opcoesNomes, setOpcoesNomes] = useState([]);
+  const [filtroBusca, setFiltroBusca] = useState('');
+
+
+  useEffect(() => {
+    axios.get(`${import.meta.env.VITE_API_URL}/api/testes/`)
+      .then(res => {
+        const idCategoriaTestesDeMovimento = 8; // ID da categoria desejada
+        const somenteTestesDeMovimento = res.data.filter(
+          (teste) => teste.categoria === idCategoriaTestesDeMovimento
+        );
+        setOpcoesNomes(somenteTestesDeMovimento);
+      })
+      .catch(err => console.error('Erro ao carregar opções de testes:', err));
+  }, []);
+
+
+  useEffect(() => {
+    localStorage.setItem(localStorageKey, JSON.stringify(formularios));
+  }, [formularios, localStorageKey]);
 
   const handleChange = (index, e) => {
     const novos = [...formularios];
@@ -26,6 +52,12 @@ function FormMobilidade({ pacienteId, dataAvaliacao }) {
     setFormularios(novos);
   };
 
+  // Função para resetar formulário e localStorage
+  const resetarFormulario = () => {
+    setFormularios([{ nome: '', lado_esquerdo: '', lado_direito: '', observacao: '' }]);
+    localStorage.removeItem(localStorageKey);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -37,13 +69,14 @@ function FormMobilidade({ pacienteId, dataAvaliacao }) {
 
       console.log('Enviando dados:', dados);
 
-      // Envia um por um (ou adapte para envio em lote se o backend permitir)
-      await Promise.all(dados.map(d => axios.post(`${import.meta.env.VITE_API_URL}/api/mobilidade/`, d)));
+      await Promise.all(dados.map(d =>
+        axios.post(`${import.meta.env.VITE_API_URL}/api/mobilidade/`, d)
+      ));
 
       alert('Todos os dados foram salvos com sucesso!');
-      setFormularios([
-        { nome: '', lado_esquerdo: '', lado_direito: '', observacao: '' }
-      ]);
+
+      // Limpa o estado e o localStorage
+      resetarFormulario();
     } catch (err) {
       alert('Erro ao salvar dados de mobilidade');
       console.error(err);
@@ -57,14 +90,45 @@ function FormMobilidade({ pacienteId, dataAvaliacao }) {
         {formularios.map((form, index) => (
           <div key={index} className="form-mobilidade-container">
             <label className="form-label">Nome da Mobilidade</label>
-            <input
-              name="nome"
-              placeholder="Ex: Flexão de Quadril"
-              value={form.nome}
-              onChange={(e) => handleChange(index, e)}
-              className="form-input"
-              required
-            />
+            <div className="autocomplete-container">
+              <input
+                type="text"
+                name="nome"
+                placeholder="Buscar por nome ou região (ex: ombro)"
+                value={
+                  filtroBusca !== ''
+                    ? filtroBusca
+                    : opcoesNomes.find((opcao) => opcao.id === formularios[index].nome)?.nome || ''
+                } onChange={(e) => {
+                  handleChange(index, e);
+                  setFiltroBusca(e.target.value.toLowerCase());
+                }}
+                className="form-input"
+                autoComplete="off"
+                required
+              />
+              {filtroBusca && (
+                <ul className="autocomplete-list">
+                  {opcoesNomes
+                    .filter((opcao) => opcao.nome.toLowerCase().includes(filtroBusca))
+                    .slice(0, 5)
+                    .map((opcao) => (
+                      <li
+                        key={opcao.id}
+                        onClick={() => {
+                          const novos = [...formularios];
+                          novos[index].nome = opcao.id;
+                          setFormularios(novos);
+                          setFiltroBusca(''); // limpa dropdown
+                        }}
+                      >
+                        {opcao.nome}
+                      </li>
+                    ))}
+                </ul>
+              )}
+            </div>
+
 
             <div className="form-lados">
               <div>
@@ -107,10 +171,25 @@ function FormMobilidade({ pacienteId, dataAvaliacao }) {
         ))}
 
         <div style={{ width: '100%', display: 'flex', justifyContent: 'right', marginTop: '1rem' }}>
-          <button type="button" onClick={adicionarFormulario} className="btn-adicionar" style={{marginRight: '1rem' }}>
+          <button
+            type="button"
+            onClick={resetarFormulario}
+            className="btn-resetar"
+            style={{ marginRight: '1rem', backgroundColor: '#f44336', color: 'white' }}
+          >
+            Resetar
+          </button>
+          <button
+            type="button"
+            onClick={adicionarFormulario}
+            className="btn-adicionar"
+            style={{ marginRight: '1rem' }}
+          >
             + Adicionar Mobilidade
           </button>
-          <button type="submit" className="btn-salvar">Salvar Todos</button>
+          <button type="submit" className="btn-salvar">
+            Salvar Todos
+          </button>
         </div>
       </form>
     </div>
