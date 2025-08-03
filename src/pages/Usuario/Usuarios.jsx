@@ -7,6 +7,8 @@ import GraficoForca from '../../components/Dashboard/GraficoForca';
 import GraficoMobilidade from '../../components/Dashboard/GraficoMobilidade';
 import GraficoTesteFuncao from '../../components/Dashboard/GraficoTestesFuncao';
 import GraficoTesteDor from '../../components/Dashboard/GraficoTestesDor';
+import GraficoEstabilidade from '../../components/Dashboard/GraficoEstabilidade';
+import GraficoEstabilidade2 from '../../components/Dashboard/GraficoEstabilidade2';
 import Card from '../../components/Card';
 import FiltroData from '../../components/FiltroData';
 import DadosUsuario from './DadosUsuario';
@@ -78,13 +80,25 @@ const atualizarUsuario = (novoUsuario) => {
                 <GraficoMobilidade usuarioId={usuarioSelecionado.id} dataSelecionada={dataSelecionada} />
               </Card>
 
-              <Card title="Função" size="lg">
-                <GraficoTesteFuncao usuarioId={usuarioSelecionado.id} dataSelecionada={dataSelecionada} />
+              <Card title="Estabilidade" size="lg">
+                <div style={{ display: 'flex'}}>
+                  <div style={{ flex: 1 }}>
+                    <GraficoEstabilidade usuarioId={usuarioSelecionado.id} dataSelecionada={dataSelecionada} />
+                  </div>
+                </div>
               </Card>
+
 
               <Card title="Dor" size="sm">
                 <GraficoTesteDor usuarioId={usuarioSelecionado.id} dataSelecionada={dataSelecionada} />
               </Card>
+
+              <Card title="Função" size="lg">
+                <GraficoTesteFuncao usuarioId={usuarioSelecionado.id} dataSelecionada={dataSelecionada} />
+              </Card>
+
+              
+  
             </div>
           </>
         );
