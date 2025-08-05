@@ -2,6 +2,7 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import ptBr from '@fullcalendar/core/locales/pt-br'; // ✅ Importar locale
 import Card from '../../components/Card';
 
 export default function Calendario({
@@ -30,13 +31,13 @@ export default function Calendario({
             buttonText: '3 dias',
           },
         }}
-        locale="pt-br"
+        locale="pt-br"      // ✅ Nome da localidade
+        locales={[ptBr]}    // ✅ Lista de localidades suportadas
         events={eventos}
         eventClick={onEventClick}
         dateClick={onDateClick}
         height="auto"
       />
     </Card>
-
   );
 }
