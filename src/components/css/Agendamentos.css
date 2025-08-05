@@ -168,3 +168,42 @@
 .btn-cancel:hover {
   background-color: #c82333 !important;
 }
+
+@media (max-width: 768px) {
+
+  .fc {
+    font-size: 6px;
+
+  }
+
+  .fc .fc-toolbar.fc-header-toolbar {
+    gap: 10px;
+    align-items: center;
+  }
+
+  .google-calendar-modal {
+    width: 95vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 16px;
+  }
+
+  .form-row {
+    flex-direction: column;
+  }
+
+  .form-group {
+    width: 100%;
+    margin-bottom: 12px;
+  }
+
+  .btn-save {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .fc-view-harness {
+    overflow-x: auto;
+  }
+}

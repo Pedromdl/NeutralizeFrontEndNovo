@@ -21,7 +21,14 @@ export default function Calendario({
         headerToolbar={{
           left: 'prev,next today',
           center: 'title',
-          right: 'dayGridMonth,timeGridWeek,timeGridDay',
+          right: 'dayGridMonth,timeGridWeek,timeGridThreeDay,timeGridDay',
+        }}
+        views={{
+          timeGridThreeDay: {
+            type: 'timeGrid',
+            duration: { days: 3 },
+            buttonText: '3 dias',
+          },
         }}
         locale="pt-br"
         events={eventos}
@@ -30,5 +37,6 @@ export default function Calendario({
         height="auto"
       />
     </Card>
+
   );
 }
