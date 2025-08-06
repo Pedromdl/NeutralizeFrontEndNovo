@@ -65,7 +65,7 @@ function FormEstabilidade({ pacienteId, dataAvaliacao }) {
       console.log('Enviando dados:', dados);
 
       await Promise.all(dados.map(d =>
-        axios.post(`${import.meta.env.VITE_API_URL}/api/testeestabilidade/`, d)
+        axios.post(`${import.meta.env.VITE_API_URL}/api/estabilidade/`, d)
       ));
 
       alert('Todos os testes de estabilidade foram salvos com sucesso!');
