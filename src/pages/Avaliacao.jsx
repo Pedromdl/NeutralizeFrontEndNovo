@@ -4,6 +4,7 @@ import UserSearch from '../components/UserSearch';
 import FormMobilidade from '../components/Avaliacao/FormMobilidade.jsx';
 import FormForca from '../components/Avaliacao/FormForca.jsx';
 import FormFuncao from '../components/Avaliacao/FormFuncao.jsx';
+import FormEstabilidade from '../components/Avaliacao/FormEstabilidade.jsx';
 import FormDor from '../components/Avaliacao/FormDor.jsx';
 // import FormEscalas from '../components/FormEscalas';
 import FormText from '../components/Avaliacao/FormText.jsx';
@@ -65,6 +66,7 @@ function CadastrarDados() {
           <FormText pacienteId={pacienteSelecionado.id} dataAvaliacao={dataAvaliacao} />
           <FormMobilidade pacienteId={pacienteSelecionado.id} dataAvaliacao={dataAvaliacao} />
           <FormForca pacienteId={pacienteSelecionado.id} dataAvaliacao={dataAvaliacao} />
+          <FormEstabilidade pacienteId={pacienteSelecionado.id} dataAvaliacao={dataAvaliacao} />
           <FormFuncao pacienteId={pacienteSelecionado.id} dataAvaliacao={dataAvaliacao} resetKey={resetKey} />
           <FormDor pacienteId={pacienteSelecionado.id} dataAvaliacao={dataAvaliacao} />
         </>
