@@ -29,7 +29,7 @@ export default function useFuncaoCalendario() {
 
         const eventosFormatados = eventosApi.map(ev => ({
           id: ev.id.toString(),
-          title: `${ev.tipo} (${ev.status}) - Paciente ${ev.paciente_nome || ev.paciente}`,
+          title: `${ev.paciente_nome || ev.paciente}`,
           start: `${ev.data}T${ev.hora_inicio}`,
           end: ev.hora_fim ? `${ev.data}T${ev.hora_fim}` : undefined,
           extendedProps: { ...ev },

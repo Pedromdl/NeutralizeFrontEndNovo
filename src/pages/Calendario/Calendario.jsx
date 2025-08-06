@@ -36,6 +36,7 @@ export default function Calendario({
         events={eventos}
         eventClick={onEventClick}
         dateClick={onDateClick}
+        
         height="auto"
       />
     </Card>
