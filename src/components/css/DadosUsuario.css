@@ -57,3 +57,18 @@
   background-color: #e0e0e0;
   color: #333;
 }
+
+@media (max-width: 768px) {
+  .dados-usuario {
+    grid-template-columns: 1fr; /* Apenas 1 coluna no mobile */
+  }
+
+  .botoes-edicao {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .botoes-edicao button {
+    width: 100%;
+  }
+}
