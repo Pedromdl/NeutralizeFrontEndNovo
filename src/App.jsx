@@ -21,6 +21,7 @@ import AvaliacaoDetalhe from './pages/Usuario/AvaliacaoDetalhe';
 import SessoesDetalhes from './pages/Usuario/SessoesDetalhes';
 import SessaoNova from './pages/Usuario/SessaoNova';
 import Sessoes from './pages/Usuario/Sessoes';
+import DemoBody from './pages/DemoBody';
 
 
 function LayoutComSidebar({ children }) {
@@ -70,6 +71,7 @@ function App() {
         <Route path="/sessoes/nova/:usuarioId" element={<SessaoNova />} />
         <Route path="/sessoes/:sessaoId" element={<SessoesDetalhes />} />
         <Route path="/configuracoes/pre-avaliacoes" element={<PreAvaliacoes />} />
+        <Route path="/demo" element={<DemoBody />} />
       </Routes>
     </LayoutComSidebar>
   );
