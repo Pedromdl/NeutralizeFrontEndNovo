@@ -33,18 +33,7 @@ export default function Sessoes({ usuarioId }) {
 
   return (
     <Card title="Sessões do Paciente" size="al">
-      <button
-        onClick={() => navigate(`/sessoes/nova/${usuarioId}`)}
-        style={{
-          marginBottom: '1rem',
-          padding: '0.5rem 1rem',
-          backgroundColor: '#2563eb',
-          color: 'white',
-          border: 'none',
-          borderRadius: '6px',
-          cursor: 'pointer'
-        }}
-      >
+      <button className='black' onClick={() => navigate(`/sessoes/nova/${usuarioId}`)}     >
         + Nova Sessão
       </button>
 

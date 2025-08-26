@@ -76,6 +76,7 @@ body {
   width: 100%;
   margin-bottom: 20px;
 }
+
 .carrossel {
   display: flex;
   overflow-x: auto;
@@ -95,6 +96,16 @@ body {
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
+.input {
+  width: 300px;        /* define uma largura fixa */
+  padding: 8px;
+  border: 2px solid #ccc;
+  color: #000;
+  border-radius: 4px;
+  font-size: 14px;
+  margin: 0 auto 16px; /* 🔹 auto centraliza horizontal */
+  display: block;      /* garante que ocupe uma linha */
+}
 
 /* Responsivo */
 @media (max-width: 768px) {
@@ -204,6 +215,23 @@ button.ativo {
   background-color: #b7de42; /* indigo */
   color: #fff;
   border-color: #b7de42;
+}
+
+button.black {
+  background-color: black !important;
+  color: white !important;
+}
+
+button.black:hover {
+  background-color: #282829 !important;
+}
+
+.toggle-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 16px;
 }
 
 

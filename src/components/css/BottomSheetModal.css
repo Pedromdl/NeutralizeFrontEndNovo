@@ -1,0 +1,33 @@
+.bottom-sheet-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  z-index: 1000;
+}
+
+.bottom-sheet-content {
+  width: 100%;
+  max-height: 80%;
+  background-color: #fff;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  padding: 16px;
+  overflow-y: auto;
+  animation: slideUp 0.3s ease;
+}
+
+.close-button {
+  float: right;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}

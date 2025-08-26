@@ -120,7 +120,7 @@ export default function PreAvaliacoes() {
                     style={{ marginBottom: '1rem' }}
                 />
 
-                <div style={{ display: 'flex', gap: '1rem' }}>
+                <div style={{ display: 'flex', gap: '1rem', flexDirection: 'row-reverse'}}>
                     <button onClick={salvar} style={{ backgroundColor: '#b7de42', color: 'white' }}>
                         {avaliacaoSelecionada ? 'Salvar alterações' : 'Criar nova'}
                     </button>

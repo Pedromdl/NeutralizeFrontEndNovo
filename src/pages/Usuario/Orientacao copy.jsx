@@ -21,9 +21,7 @@ export default function OrientacoesComPastas({ usuarioId }) {
     }
   }, [usuarioId]);
 
-  const entrarNaPasta = (pasta) => {
-    navigate(`/pastas/${pasta.id}`); // redireciona para PastaDetalhe
-  };
+  const entrarNaPasta = (pasta) => setPastaSelecionada(pasta);
   const voltarLista = () => setPastaSelecionada(null);
   const abrirSecao = (secaoId) => navigate(`/treinos/${secaoId}`);
 
@@ -72,7 +70,7 @@ export default function OrientacoesComPastas({ usuarioId }) {
       {!pastaSelecionada ? (
         <>
           {/* Botão para abrir modal de pasta */}
-          <button className='black' onClick={() => setModalPastaAberto(true)}>
+          <button onClick={() => setModalPastaAberto(true)} style={{ marginBottom: '1rem' }}>
             + Criar Pasta
           </button>
 
@@ -82,11 +80,11 @@ export default function OrientacoesComPastas({ usuarioId }) {
               <div style={modalContentStyle}>
                 <h3>Criar Nova Pasta</h3>
                 <input
-                  className='input'
                   type="text"
                   value={novoNomePasta}
                   onChange={(e) => setNovoNomePasta(e.target.value)}
                   placeholder="Nome da pasta"
+                  style={inputStyle}
                 />
                 <div style={modalButtonGroupStyle}>
                   <button onClick={() => setModalPastaAberto(false)}>Cancelar</button>
@@ -101,12 +99,8 @@ export default function OrientacoesComPastas({ usuarioId }) {
             {pastas.map((pasta) => (
               <li
                 key={pasta.id}
-                style={{
-                  cursor: 'pointer',
-                  padding: '0.5rem 0',
-                  borderBottom: '1px solid #ddd',
-                }}
-                onClick={() => entrarNaPasta(pasta)} // chama o navigate
+                style={pastaItemStyle}
+                onClick={() => entrarNaPasta(pasta)}
               >
                 {pasta.nome} (
                 {pasta.secoes?.reduce(
@@ -183,11 +177,8 @@ const modalContentStyle = {
   padding: '2rem',
   borderRadius: '8px',
   minWidth: '300px',
-  display: 'flex',
-  flexDirection: 'column',
-  flexWrap: 'wrap',
-  alignContent: 'center',
 };
+const inputStyle = { width: '100%', padding: '0.5rem', marginBottom: '1rem' };
 const modalButtonGroupStyle = { display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' };
 const pastaItemStyle = { cursor: 'pointer', padding: '0.5rem 0', borderBottom: '1px solid #ddd' };
 const secaoItemStyle = { cursor: 'pointer', backgroundColor: '#f0f0f0', padding: '1rem', borderRadius: '6px', marginBottom: '0.5rem' };

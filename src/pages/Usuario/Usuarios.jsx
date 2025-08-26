@@ -16,6 +16,34 @@ import Orientacao from './Orientacao'
 import Avaliacoes from './Avaliacoes';
 import Sessoes from './Sessoes';
 
+const toggleButtonsStyle = {
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '10px',
+  marginBottom: '16px',
+};
+
+const buttonStyle = {
+  padding: '8px 12px',
+  border: 'none',
+  borderRadius: '6px',
+  cursor: 'pointer',
+  fontWeight: 500,
+  backgroundColor: '#f5f5f5',
+  transition: 'background-color 0.2s',
+};
+
+const ativoButtonStyle = {
+  ...buttonStyle,
+  backgroundColor: '#cce5ff',
+  color: '#003366',
+};
+
+// Para mobile podemos usar media queries com window.innerWidth
+const isMobile = window.innerWidth <= 768;
+const mobileButtonStyle = isMobile
+  ? { ...buttonStyle, flex: '1 1 45%', padding: '10px 0', fontSize: '14px' }
+  : buttonStyle;
 
 function Usuarios() {
   const location = useLocation(); // 👈 E ISSO

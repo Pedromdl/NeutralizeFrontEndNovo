@@ -91,7 +91,7 @@ export default function DadosUsuario({ usuarioSelecionado, atualizarUsuario }) {
               : 'Não informada'}</p>
             <p><strong>Idade:</strong> {calcularIdade(dados.data_de_nascimento)}</p>
             <div className="botoes-edicao">
-              <button onClick={() => setEditando(true)}>Editar</button>
+              <button className="black" onClick={() => setEditando(true)}>Editar</button>
             </div>
           </>
         )}

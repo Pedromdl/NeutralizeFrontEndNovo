@@ -66,3 +66,43 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.toggle-buttons {
+  display: flex;
+  flex-wrap: wrap;      /* permite quebrar linha se necessário */
+  gap: 10px;            /* espaçamento entre os botões */
+  margin-bottom: 16px;
+}
+
+.toggle-buttons button {
+  padding: 8px 12px;
+  border: none;
+  background-color: #f5f5f5;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.toggle-buttons button.ativo {
+  background-color: #cce5ff;
+  color: #003366;
+}
+
+.toggle-buttons button:hover {
+  background-color: #e0e0e0;
+}
+
+/* Mobile: ocupa largura proporcional e mais espaçamento */
+@media (max-width: 768px) {
+  .toggle-buttons {
+    justify-content: space-between; /* distribui igualmente os botões */
+    gap: 6px;                       /* reduz gap se necessário */
+  }
+
+  .toggle-buttons button {
+    flex: 1 1 45%;     /* cada botão ocupa ~45% da largura, quebra linha se necessário */
+    padding: 10px 0;   /* aumenta área clicável */
+    font-size: 14px;
+  }
+}

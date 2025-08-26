@@ -11,7 +11,6 @@ export default function Profile() {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    console.log('Token para requisição:', token);
 
     if (!token) {
       setErro('Usuário não autenticado');
@@ -50,7 +49,7 @@ export default function Profile() {
 
           {/* Adicione outros campos se desejar */}
           <div className="botoes-edicao">
-            <button onClick={handleLogout}>Sair</button>
+            <button className="black" onClick={handleLogout}>Sair</button>
           </div>
         </div>
       </Card>
