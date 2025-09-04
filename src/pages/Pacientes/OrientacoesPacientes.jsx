@@ -39,7 +39,7 @@ export default function OrientacoesPaciente() {
               style={{ cursor: 'pointer', padding: '0.5rem 0', borderBottom: '1px solid #ddd' }}
               onClick={() => setPastaSelecionada(pasta)}
             >
-              {pasta.nome} ({pasta.secoes?.reduce((total, secao) => total + (secao.orientacoes?.length || 0), 0)} exercícios)
+              {pasta.nome}
             </li>
           )) : <li>Nenhuma pasta encontrada.</li>}
         </ul>

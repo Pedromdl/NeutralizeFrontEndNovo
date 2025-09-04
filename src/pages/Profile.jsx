@@ -50,6 +50,7 @@ export default function Profile() {
           {/* Adicione outros campos se desejar */}
           <div className="botoes-edicao">
             <button className="black" onClick={handleLogout}>Sair</button>
+            <button className="grey" onClick={() => navigate(-1)}>Voltar</button>
           </div>
         </div>
       </Card>

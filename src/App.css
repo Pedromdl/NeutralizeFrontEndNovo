@@ -55,7 +55,17 @@ body {
   box-sizing: border-box;
 }
 
+.cards-row {
+  display: flex; /* padrão: um embaixo do outro */
+  gap: 20px; /* espaço entre eles */
+  width: 100%;
+}
+
 /* Tamanhos por grid */
+.card-mi {
+  grid-column: span 3;
+}
+
 .card-sm {
   grid-column: span 5;
 }
@@ -105,6 +115,48 @@ body {
   font-size: 14px;
   margin: 0 auto 16px; /* 🔹 auto centraliza horizontal */
   display: block;      /* garante que ocupe uma linha */
+}
+
+/* TIMELINE */
+.timeline {
+  position: relative;
+  text-align: left;
+  margin-left: 20px;
+  padding-left: 20px;
+  border-left: 2px solid #ddd;
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: -11px; /* alinhamento com a linha */
+  top: 5px;
+  width: 12px;
+  height: 12px;
+  background-color: #4f46e5; /* roxo */
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 2px #ddd;
+}
+
+.timeline-content {
+  margin-left: 10px;
+}
+
+.timeline-content .acao {
+  font-weight: 500;
+  color: #333;
+  margin: 0;
+}
+
+.timeline-content .data {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 2px;
 }
 
 /* Responsivo */

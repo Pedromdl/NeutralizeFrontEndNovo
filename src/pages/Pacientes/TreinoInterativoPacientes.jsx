@@ -235,7 +235,7 @@ export default function TreinoInterativoPacientes() {
   const iniciarTreino = () => {
     if (!orientacoes.length) return;
     const pastaId = orientacoes[0].pastaId;
-    const payload = { treino: pastaId, paciente: user.id };
+    const payload = { treino: pastaId };
 
     axios.post(`${import.meta.env.VITE_API_URL}/api/orientacoes/treinosexecutados/`, payload)
       .then(resExec => {

@@ -108,12 +108,7 @@ export default function OrientacoesComPastas({ usuarioId }) {
                 }}
                 onClick={() => entrarNaPasta(pasta)} // chama o navigate
               >
-                {pasta.nome} (
-                {pasta.secoes?.reduce(
-                  (total, secao) => total + (secao.treinos?.length || 0),
-                  0
-                )}{' '}
-                treinos)
+                {pasta.nome}
               </li>
             ))}
           </ul>

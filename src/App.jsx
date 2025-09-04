@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
+import PacienteSidebar from './components/PacienteSidebar';
 import BottomMenu from './components/BottomMenu';
+import PacienteBottomMenu from './components/PacienteBottomMenu';
 import Logo from './images/logo.png';
 import PrivateRoute from './components/PrivateRoute';
 import './App.css';
@@ -31,8 +33,14 @@ import TreinoInterativoPacientes from './pages/Pacientes/TreinoInterativoPacient
 import PainelInicialPaciente from "./pages/Pacientes/PainelInicialPacientes";
 
 
+
 function LayoutComSidebar({ children }) {
+  const location = useLocation();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  // Rotas que NÃO terão sidebar
+  const rotasSemSidebar = ['/perfil']; 
+  const isNoSidebar = rotasSemSidebar.includes(location.pathname);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -40,20 +48,25 @@ function LayoutComSidebar({ children }) {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  const isPacienteRoute = location.pathname.startsWith("/paciente");
+
   return (
     <div className="app-container">
-      {/* Sidebar só aparece no desktop */}
-      {!isMobile && <Sidebar />}
-      
+      {/* Renderiza sidebar só se não estiver em rota sem sidebar */}
+      {!isMobile && !isNoSidebar && (isPacienteRoute ? <PacienteSidebar /> : <Sidebar />)}
+
       <div className="main-area">
+        {/* Logo sempre visível */}
         <div className="logo-container">
           <img src={Logo} alt="Logo" className="logo" />
         </div>
 
         {children}
 
-        {/* BottomMenu só aparece no mobile */}
-        {isMobile && <BottomMenu />}
+        {/* Bottom menu mobile, exceto nas rotas sem menu */}
+        {isMobile && !isNoSidebar && (
+          isPacienteRoute ? <PacienteBottomMenu /> : <BottomMenu />
+        )}
       </div>
     </div>
   );
@@ -62,10 +75,10 @@ function LayoutComSidebar({ children }) {
 function App() {
   const location = useLocation();
 
-  // Rotas sem sidebar nem logo
-  const rotaSemSidebar = ['/login', '/register'].includes(location.pathname);
+  // Rotas públicas sem layout (login/register)
+  const rotaSemLayout = ['/login', '/register'];
 
-  if (rotaSemSidebar) {
+  if (rotaSemLayout.includes(location.pathname)) {
     return (
       <Routes>
         <Route path="/login" element={<Login />} />
@@ -74,34 +87,36 @@ function App() {
     );
   }
 
-  // Rotas com sidebar, logo e BottomMenu condicional
+  // Todas as demais rotas protegidas
   return (
-    <LayoutComSidebar>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/usuarios" element={<Usuarios />} />
-        <Route path="/perfil" element={<Profile />} />
-        <Route path="/avaliacao" element={<Avaliacao />} />
-        <Route path="/cadastro" element={<Cadastro />} />
-        <Route path="/orientacao" element={<Orientacao />} />
-        <Route path="/pastas/:id" element={<PastaDetalhe />} />
-        <Route path="/secoes/:id/treino" element={<TreinoDetalhe />} />
-        <Route path="/configuracoes" element={<PrivateRoute><Configuracoes /></PrivateRoute>} />
-        <Route path="/orientacoes/:pastaId/secao/:secaoId" element={<SecaoDetalhe />} />
-        <Route path="/avaliacoes/:avaliacaoId" element={<AvaliacaoDetalhe />} />
-        <Route path="/agendamentos" element={<Agendamentos />} />
-        <Route path="/sessoes/nova/:usuarioId" element={<SessaoNova />} />
-        <Route path="/sessoes/:sessaoId" element={<SessoesDetalhes />} />
-        <Route path="/configuracoes/pre-avaliacoes" element={<PreAvaliacoes />} />
-        <Route path="/demo" element={<DemoBody />} />
-        <Route path="/treinos/:secaoId" element={<TreinoInterativo />} />
-        <Route path="/paciente/orientacoes" element={<OrientacoesPaciente />} />
-        <Route path="/paciente/treinos/:secaoId" element={<TreinoInterativoPacientes />} />
-        <Route path="/paciente" element={<PainelInicialPaciente />} />
-
-      </Routes>
-    </LayoutComSidebar>
+    <PrivateRoute>
+      <LayoutComSidebar>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/perfil" element={<Profile />} />
+          <Route path="/usuarios" element={<Usuarios />} />
+          <Route path="/avaliacao" element={<Avaliacao />} />
+          <Route path="/cadastro" element={<Cadastro />} />
+          <Route path="/orientacao" element={<Orientacao />} />
+          <Route path="/pastas/:id" element={<PastaDetalhe />} />
+          <Route path="/secoes/:id/treino" element={<TreinoDetalhe />} />
+          <Route path="/configuracoes" element={<Configuracoes />} />
+          <Route path="/orientacoes/:pastaId/secao/:secaoId" element={<SecaoDetalhe />} />
+          <Route path="/avaliacoes/:avaliacaoId" element={<AvaliacaoDetalhe />} />
+          <Route path="/agendamentos" element={<Agendamentos />} />
+          <Route path="/sessoes/nova/:usuarioId" element={<SessaoNova />} />
+          <Route path="/sessoes/:sessaoId" element={<SessoesDetalhes />} />
+          <Route path="/configuracoes/pre-avaliacoes" element={<PreAvaliacoes />} />
+          <Route path="/demo" element={<DemoBody />} />
+          <Route path="/treinos/:secaoId" element={<TreinoInterativo />} />
+          <Route path="/paciente/orientacoes" element={<OrientacoesPaciente />} />
+          <Route path="/paciente/treinos/:secaoId" element={<TreinoInterativoPacientes />} />
+          <Route path="/paciente" element={<PainelInicialPaciente />} />
+        </Routes>
+      </LayoutComSidebar>
+    </PrivateRoute>
   );
 }
+
 
 export default App;
