@@ -8,7 +8,13 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [erro, setErro] = useState('');
+  const [redirectPath, setRedirectPath] = useState(null);
   const navigate = useNavigate();
+
+  // efeito que dispara o navigate quando redirectPath é definido
+  useEffect(() => {
+    if (redirectPath) navigate(redirectPath);
+  }, [redirectPath, navigate]);
 
   // Inicializa Google Identity Services
   useEffect(() => {
@@ -33,25 +39,29 @@ export default function Login() {
   // Callback do Google
   const handleGoogleCallback = async (response) => {
     try {
+      console.log('Callback Google recebido:', response);
       const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/google/`, {
         token: response.credential,
       });
+      console.log('Resposta do backend Google:', res.data);
 
       const token = res.data.access;
       localStorage.setItem('token', token);
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-      // Pega dados do usuário
-      const userRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/profile/`);
+      const userRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/profile/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log('Dados do usuário:', userRes.data);
+
       const user = userRes.data;
       localStorage.setItem('user', JSON.stringify(user));
 
-      // Redireciona baseado na role
-      if (user.role === 'profissional') navigate('/usuarios');
-      else if (user.role === 'paciente') navigate('/paciente');
+      if (user.role === 'profissional') setRedirectPath('/usuarios');
+      else if (user.role === 'paciente') setRedirectPath('/paciente');
 
     } catch (err) {
-      console.error('Erro no login Google:', err);
+      console.error('Erro no login Google:', err.response || err);
       setErro('Erro ao autenticar com o Google.');
     }
   };
@@ -70,16 +80,18 @@ export default function Login() {
       localStorage.setItem('token', token);
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-      // Pega dados do usuário
-      const userRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/profile/`);
+      const userRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/profile/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
       const user = userRes.data;
       localStorage.setItem('user', JSON.stringify(user));
 
-      // Redireciona baseado na role
-      if (user.role === 'profissional') navigate('/usuarios');
-      else if (user.role === 'paciente') navigate('/paciente');
+      if (user.role === 'profissional') setRedirectPath('/usuarios');
+      else if (user.role === 'paciente') setRedirectPath('/paciente');
 
-    } catch {
+    } catch (err) {
+      console.error('Erro no login padrão:', err.response || err);
       setErro('Usuário ou senha inválidos');
     }
   };
