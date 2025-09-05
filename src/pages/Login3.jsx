@@ -10,26 +10,6 @@ export default function Login() {
   const [erro, setErro] = useState('');
   const navigate = useNavigate();
 
-  // Inicializa Google Identity Services
-  useEffect(() => {
-    /* global google */
-    const script = document.createElement('script');
-    script.src = 'https://accounts.google.com/gsi/client';
-    script.async = true;
-    script.defer = true;
-    script.onload = () => {
-      google.accounts.id.initialize({
-        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-        callback: handleGoogleCallback,
-      });
-      google.accounts.id.renderButton(
-        document.getElementById('googleSignInDiv'),
-        { theme: 'outline', size: 'large', text: 'continue_with', width: '250' }
-      );
-    };
-    document.body.appendChild(script);
-  }, []);
-
   // Callback do Google
   const handleGoogleCallback = async (response) => {
     try {
@@ -41,12 +21,10 @@ export default function Login() {
       localStorage.setItem('token', token);
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-      // Pega dados do usuário
       const userRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/profile/`);
       const user = userRes.data;
       localStorage.setItem('user', JSON.stringify(user));
 
-      // Redireciona baseado na role
       if (user.role === 'profissional') navigate('/usuarios');
       else if (user.role === 'paciente') navigate('/paciente');
 
@@ -55,6 +33,25 @@ export default function Login() {
       setErro('Erro ao autenticar com o Google.');
     }
   };
+
+  // Inicializa Google Identity Services
+  useEffect(() => {
+    /* global google */
+    if (window.google) {
+      google.accounts.id.initialize({
+        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+        callback: handleGoogleCallback,
+      });
+
+      google.accounts.id.renderButton(
+        document.getElementById('googleSignInDiv'),
+        { theme: 'outline', size: 'large', text: 'continue_with', width: '250' }
+      );
+
+      // Optional: prompt one-tap login
+      // google.accounts.id.prompt();
+    }
+  }, []);
 
   // Login padrão
   const handleLogin = async (e) => {
@@ -70,12 +67,10 @@ export default function Login() {
       localStorage.setItem('token', token);
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-      // Pega dados do usuário
       const userRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/profile/`);
       const user = userRes.data;
       localStorage.setItem('user', JSON.stringify(user));
 
-      // Redireciona baseado na role
       if (user.role === 'profissional') navigate('/usuarios');
       else if (user.role === 'paciente') navigate('/paciente');
 
