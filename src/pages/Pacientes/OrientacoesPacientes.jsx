@@ -19,7 +19,7 @@ export default function OrientacoesPaciente() {
         return;
       }
 
-      axios.get(`${import.meta.env.VITE_API_URL}/api/orientacoes/pastas/?paciente=${user.id}`)
+      axios.get(`${import.meta.env.VITE_API_URL}/api/orientacoes/pastas/`)
         .then((res) => setPastas(res.data))
         .catch((err) => setErro('Não foi possível carregar as pastas'));
     }
