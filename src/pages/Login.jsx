@@ -8,13 +8,7 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [erro, setErro] = useState('');
-  const [redirectPath, setRedirectPath] = useState(null);
   const navigate = useNavigate();
-
-  // efeito que dispara o navigate quando redirectPath é definido
-  useEffect(() => {
-    if (redirectPath) navigate(redirectPath);
-  }, [redirectPath, navigate]);
 
   // Inicializa Google Identity Services
   useEffect(() => {
@@ -57,8 +51,12 @@ export default function Login() {
       const user = userRes.data;
       localStorage.setItem('user', JSON.stringify(user));
 
-      if (user.role === 'profissional') setRedirectPath('/usuarios');
-      else if (user.role === 'paciente') setRedirectPath('/paciente');
+      // 🔹 Navegação direta
+      if (user.role === 'profissional') {
+        navigate('/usuarios');
+      } else if (user.role === 'paciente') {
+        navigate('/paciente');
+      }
 
     } catch (err) {
       console.error('Erro no login Google:', err.response || err);
@@ -87,8 +85,12 @@ export default function Login() {
       const user = userRes.data;
       localStorage.setItem('user', JSON.stringify(user));
 
-      if (user.role === 'profissional') setRedirectPath('/usuarios');
-      else if (user.role === 'paciente') setRedirectPath('/paciente');
+      // 🔹 Navegação direta
+      if (user.role === 'profissional') {
+        navigate('/usuarios');
+      } else if (user.role === 'paciente') {
+        navigate('/paciente');
+      }
 
     } catch (err) {
       console.error('Erro no login padrão:', err.response || err);
