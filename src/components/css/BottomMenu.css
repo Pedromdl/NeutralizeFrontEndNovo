@@ -72,3 +72,14 @@
   height: 32px;   /* ajuste o tamanho */
   width: auto;
 }
+
+.bottomsheet-header {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0;
+}
+
+.bottomsheet-header img {
+  height: 50px;
+  width: auto;
+}

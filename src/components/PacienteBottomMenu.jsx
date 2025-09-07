@@ -2,6 +2,8 @@ import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import BottomSheetModal from "./BottomSheetModal";
 import "./css/BottomMenu.css";
+import Logo from '../images/logo3.png'; // 🔹 ajuste o caminho da imagem
+
 
 function PacienteBottomMenu() {
   const [isOpen, setIsOpen] = useState(false);
@@ -14,7 +16,13 @@ function PacienteBottomMenu() {
 
   return (
     <>
+    
       <nav className="bottom-menu">
+
+                <div className="bottom-menu-logo">
+                  <img src={Logo} alt="Logo" />
+                </div>
+
         <NavLink
           to="/paciente"
           className={({ isActive }) => (isActive ? "ativo" : "")}

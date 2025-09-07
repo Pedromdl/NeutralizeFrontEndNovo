@@ -45,6 +45,7 @@ function BottomMenu() {
       </nav>
 
       <BottomSheetModal isOpen={isOpen} onClose={() => setIsOpen(false)}>
+        
         <h2>Configurações</h2>
         <ul>
           <li>
