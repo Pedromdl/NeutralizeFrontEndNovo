@@ -58,7 +58,6 @@ function LayoutComSidebar({ children }) {
       <div className="main-area">
         {/* Logo sempre visível */}
         <div className="logo-container">
-          <img src={Logo} alt="Logo" className="logo" />
         </div>
 
         {children}

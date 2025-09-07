@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import BottomSheetModal from './BottomSheetModal';
 import './css/BottomMenu.css';
+import Logo from '../images/logo3.png'; // 🔹 ajuste o caminho da imagem
 
 function BottomMenu() {
   const [isOpen, setIsOpen] = useState(false);
@@ -9,12 +10,17 @@ function BottomMenu() {
 
   const irPara = (caminho) => {
     navigate(caminho);
-    setIsOpen(false); // fecha o modal ao navegar
+    setIsOpen(false);
   };
 
   return (
     <>
       <nav className="bottom-menu">
+        {/* 🔹 Logo à esquerda */}
+        <div className="bottom-menu-logo">
+          <img src={Logo} alt="Logo" />
+        </div>
+
         <NavLink to="/" className={({ isActive }) => (isActive ? 'ativo' : '')}>
           🏠
           <span>Início</span>
@@ -32,11 +38,7 @@ function BottomMenu() {
           <span>Agenda</span>
         </NavLink>
 
-        {/* Botão de Configurações abre o modal */}
-        <button
-          className="bottom-menu-extra"
-          onClick={() => setIsOpen(true)}
-        >
+        <button className="bottom-menu-extra" onClick={() => setIsOpen(true)}>
           ⚙️
           <span>Configurações</span>
         </button>

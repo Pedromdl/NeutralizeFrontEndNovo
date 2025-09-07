@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import './css/Sidebar.css';
 import { NavLink } from 'react-router-dom';
+import Logo from '../images/logo2.png'; // 🔹 ajuste o caminho conforme sua pasta
 
 function Sidebar() {
   const [aberto, setAberto] = useState(true);
@@ -14,22 +15,28 @@ function Sidebar() {
   }, []);
 
   const toggleSidebar = () => setAberto(!aberto);
-
-  // Fechar sidebar ao clicar no overlay
   const handleOverlayClick = () => setAberto(false);
 
   return (
     <>
       {isMobile && aberto && <div className="overlay" onClick={handleOverlayClick}></div>}
       {!aberto && window.innerWidth <= 768 && (
-  <button className="botao-toggle-global" onClick={toggleSidebar}>
-    ☰
-  </button>
-)}
+        <button className="botao-toggle-global" onClick={toggleSidebar}>
+          ☰
+        </button>
+      )}
       <div className={`sidebar ${aberto ? 'aberta' : 'fechada'}`}>
         <button className="botao-toggle" onClick={toggleSidebar}>
           {aberto ? '←' : '→'}
         </button>
+
+        {/* 🔹 Imagem no topo */}
+        {aberto && (
+          <div className="sidebar-logo">
+            <img src={Logo} alt="Logo" />
+          </div>
+        )}
+
         {aberto && (
           <ul className="menu">
             <li>
@@ -62,7 +69,6 @@ function Sidebar() {
                 ⚙️ <span>Configurações</span>
               </NavLink>
             </li>
-            
           </ul>
         )}
       </div>

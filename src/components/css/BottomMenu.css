@@ -4,7 +4,7 @@
   align-items: center;
   height: 60px;
   border-top: 1px solid #ddd;
-  background-color: #fff;
+  background-color: #282829;
   position: fixed;
   bottom: 0;
   width: 100%;
@@ -18,7 +18,7 @@
   align-items: center;
   justify-content: center;
   text-decoration: none;
-  color: #333;
+  color: #edecea;
   font-size: 12px;
   background: none;
   border: none;
@@ -42,6 +42,8 @@
 
 .bottom-menu-extra span {
   font-size: 0.7rem;
+  color: #edecea;
+
 }
 
 .bottom-sheet-content ul {
@@ -57,4 +59,16 @@
   border: none;
   cursor: pointer;
   font-size: 1rem;
+}
+
+.bottom-menu {
+  display: flex;
+  align-items: center;
+  justify-content: space-around; /* ou space-between, se quiser mais espaço */
+  padding: 0.5rem 1rem;
+}
+
+.bottom-menu-logo img {
+  height: 32px;   /* ajuste o tamanho */
+  width: auto;
 }
