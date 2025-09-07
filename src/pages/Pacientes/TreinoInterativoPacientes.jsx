@@ -173,7 +173,7 @@ export default function TreinoInterativoPacientes() {
   const formatarTempo = (segundos) => {
     const min = Math.floor(segundos / 60);
     const seg = segundos % 60;
-    return `${min.toString().padStart(2,'0')}:${seg.toString().padStart(2,'0')}`;
+    return `${min.toString().padStart(2, '0')}:${seg.toString().padStart(2, '0')}`;
   };
 
   const handleInputChange = (exercicioIndex, serieIndex, campo, valor) => {
@@ -310,10 +310,14 @@ export default function TreinoInterativoPacientes() {
           <div className="exercicio-titulo">
             <h3>{exercicioAtual.titulo}</h3>
             {exercicioAtual.videoUrl && (
-              <button onClick={() => window.open(exercicioAtual.videoUrl, '_blank')}
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#2563eb', border: 'none', borderRadius: '50%', width: '36px', height: '36px', cursor: 'pointer', color: 'white' }}>
-                <Play size={20} />
-              </button>
+              <a
+                href={exercicioAtual.videoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-video"
+              >
+                <img src="/blackplay.png" alt="Abrir vídeo" style={{ width: '26px', height: '26px' }} />
+              </a>
             )}
           </div>
           <p className="exercicio-descricao">{exercicioAtual.descricao}</p>

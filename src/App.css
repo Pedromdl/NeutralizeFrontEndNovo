@@ -247,6 +247,7 @@ body {
   /* padrão desktop */
 }
 
+
 button {
   padding: 0.5rem 1rem;
   margin-right: 0.5rem;
@@ -286,6 +287,12 @@ button.black:hover {
   margin-bottom: 16px;
 }
 
+.btn-video {
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
 
 
 @media (min-width: 768px) {
