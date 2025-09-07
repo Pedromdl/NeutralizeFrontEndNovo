@@ -2,7 +2,6 @@ import { useState, useEffect, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import Card from '../../components/Card';
-import { Play } from 'lucide-react';
 import { AuthContext } from '../../context/AuthContext';
 import './TreinoInterativo.css';
 

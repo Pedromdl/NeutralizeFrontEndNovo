@@ -29,31 +29,51 @@ function ModalAdicionarExercicio({ isOpen, onClose, exerciciosDisponiveis, onSal
 
   return (
     <div className="modal-backdrop">
-      <div className="modal">
-        <h3>Adicionar Exercício</h3>
-        <select
-          value={exercicioSelecionado?.id || ''}
-          onChange={(e) => {
-            const ex = exerciciosDisponiveis.find(ex => ex.id === Number(e.target.value));
-            setExercicioSelecionado(ex);
-          }}
-        >
-          <option value="">Selecione um exercício</option>
-          {exerciciosDisponiveis.map(ex => (
-            <option key={ex.id} value={ex.id}>{ex.titulo}</option>
-          ))}
-        </select>
-        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
-          <input type="number" value={series} onChange={e => setSeries(Number(e.target.value))} placeholder="Séries" />
-          <input type="number" value={repeticoes} onChange={e => setRepeticoes(Number(e.target.value))} placeholder="Repetições" />
-          <input type="number" value={carga} onChange={e => setCarga(Number(e.target.value))} placeholder="Carga" />
+      <div className="modal-conteudo">
+        <h2>Adicionar Exercício</h2>
+
+        <div className="modal-form">
+          <label>
+            Exercício
+            <select
+              value={exercicioSelecionado?.id || ''}
+              onChange={(e) => {
+                const ex = exerciciosDisponiveis.find(ex => ex.id === Number(e.target.value));
+                setExercicioSelecionado(ex);
+              }}
+            >
+              <option value="">Selecione um exercício</option>
+              {exerciciosDisponiveis.map(ex => (
+                <option key={ex.id} value={ex.id}>{ex.titulo}</option>
+              ))}
+            </select>
+          </label>
+
+          <div className="modal-inputs">
+            <label>
+              Séries
+              <input type="number" value={series} onChange={e => setSeries(Number(e.target.value))} />
+            </label>
+            <label>
+              Repetições
+              <input type="number" value={repeticoes} onChange={e => setRepeticoes(Number(e.target.value))} />
+            </label>
+            <label>
+              Carga
+              <input type="number" value={carga} onChange={e => setCarga(Number(e.target.value))} />
+            </label>
+          </div>
         </div>
-        <button onClick={handleSalvar} style={{ marginTop: '1rem' }}>Salvar</button>
-        <button onClick={onClose} style={{ marginLeft: '0.5rem' }}>Cancelar</button>
+
+        <div className="modal-botoes">
+          <button className="btn-salvar" onClick={handleSalvar}>Salvar</button>
+          <button className="btn-cancelar" onClick={onClose}>Cancelar</button>
+        </div>
       </div>
     </div>
   );
 }
+
 
 export default function TreinoDetalhe() {
   const { id } = useParams(); // id da seção
@@ -179,26 +199,28 @@ export default function TreinoDetalhe() {
                 <div style={{ marginTop: '1rem' }}>
                   {/* Lista de exercícios do treino */}
                   {t.exerciciosDoTreino.length > 0 && (
-                    <table style={{ width: '100%', marginBottom: '0.5rem' }}>
-                      <thead>
-                        <tr>
-                          <th>Exercício</th>
-                          <th>Séries</th>
-                          <th>Repetições</th>
-                          <th>Carga</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {t.exerciciosDoTreino.map(ex => (
-                          <tr key={ex.id}>
-                            <td>{ex.orientacao_detalhes.titulo}</td>
-                            <td>{ex.series_planejadas}</td>
-                            <td>{ex.repeticoes_planejadas}</td>
-                            <td>{ex.carga_planejada}</td>
+                    <div className="tabela-exercicios-wrapper">
+                      <table className="tabela-exercicios">
+                        <thead>
+                          <tr>
+                            <th>Exercício</th>
+                            <th>Séries</th>
+                            <th>Repetições</th>
+                            <th>Carga</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody>
+                          {t.exerciciosDoTreino.map(ex => (
+                            <tr key={ex.id}>
+                              <td>{ex.orientacao_detalhes.titulo}</td>
+                              <td>{ex.series_planejadas}</td>
+                              <td>{ex.repeticoes_planejadas}</td>
+                              <td>{ex.carga_planejada}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   )}
 
                   <button onClick={() => abrirModal(t)}>Adicionar Exercício</button>

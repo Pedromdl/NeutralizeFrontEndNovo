@@ -294,6 +294,146 @@ button.black:hover {
     transition: all 0.2s ease;
 }
 
+.tabela-exercicios-wrapper {
+  overflow-x: auto; /* rolagem em telas pequenas */
+  margin-bottom: 1rem;
+}
+
+.tabela-exercicios {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.tabela-exercicios th,
+.tabela-exercicios td {
+  text-align: center;
+  padding: 0.75rem;
+  border-bottom: 1px solid #eee;
+}
+
+.tabela-exercicios th {
+  background-color: #f5f5f5;
+  font-weight: 600;
+  color: #333;
+}
+
+.tabela-exercicios tr:hover {
+  background-color: #f9f9f9;
+}
+
+.tabela-exercicios td {
+  color: #444;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-conteudo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #fff;
+  padding: 2rem;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.modal-conteudo h2 {
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  color: #333;
+}
+
+.modal-form label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  color: #444;
+}
+
+.modal-form select {
+  margin-top: 0.25rem;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  width: 100%;
+}
+
+.modal-form input {
+  margin-top: 0.25rem;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  width: 100%;
+}
+
+.modal-inputs {
+  display: flex;
+  gap: 20px;
+  padding: 10px;
+  margin-right: 10px;
+}
+
+.modal-inputs label {
+  flex: 1;
+}
+
+.modal-botoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.btn-salvar {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-cancelar {
+  background: #e5e7eb;
+  color: #333;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-salvar:hover {
+  background: #1e4ed8;
+}
+
+.btn-cancelar:hover {
+  background: #d1d5db;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
 
 @media (min-width: 768px) {
   .app {
