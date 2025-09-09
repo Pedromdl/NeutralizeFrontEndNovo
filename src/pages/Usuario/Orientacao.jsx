@@ -1,82 +1,52 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import Card from '../../components/Card';
+import usePastas from '../../hooks/usePastas';
+import '../../components/css/Agendamentos.css';
 
 export default function OrientacoesComPastas({ usuarioId }) {
-  const [pastas, setPastas] = useState([]);
-  const [pastaSelecionada, setPastaSelecionada] = useState(null);
-  const [modalPastaAberto, setModalPastaAberto] = useState(false);
-  const [modalSecaoAberto, setModalSecaoAberto] = useState(false);
+  const navigate = useNavigate();
   const [novoNomePasta, setNovoNomePasta] = useState('');
   const [novoNomeSecao, setNovoNomeSecao] = useState('');
-  const navigate = useNavigate();
 
-  useEffect(() => {
-    if (usuarioId) {
-      axios
-        .get(`${import.meta.env.VITE_API_URL}/api/orientacoes/pastas/?paciente=${usuarioId}`)
-        .then((res) => setPastas(res.data))
-        .catch((err) => console.error('Erro ao carregar pastas:', err));
-    }
-  }, [usuarioId]);
+  const {
+    pastas,
+    pastaSelecionada,
+    setPastaSelecionada,
+    modalPastaAberto,
+    setModalPastaAberto,
+    modalSecaoAberto,
+    setModalSecaoAberto,
+    criarPasta,
+    criarSecao,
+  } = usePastas(usuarioId);
 
-  const entrarNaPasta = (pasta) => {
-    navigate(`/pastas/${pasta.id}`); // redireciona para PastaDetalhe
-  };
+  // 🔹 Navegação
+  const entrarNaPasta = (pasta) => setPastaSelecionada(pasta);
   const voltarLista = () => setPastaSelecionada(null);
   const abrirSecao = (secaoId) => navigate(`/treinos/${secaoId}`);
 
-  // Criar pasta
-  const criarPasta = async () => {
+  // 🔹 Handlers para modais
+  const handleCriarPasta = () => {
     if (!novoNomePasta.trim()) return;
-
-    try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/orientacoes/pastas/`, {
-        paciente: usuarioId,
-        nome: novoNomePasta,
-      });
-      setPastas([...pastas, response.data]);
-      setNovoNomePasta('');
-      setModalPastaAberto(false);
-    } catch (err) {
-      console.error('Erro ao criar pasta:', err);
-    }
+    criarPasta(novoNomePasta);
+    setNovoNomePasta('');
+    setModalPastaAberto(false);
   };
 
-  // Criar seção dentro da pasta selecionada
-  const criarSecao = async () => {
+  const handleCriarSecao = () => {
     if (!novoNomeSecao.trim() || !pastaSelecionada) return;
-
-    try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/orientacoes/secoes/`, {
-        pasta: pastaSelecionada.id,
-        titulo: novoNomeSecao,
-      });
-      // Atualiza a pasta selecionada com a nova seção
-      setPastaSelecionada({
-        ...pastaSelecionada,
-        secoes: [...(pastaSelecionada.secoes || []), response.data],
-      });
-      // Também atualiza a lista geral de pastas
-      setPastas(pastas.map(p => p.id === pastaSelecionada.id ? { ...p, secoes: [...(p.secoes || []), response.data] } : p));
-      setNovoNomeSecao('');
-      setModalSecaoAberto(false);
-    } catch (err) {
-      console.error('Erro ao criar seção:', err);
-    }
+    criarSecao({ pastaId: pastaSelecionada.id, titulo: novoNomeSecao });
+    setNovoNomeSecao('');
+    setModalSecaoAberto(false);
   };
 
   return (
     <Card title="Orientações do Paciente" size="al">
       {!pastaSelecionada ? (
         <>
-          {/* Botão para abrir modal de pasta */}
-          <button className='black' onClick={() => setModalPastaAberto(true)}>
-            + Criar Pasta
-          </button>
+          <button className='black' onClick={() => setModalPastaAberto(true)}>+ Criar Pasta</button>
 
-          {/* Modal Criar Pasta */}
           {modalPastaAberto && (
             <div style={modalStyle}>
               <div style={modalContentStyle}>
@@ -90,24 +60,15 @@ export default function OrientacoesComPastas({ usuarioId }) {
                 />
                 <div style={modalButtonGroupStyle}>
                   <button onClick={() => setModalPastaAberto(false)}>Cancelar</button>
-                  <button onClick={criarPasta}>Salvar</button>
+                  <button onClick={handleCriarPasta}>Salvar</button>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Listagem de pastas */}
           <ul style={{ listStyle: 'none', padding: 0 }}>
             {pastas.map((pasta) => (
-              <li
-                key={pasta.id}
-                style={{
-                  cursor: 'pointer',
-                  padding: '0.5rem 0',
-                  borderBottom: '1px solid #ddd',
-                }}
-                onClick={() => entrarNaPasta(pasta)} // chama o navigate
-              >
+              <li key={pasta.id} style={pastaItemStyle} onClick={() => entrarNaPasta(pasta)}>
                 {pasta.nome}
               </li>
             ))}
@@ -115,17 +76,11 @@ export default function OrientacoesComPastas({ usuarioId }) {
         </>
       ) : (
         <>
-          <button onClick={voltarLista} style={{ marginBottom: '1rem' }}>
-            ← Voltar para pastas
-          </button>
+          <button onClick={voltarLista} style={{ marginBottom: '1rem' }}>← Voltar para pastas</button>
           <h2>{pastaSelecionada.nome}</h2>
 
-          {/* Botão para criar seção */}
-          <button onClick={() => setModalSecaoAberto(true)} style={{ marginBottom: '1rem' }}>
-            + Criar Seção
-          </button>
+          <button onClick={() => setModalSecaoAberto(true)} style={{ marginBottom: '1rem'}}>+ Criar Seção</button>
 
-          {/* Modal Criar Seção */}
           {modalSecaoAberto && (
             <div style={modalStyle}>
               <div style={modalContentStyle}>
@@ -139,19 +94,14 @@ export default function OrientacoesComPastas({ usuarioId }) {
                 />
                 <div style={modalButtonGroupStyle}>
                   <button onClick={() => setModalSecaoAberto(false)}>Cancelar</button>
-                  <button onClick={criarSecao}>Salvar</button>
+                  <button onClick={handleCriarSecao}>Salvar</button>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Listagem de seções */}
           {pastaSelecionada.secoes?.map((secao) => (
-            <div
-              key={secao.id}
-              onClick={() => abrirSecao(secao.id)}
-              style={secaoItemStyle}
-            >
+            <div key={secao.id} onClick={() => abrirSecao(secao.id)} style={secaoItemStyle}>
               <h3>{secao.titulo}</h3>
             </div>
           ))}
@@ -163,26 +113,14 @@ export default function OrientacoesComPastas({ usuarioId }) {
 
 // ======= Estilos =======
 const modalStyle = {
-  position: 'fixed',
-  top: 0,
-  left: 0,
-  width: '100%',
-  height: '100%',
-  backgroundColor: 'rgba(0,0,0,0.5)',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
+  position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+  backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center',
 };
 const modalContentStyle = {
-  backgroundColor: 'white',
-  padding: '2rem',
-  borderRadius: '8px',
-  minWidth: '300px',
-  display: 'flex',
-  flexDirection: 'column',
-  flexWrap: 'wrap',
-  alignContent: 'center',
+  backgroundColor: 'white', padding: '2rem', borderRadius: '8px',
+  minWidth: '300px', display: 'flex', flexDirection: 'column',
 };
 const modalButtonGroupStyle = { display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' };
 const pastaItemStyle = { cursor: 'pointer', padding: '0.5rem 0', borderBottom: '1px solid #ddd' };
 const secaoItemStyle = { cursor: 'pointer', backgroundColor: '#f0f0f0', padding: '1rem', borderRadius: '6px', marginBottom: '0.5rem' };
+const inputStyle = { padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc', width: '100%' };
