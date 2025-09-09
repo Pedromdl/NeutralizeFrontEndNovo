@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
+
 import Sidebar from './components/Sidebar';
 import PacienteSidebar from './components/PacienteSidebar';
 import BottomMenu from './components/BottomMenu';
 import PacienteBottomMenu from './components/PacienteBottomMenu';
-import Logo from './images/logo.png';
 import PrivateRoute from './components/PrivateRoute';
 import './App.css';
 
@@ -29,16 +29,12 @@ import DemoBody from './pages/DemoBody';
 import TreinoInterativo from "./components/TreinoInterativo";
 import OrientacoesPaciente from './pages/Pacientes/OrientacoesPacientes';
 import TreinoInterativoPacientes from './pages/Pacientes/TreinoInterativoPacientes';
-
 import PainelInicialPaciente from "./pages/Pacientes/PainelInicialPacientes";
-
-
 
 function LayoutComSidebar({ children }) {
   const location = useLocation();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
-  // Rotas que NÃO terão sidebar
   const rotasSemSidebar = ['/perfil']; 
   const isNoSidebar = rotasSemSidebar.includes(location.pathname);
 
@@ -52,29 +48,18 @@ function LayoutComSidebar({ children }) {
 
   return (
     <div className="app-container">
-      {/* Renderiza sidebar só se não estiver em rota sem sidebar */}
       {!isMobile && !isNoSidebar && (isPacienteRoute ? <PacienteSidebar /> : <Sidebar />)}
-
       <div className="main-area">
-        {/* Logo sempre visível */}
-        <div className="logo-container">
-        </div>
-
+        <div className="logo-container"></div>
         {children}
-
-        {/* Bottom menu mobile, exceto nas rotas sem menu */}
-        {isMobile && !isNoSidebar && (
-          isPacienteRoute ? <PacienteBottomMenu /> : <BottomMenu />
-        )}
+        {isMobile && !isNoSidebar && (isPacienteRoute ? <PacienteBottomMenu /> : <BottomMenu />)}
       </div>
     </div>
   );
 }
 
-function App() {
+function AppRoutes() {
   const location = useLocation();
-
-  // Rotas públicas sem layout (login/register)
   const rotaSemLayout = ['/login', '/register'];
 
   if (rotaSemLayout.includes(location.pathname)) {
@@ -86,7 +71,6 @@ function App() {
     );
   }
 
-  // Todas as demais rotas protegidas
   return (
     <PrivateRoute>
       <LayoutComSidebar>
@@ -117,5 +101,10 @@ function App() {
   );
 }
 
+function App() {
+  return (
+      <AppRoutes />
+  );
+}
 
 export default App;

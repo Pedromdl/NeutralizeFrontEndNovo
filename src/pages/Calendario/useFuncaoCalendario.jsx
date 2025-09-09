@@ -1,8 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 
 export default function useFuncaoCalendario() {
-  const [eventos, setEventos] = useState([]);
+  const queryClient = useQueryClient();
+
+  // 🔹 Estado do modal e formulário
   const [modalAberto, setModalAberto] = useState(false);
   const [eventoSelecionado, setEventoSelecionado] = useState(null);
   const [editando, setEditando] = useState(false);
@@ -21,47 +24,71 @@ export default function useFuncaoCalendario() {
     responsavel: '',
   });
 
-  useEffect(() => {
-    async function buscarEventos() {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/eventos/`);
-        const eventosApi = response.data;
-
-        const eventosFormatados = eventosApi.map(ev => ({
-          id: ev.id.toString(),
-          title: `${ev.paciente_nome || ev.paciente}`,
-          start: `${ev.data}T${ev.hora_inicio}`,
-          end: ev.hora_fim ? `${ev.data}T${ev.hora_fim}` : undefined,
-          extendedProps: { ...ev },
-          color:
-            ev.status === 'Realizado' ? '#b7de42' :
-              ev.status === 'Confirmado' ? '#25CED1' :
-                'grey',
-        }));
-
-        setEventos(eventosFormatados);
-      } catch (error) {
-        console.error('Erro ao buscar eventos:', error);
-      }
+  // 🔹 Busca eventos com React Query
+  const { data: eventosApi = [] } = useQuery(
+    ['eventos'],
+    async () => {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/eventos/`);
+      return response.data;
+    },
+    {
+      staleTime: 1000 * 60 * 5,
+      cacheTime: 1000 * 60 * 10,
     }
-    buscarEventos();
-  }, []);
+  );
 
+  // 🔹 Formata eventos para o calendário
+  const eventos = eventosApi.map(ev => ({
+    id: ev.id.toString(),
+    title: `${ev.paciente_nome || ev.paciente}`,
+    start: `${ev.data}T${ev.hora_inicio}`,
+    end: ev.hora_fim ? `${ev.data}T${ev.hora_fim}` : undefined,
+    extendedProps: { ...ev },
+    color:
+      ev.status === 'Realizado' ? '#b7de42' :
+      ev.status === 'Confirmado' ? '#25CED1' :
+      'grey',
+  }));
+
+  // 🔹 Mutação para salvar ou editar evento
+  const salvarEdicaoMutation = useMutation(
+    async (dados) => {
+      if (dados.id) {
+        return axios.put(`${import.meta.env.VITE_API_URL}/api/eventos/${dados.id}/`, dados);
+      } else {
+        return axios.post(`${import.meta.env.VITE_API_URL}/api/eventos/`, dados);
+      }
+    },
+    {
+      onSuccess: () => queryClient.invalidateQueries(['eventos']),
+    }
+  );
+
+  // 🔹 Mutação para excluir evento
+  const excluirEventoMutation = useMutation(
+    async (id) => axios.delete(`${import.meta.env.VITE_API_URL}/api/eventos/${id}/`),
+    {
+      onSuccess: () => queryClient.invalidateQueries(['eventos']),
+    }
+  );
+
+  // 🔹 Ações do modal
   const handleClickEvento = (info) => {
-    setEventoSelecionado(info.event.extendedProps);
+    const ev = info.event.extendedProps;
+    setEventoSelecionado(ev);
     setForm({
-      id: info.event.extendedProps.id || info.event.id,
-      paciente: info.event.extendedProps.paciente || null,
-      paciente_nome: info.event.extendedProps.paciente_nome || '',
-      tipo: info.event.extendedProps.tipo || '',
-      status: info.event.extendedProps.status || '',
-      data: info.event.extendedProps.data || '',
-      hora_inicio: info.event.extendedProps.hora_inicio || '',
-      hora_fim: info.event.extendedProps.hora_fim || '',
-      repetir: info.event.extendedProps.repetir || false,
-      frequencia: info.event.extendedProps.frequencia || 'nenhuma',
-      repeticoes: info.event.extendedProps.repeticoes || 0,
-      responsavel: info.event.extendedProps.responsavel || '',
+      id: ev.id || info.event.id,
+      paciente: ev.paciente || null,
+      paciente_nome: ev.paciente_nome || '',
+      tipo: ev.tipo || '',
+      status: ev.status || '',
+      data: ev.data || '',
+      hora_inicio: ev.hora_inicio || '',
+      hora_fim: ev.hora_fim || '',
+      repetir: ev.repetir || false,
+      frequencia: ev.frequencia || 'nenhuma',
+      repeticoes: ev.repeticoes || 0,
+      responsavel: ev.responsavel || '',
     });
     setEditando(false);
     setModalAberto(true);
@@ -71,8 +98,6 @@ export default function useFuncaoCalendario() {
     const dataHora = info.date;
     const data = info.dateStr.split('T')[0];
     const hora_inicio = info.dateStr.split('T')[1]?.slice(0, 5) || '08:00';
-
-    // Adiciona 1 hora à hora_inicio
     const fim = new Date(dataHora.getTime() + 60 * 60 * 1000);
     const hora_fim = fim.toTimeString().slice(0, 5);
 
@@ -102,31 +127,35 @@ export default function useFuncaoCalendario() {
     setEditando(false);
   };
 
-  const excluirEvento = async () => {
+  // 🔹 Salvar ou editar evento
+  const salvarEdicao = () => {
+    const dadosParaEnviar = {
+      ...form,
+      paciente: form.paciente ? Number(form.paciente) : null,
+    };
+    salvarEdicaoMutation.mutate(dadosParaEnviar);
+    fecharModal();
+  };
+
+  // 🔹 Excluir evento
+  const excluirEvento = () => {
     if (!eventoSelecionado?.id) return;
 
     const confirmar = window.confirm('Tem certeza que deseja excluir este evento?');
     if (!confirmar) return;
 
-    try {
-      await axios.delete(`${import.meta.env.VITE_API_URL}/api/eventos/${eventoSelecionado.id}/`);
-      setEventos(prevEventos => prevEventos.filter(ev => ev.id !== eventoSelecionado.id.toString()));
-      fecharModal();
-    } catch (error) {
-      console.error('Erro ao excluir evento:', error);
-      alert('Erro ao excluir o evento. Tente novamente.');
-    }
+    excluirEventoMutation.mutate(eventoSelecionado.id);
+    fecharModal();
   };
 
+  // 🔹 Input change
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
 
-    // Atualiza hora_fim automaticamente se hora_inicio for alterado
     if (name === 'hora_inicio') {
       const [hora, minuto] = value.split(':').map(Number);
       const novaData = new Date();
       novaData.setHours(hora + 1, minuto);
-
       const novaHoraFim = novaData.toTimeString().slice(0, 5);
 
       setForm(prev => ({
@@ -139,84 +168,6 @@ export default function useFuncaoCalendario() {
         ...prev,
         [name]: type === 'checkbox' ? checked : value,
       }));
-    }
-  };
-
-  const salvarEdicao = async () => {
-    try {
-      const dadosParaEnviar = {
-        ...form,
-        paciente: form.paciente ? Number(form.paciente) : null,
-      };
-
-      if (form.id) {
-        // Atualização
-        await axios.put(`${import.meta.env.VITE_API_URL}/api/eventos/${form.id}/`, dadosParaEnviar);
-        setEventos(prevEventos =>
-          prevEventos.map(ev =>
-            ev.id === form.id.toString()
-              ? {
-                ...ev,
-                title: `${dadosParaEnviar.tipo} (${dadosParaEnviar.status}) - Paciente ${form.paciente_nome || dadosParaEnviar.paciente}`,
-                start: `${dadosParaEnviar.data}T${dadosParaEnviar.hora_inicio}`,
-                end: dadosParaEnviar.hora_fim ? `${dadosParaEnviar.data}T${dadosParaEnviar.hora_fim}` : undefined,
-                color:
-                  dadosParaEnviar.status === 'Realizado' ? '#b7de42' :
-                    dadosParaEnviar.status === 'Confirmado' ? '#25CED1' :
-                      'grey',
-                extendedProps: dadosParaEnviar,
-              }
-              : ev
-          )
-        );
-      } else {
-        // Criação (POST) - ajustado para lidar com array de eventos (recorrências)
-        const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/eventos/`, dadosParaEnviar);
-        const data = response.data;
-
-        if (Array.isArray(data)) {
-          // Se retornar array, formata todos e adiciona
-          const eventosFormatados = data.map(ev => ({
-            id: ev.id.toString(),
-            title: `${ev.tipo} (${ev.status}) - Paciente ${form.paciente_nome || ev.paciente}`,
-            start: `${ev.data}T${ev.hora_inicio}`,
-            end: ev.hora_fim ? `${ev.data}T${ev.hora_fim}` : undefined,
-            extendedProps: {
-              ...ev,
-              paciente_nome: form.paciente_nome,
-            },
-            color:
-              ev.status === 'Realizado' ? '#b7de42' :
-                ev.status === 'Confirmado' ? '#25CED1' :
-                  'grey',
-          }));
-          setEventos(prev => [...prev, ...eventosFormatados]);
-        } else {
-          // Se retornar um único evento
-          setEventos(prev => [
-            ...prev,
-            {
-              id: data.id.toString(),
-              title: `${data.tipo} (${data.status}) - Paciente ${form.paciente_nome || data.paciente}`,
-              start: `${data.data}T${data.hora_inicio}`,
-              end: data.hora_fim ? `${data.data}T${data.hora_fim}` : undefined,
-              extendedProps: {
-                ...data,
-                paciente_nome: form.paciente_nome,
-              },
-              color:
-                data.status === 'Realizado' ? '#b7de42' :
-                  data.status === 'Confirmado' ? '#25CED1' :
-                    'grey',
-            },
-          ]);
-        }
-      }
-
-      fecharModal();
-    } catch (error) {
-      console.error('Erro ao salvar evento:', error);
-      alert('Erro ao salvar. Verifique os campos.');
     }
   };
 
