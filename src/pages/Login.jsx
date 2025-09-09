@@ -1,14 +1,20 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from "../context/AuthContext"; // ajuste o caminho
+import { useContext } from "react";
+
 import '../components/css/Login.css';
 import Logo from './../images/logo.png';
+
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [erro, setErro] = useState('');
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
+
 
   // Inicializa Google Identity Services
   useEffect(() => {
@@ -33,30 +39,25 @@ export default function Login() {
   // Callback do Google
   const handleGoogleCallback = async (response) => {
     try {
-      console.log('Callback Google recebido:', response);
       const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/google/`, {
         token: response.credential,
       });
-      console.log('Resposta do backend Google:', res.data);
 
-      const token = res.data.access;
-      localStorage.setItem('token', token);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+     const token = res.data.access;
+const userRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/profile/`, {
+  headers: { Authorization: `Bearer ${token}` },
+});
+const user = userRes.data;
 
-      const userRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/profile/`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      console.log('Dados do usuário:', userRes.data);
+// 🔹 Atualiza contexto
+login(token, user);
 
-      const user = userRes.data;
-      localStorage.setItem('user', JSON.stringify(user));
-
-      // 🔹 Navegação direta
-      if (user.role === 'profissional') {
-        navigate('/usuarios');
-      } else if (user.role === 'paciente') {
-        navigate('/paciente');
-      }
+// 🔹 Redireciona
+if (user.role === "profissional") {
+  navigate("/usuarios");
+} else if (user.role === "paciente") {
+  navigate("/paciente");
+}
 
     } catch (err) {
       console.error('Erro no login Google:', err.response || err);
@@ -75,22 +76,22 @@ export default function Login() {
       });
 
       const token = res.data.access;
-      localStorage.setItem('token', token);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-      const userRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/profile/`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+const userRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/profile/`, {
+  headers: { Authorization: `Bearer ${token}` },
+});
 
-      const user = userRes.data;
-      localStorage.setItem('user', JSON.stringify(user));
+const user = userRes.data;
 
-      // 🔹 Navegação direta
-      if (user.role === 'profissional') {
-        navigate('/usuarios');
-      } else if (user.role === 'paciente') {
-        navigate('/paciente');
-      }
+// 🔹 Agora atualiza tanto contexto quanto localStorage
+login(token, user);
+
+// 🔹 Redireciona
+if (user.role === "profissional") {
+  navigate("/usuarios");
+} else if (user.role === "paciente") {
+  navigate("/paciente");
+}
 
     } catch (err) {
       console.error('Erro no login padrão:', err.response || err);
