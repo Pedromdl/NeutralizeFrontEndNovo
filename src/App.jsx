@@ -88,7 +88,6 @@ function App() {
 
   // Todas as demais rotas protegidas
   return (
-    <PrivateRoute>
       <LayoutComSidebar>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -113,7 +112,6 @@ function App() {
           <Route path="/paciente" element={<PainelInicialPaciente />} />
         </Routes>
       </LayoutComSidebar>
-    </PrivateRoute>
   );
 }
 
