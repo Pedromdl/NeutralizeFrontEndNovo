@@ -89,6 +89,34 @@
   text-align: center;
 }
 
+.series-container {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.serie-header,
+.serie-item {
+  display: grid;
+  grid-template-columns: 60px 80px 80px; /* Série | Reps | Carga */
+  align-items: center;
+  gap: 10px;
+}
+
+.serie-header {
+  font-weight: bold;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 4px;
+}
+
+.serie-item input {
+  width: 100%;
+  padding: 4px 6px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
 /* ---------- AutoFill ---------- */
 .autofill-container {
   display: flex;
@@ -163,31 +191,44 @@
   border-radius: 6px;
 }
 
+.btn-principal.btn-proximo:hover {
+  background-color: #000; /* cor que você quer */
+  color: white;              /* cor do texto */
+}
+
 /* ---------- Modal RPE ---------- */
 .modal-rpe-overlay {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0,0,0,0.5);
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   z-index: 1000;
 }
 
+
 .modal-rpe-content {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  width: 350px;
+  background: #fff;
+  padding: 16px 20px;
+  border-radius: 12px;
+  width: 280px;              /* 🔹 largura menor */
+  max-width: 90%;            /* 🔹 responsivo */
   text-align: center;
   position: relative;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
 .modal-rpe-content h3 {
-  margin-bottom: 15px;
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.modal-rpe-content input[type="range"] {
+  width: 100%;
 }
 
 .modal-rpe-content button.fechar {
@@ -202,7 +243,6 @@
 
 .modal-rpe-content input[type="range"] {
   width: 100%;
-  height: 25px;
   border-radius: 12px;
   appearance: none;
   background: linear-gradient(to right, #16a34a, #f59e0b, #dc2626);
@@ -210,11 +250,17 @@
 }
 
 .modal-rpe-content .btn-confirmar {
-  margin-top: 20px;
   padding: 10px 20px;
   background-color: #2563eb;
   color: #fff;
   border: none;
   border-radius: 8px;
   cursor: pointer;
+}
+
+
+.valor-rpe {
+  margin: 10px 0;
+  font-weight: bold;
+  font-size: 12px;
 }

@@ -38,6 +38,8 @@ export default function Login() {
 
   // Callback do Google
   const handleGoogleCallback = async (response) => {
+      console.log("Credential do Google:", response.credential);
+
     try {
       const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/google/`, {
         token: response.credential,

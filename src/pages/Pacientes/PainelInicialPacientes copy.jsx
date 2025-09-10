@@ -20,23 +20,30 @@ export default function DashboardPaciente() {
   const [exercicioSelecionado, setExercicioSelecionado] = useState(null);
   const [evolucao, setEvolucao] = useState([]);
 
+  // Mostrar/ocultar linhas
   const [mostrarReps, setMostrarReps] = useState(true);
   const [mostrarCarga, setMostrarCarga] = useState(true);
   const [mostrarRPE, setMostrarRPE] = useState(true);
 
-  // 🔹 Buscar treinos do paciente para lista de exercícios
+  // 🔹 Buscar treinos do paciente
   useEffect(() => {
     if (!loading && user) {
       axios
         .get(`${import.meta.env.VITE_API_URL}/api/orientacoes/treinosexecutados/?paciente=${user.id}`)
         .then((res) => {
           const data = res.data;
-          const ordenados = [...data].sort((a, b) => new Date(a.data) - new Date(b.data));
 
-          // Extrair exercícios únicos
+          const ordenados = [...data].sort(
+            (a, b) => new Date(a.data) - new Date(b.data)
+          );
+
+          const totalTreinos = ordenados.length;
+          const ultimoTreino = totalTreinos > 0 ? ordenados[ordenados.length - 1] : null;
+
+          // 🔹 Extrair lista de exercícios únicos
           const exercsSet = new Map();
-          ordenados.forEach((treino) => {
-            treino.exercicios.forEach((ex) => {
+          ordenados.forEach(exec => {
+            exec.exercicios.forEach(ex => {
               const id = ex.exercicio;
               const nome = ex.series[0]?.exercicio?.orientacao_detalhes?.titulo || `Exercício ${id}`;
               if (!exercsSet.has(id)) exercsSet.set(id, { id, nome });
@@ -49,58 +56,71 @@ export default function DashboardPaciente() {
             setExercicioSelecionado(listaExercicios[0].id);
           }
 
-          setStats({
-            totalTreinosExecutados: data.length,
-            ultimoTreino: data.length
-              ? { nome: data[data.length - 1].treino?.nome || "Treino", data: new Date(data[data.length - 1].data).toLocaleDateString("pt-BR") }
+          const statsBackend = {
+            totalTreinosExecutados: totalTreinos,
+            ultimoTreino: ultimoTreino
+              ? { nome: ultimoTreino.treino?.nome || "Treino", data: new Date(ultimoTreino.data).toLocaleDateString("pt-BR") }
               : { nome: "Nenhum treino", data: "-" },
-          });
+          };
+
+          setStats(statsBackend);
         })
         .catch((err) => console.error("Erro ao buscar treinos executados:", err));
     }
   }, [user, loading]);
 
-  // 🔹 Buscar evolução do exercício selecionado (otimizado)
-  useEffect(() => {
-    if (!exercicioSelecionado || !user) return;
+  // 🔹 Buscar evolução do exercício selecionado
+// 🔹 Buscar evolução do exercício selecionado
+useEffect(() => {
+  if (!exercicioSelecionado || !user) return;
 
-    axios
-      .get(`${import.meta.env.VITE_API_URL}/api/orientacoes/treinosexecutados/?paciente=${user.id}&exercicio=${exercicioSelecionado}`)
-      .then((res) => {
-              console.log("Resposta filtrada pelo exercício:", res.data); // 🔹 log aqui
+  axios
+    .get(`${import.meta.env.VITE_API_URL}/api/orientacoes/treinosexecutados/?paciente=${user.id}`)
+    .then((res) => {
+      const treinos = res.data;
+      console.log("Treinos recebidos do backend:", treinos);
 
-        const treinos = res.data;
+      const evolucaoPorData = {};
 
-        const evolucaoPorData = {};
+      treinos.forEach((treino) => {
+        const dataFormatada = new Date(treino.data).toLocaleDateString("pt-BR");
 
-        treinos.forEach((treino) => {
-          const dataFormatada = new Date(treino.data).toLocaleDateString("pt-BR");
-
-          treino.exercicios.forEach((ex) => {
-            if (ex.exercicio === Number(exercicioSelecionado)) {
-              const reps = ex.series[0]?.repeticoes ?? 0;
-              const carga = Number(ex.series[0]?.carga ?? 0);
-              const rpe = ex.rpe != null ? Number(ex.rpe) : null;
+        treino.exercicios.forEach((ex) => {
+          if (ex.exercicio === Number(exercicioSelecionado)) {
+            ex.series.forEach((serie) => {
+              const reps = serie.repeticoes;
+              const carga = Number(serie.carga);
+const rpe = ex.rpe !== undefined && ex.rpe !== null ? Number(ex.rpe) : null;
 
               if (!evolucaoPorData[dataFormatada]) {
                 evolucaoPorData[dataFormatada] = { data: dataFormatada, repeticoes: reps, carga, rpe };
               } else {
                 evolucaoPorData[dataFormatada].repeticoes = Math.max(evolucaoPorData[dataFormatada].repeticoes, reps);
                 evolucaoPorData[dataFormatada].carga = Math.max(evolucaoPorData[dataFormatada].carga, carga);
-                if (rpe != null) {
-                  evolucaoPorData[dataFormatada].rpe = evolucaoPorData[dataFormatada].rpe != null
-                    ? Math.max(evolucaoPorData[dataFormatada].rpe, rpe)
-                    : rpe;
-                }
-              }
-            }
-          });
-        });
+                // Atualiza RPE apenas se existir
+if (rpe !== null) {
+  evolucaoPorData[dataFormatada].rpe = 
+    evolucaoPorData[dataFormatada].rpe != null 
+      ? Math.max(evolucaoPorData[dataFormatada].rpe, rpe)
+      : rpe;
+}
 
-        setEvolucao(Object.values(evolucaoPorData).sort((a, b) => new Date(a.data) - new Date(b.data)));
-      })
-      .catch((err) => console.error("Erro ao buscar evolução do exercício:", err));
-  }, [exercicioSelecionado, user]);
+              }
+            });
+          }
+        });
+      });
+      
+
+      const evolucaoArray = Object.values(evolucaoPorData).sort(
+        (a, b) => new Date(a.data) - new Date(b.data)
+      );
+
+      setEvolucao(evolucaoArray);
+    })
+    .catch((err) => console.error("Erro ao buscar evolução do exercício:", err));
+}, [exercicioSelecionado, user]);
+
 
   // 🔹 Tooltip customizado
   const CustomTooltip = ({ active, payload, label }) => {
@@ -123,7 +143,9 @@ export default function DashboardPaciente() {
 
   return (
     <div className="conteudo">
-      <h1 className="text-2xl font-bold">Olá, {user?.first_name || "Paciente"} 👋</h1>
+      <h1 className="text-2xl font-bold">
+        Olá, {user?.first_name || "Paciente"} 👋
+      </h1>
 
       <div className="cards-row">
         <Card title="Treinos Realizados" size="al">
@@ -140,6 +162,7 @@ export default function DashboardPaciente() {
       </div>
 
       <Card title="Evolução do Exercício" size="al">
+        {/* 🔹 Select para escolher exercício */}
         <div style={{ marginBottom: '16px' }}>
           <label htmlFor="exercicio-select" style={{ fontWeight: 'bold', marginRight: '8px' }}>Exercício:</label>
           <select
@@ -154,20 +177,28 @@ export default function DashboardPaciente() {
           </select>
         </div>
 
+        {/* 🔹 Checkboxes para mostrar/ocultar linhas */}
         <div style={{ marginBottom: '16px' }}>
           <label style={{ marginRight: '12px' }}>
-            <input type="checkbox" checked={mostrarReps} onChange={() => setMostrarReps(!mostrarReps)} /> Repetições
+            <input type="checkbox" checked={mostrarReps} onChange={() => setMostrarReps(!mostrarReps)} />
+            Repetições
           </label>
           <label style={{ marginRight: '12px' }}>
-            <input type="checkbox" checked={mostrarCarga} onChange={() => setMostrarCarga(!mostrarCarga)} /> Carga (kg)
+            <input type="checkbox" checked={mostrarCarga} onChange={() => setMostrarCarga(!mostrarCarga)} />
+            Carga (kg)
           </label>
           <label>
-            <input type="checkbox" checked={mostrarRPE} onChange={() => setMostrarRPE(!mostrarRPE)} /> RPE
+            <input type="checkbox" checked={mostrarRPE} onChange={() => setMostrarRPE(!mostrarRPE)} />
+            RPE
           </label>
         </div>
 
+        {/* 🔹 Gráfico */}
         <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={evolucao} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+          <LineChart
+            data={evolucao}
+            margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+          >
             <XAxis dataKey="data" padding={{ left: 50, right: 50 }} />
             <YAxis padding={{ top: 10, bottom: 10 }} />
             <Tooltip content={<CustomTooltip />} />

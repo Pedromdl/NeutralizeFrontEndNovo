@@ -11,22 +11,29 @@ function ModalRPE({ isOpen, onClose, onSelecionar }) {
   if (!isOpen) return null;
 
   return (
-    <div className="modal-rpe-overlay">
-      <div className="modal-rpe-content">
-        <h3>Definir RPE</h3>
-        <button className="fechar" onClick={onClose}>X</button>
-        <input
-          type="range"
-          min={0} max={10} step={1}
-          value={rpe}
-          onChange={(e) => setRPE(Number(e.target.value))}
-        />
-        <div style={{ marginTop: '10px', fontWeight: 'bold' }}>RPE: {rpe}</div>
-        <button className="btn-confirmar" onClick={() => { onSelecionar(rpe); onClose(); }}>
-          Confirmar RPE
-        </button>
-      </div>
-    </div>
+<div className="modal-rpe-overlay">
+  <div className="modal-rpe-content">
+    <button className="fechar" onClick={onClose}>×</button>
+    <h3>Definir RPE</h3>
+    <input
+      type="range"
+      min={0} max={10} step={1}
+      value={rpe}
+      onChange={(e) => setRPE(Number(e.target.value))}
+    />
+    <div className="valor-rpe">RPE: {rpe}</div>
+    <button
+      className="btn-confirmar"
+      onClick={() => {
+        onSelecionar(rpe);
+        onClose();
+      }}
+    >
+      Confirmar
+    </button>
+  </div>
+</div>
+
   );
 }
 
@@ -77,6 +84,7 @@ export default function TreinoInterativoPacientes() {
           series: ex.series_planejadas,
           repeticoesPlanejada: ex.repeticoes_planejadas,
           cargaPlanejada: ex.carga_planejada,
+          observacao: ex.observacao,   // ✅ adiciona aqui
           pastaId: pasta.id
         }));
 
@@ -319,12 +327,20 @@ export default function TreinoInterativoPacientes() {
               </a>
             )}
           </div>
-          <p className="exercicio-descricao">{exercicioAtual.descricao}</p>
 
           {treinoIniciado ? (
             <>
+
+              {/* 🔹 Observação do exercício */}
+{exercicioAtual.observacao && (
+  <div className="observacao-box">
+    <p style={{ display: 'flex', flexDirection: 'column', fontSize: '12px', color: '#000' }}>
+      <strong>Observação:</strong> {exercicioAtual.observacao}
+    </p>
+  </div>
+)}
               <div className="autofill-container">
-                <p className="autofill-label">Preenchimento automático:</p>
+                <p className="autofill-label" style={{ fontSize: '12px'}}>Preenchimento automático:</p>
                 <div className="autofill-inputs">
                   <input type="number" placeholder="Reps" value={autoFill.repeticoes} onChange={(e) => setAutoFill({ ...autoFill, repeticoes: e.target.value })} />
                   <input type="number" placeholder="Kg" value={autoFill.carga} onChange={(e) => setAutoFill({ ...autoFill, carga: e.target.value })} />
@@ -332,18 +348,39 @@ export default function TreinoInterativoPacientes() {
                 </div>
               </div>
 
-              <div className="series-container">
-                {resAtual.series.map((serie, sIndex) => (
-                  <div key={sIndex} className="serie-item">
-                    <span>Série {sIndex + 1}:</span>
-                    <input type="number" placeholder="Reps" value={serie.repeticoes} onChange={(e) => handleInputChange(indiceAtual, sIndex, 'repeticoes', e.target.value)} />
-                    <input type="number" placeholder="Kg" value={serie.carga} onChange={(e) => handleInputChange(indiceAtual, sIndex, 'carga', e.target.value)} />
-                  </div>
-                ))}
-                <button className="btn-rpe" onClick={() => setModalRPEOpen(true)}>
-                  {resAtual.rpe !== null ? `RPE: ${resAtual.rpe}` : 'Definir RPE'}
-                </button>
-              </div>
+<div className="series-container">
+  {/* 🔹 Cabeçalho */}
+  <div className="serie-header">
+    <span style={{ width: "60px", fontWeight: "bold" }}>Série</span>
+    <span style={{ width: "80px", fontWeight: "bold" }}>Reps</span>
+    <span style={{ width: "80px", fontWeight: "bold" }}>Carga</span>
+  </div>
+
+  {/* 🔹 Linhas das séries */}
+  {resAtual.series.map((serie, sIndex) => (
+    <div key={sIndex} className="serie-item">
+      <span style={{ width: "60px" }}>{sIndex + 1}</span>
+      <input
+        type="number"
+        placeholder="Reps"
+        value={serie.repeticoes}
+        onChange={(e) => handleInputChange(indiceAtual, sIndex, 'repeticoes', e.target.value)}
+        style={{ width: "70px" }}
+      />
+      <input
+        type="number"
+        placeholder="Kg"
+        value={serie.carga}
+        onChange={(e) => handleInputChange(indiceAtual, sIndex, 'carga', e.target.value)}
+        style={{ width: "70px" }}
+      />
+    </div>
+  ))}
+
+  <button className="btn-rpe" onClick={() => setModalRPEOpen(true)}>
+    {resAtual.rpe !== null ? `RPE: ${resAtual.rpe}` : 'Definir RPE'}
+  </button>
+</div>
 
               <div>
                 <button className="btn-principal btn-proximo" onClick={proximoExercicio}>Próximo Exercício</button>
@@ -355,6 +392,7 @@ export default function TreinoInterativoPacientes() {
               <button className="btn-principal btn-iniciar" onClick={iniciarTreino}>Iniciar Treino</button>
             </div>
           )}
+
         </div>
 
         <ModalRPE isOpen={modalRPEOpen} onClose={() => setModalRPEOpen(false)} onSelecionar={definirRPE} />

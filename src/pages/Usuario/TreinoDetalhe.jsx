@@ -6,6 +6,7 @@ import Card from '../../components/Card';
 // 🔹 Modal para adicionar exercício
 function ModalAdicionarExercicio({ isOpen, onClose, exerciciosDisponiveis, onSalvar }) {
   const [exercicioSelecionado, setExercicioSelecionado] = useState(null);
+  const [observacao, setObservacao] = useState(''); // ✅ aqui
   const [series, setSeries] = useState(1);
   const [repeticoes, setRepeticoes] = useState(10);
   const [carga, setCarga] = useState(0);
@@ -18,7 +19,8 @@ function ModalAdicionarExercicio({ isOpen, onClose, exerciciosDisponiveis, onSal
       ...exercicioSelecionado,
       series_planejadas: series,
       repeticoes_planejadas: repeticoes,
-      carga_planejada: carga
+      carga_planejada: carga,
+      observacao: observacao
     });
     setExercicioSelecionado(null);
     setSeries(1);
@@ -61,6 +63,10 @@ function ModalAdicionarExercicio({ isOpen, onClose, exerciciosDisponiveis, onSal
             <label>
               Carga
               <input type="number" value={carga} onChange={e => setCarga(Number(e.target.value))} />
+            </label>
+            <label>
+              Observação
+              <input type="text" value={observacao} onChange={(e) => setObservacao(e.target.value)} />
             </label>
           </div>
         </div>
@@ -146,7 +152,8 @@ export default function TreinoDetalhe() {
         orientacao: ex.id,
         series_planejadas: ex.series_planejadas,
         repeticoes_planejadas: ex.repeticoes_planejadas,
-        carga_planejada: ex.carga_planejada
+        carga_planejada: ex.carga_planejada,
+        observacao: ex.observacao  // ← novo campo
       });
       // atualiza localmente
       setTreinosSecao(treinosSecao.map(t => {
@@ -200,26 +207,28 @@ export default function TreinoDetalhe() {
                   {/* Lista de exercícios do treino */}
                   {t.exerciciosDoTreino.length > 0 && (
                     <div className="tabela-exercicios-wrapper">
-                      <table className="tabela-exercicios">
-                        <thead>
-                          <tr>
-                            <th>Exercício</th>
-                            <th>Séries</th>
-                            <th>Repetições</th>
-                            <th>Carga</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {t.exerciciosDoTreino.map(ex => (
-                            <tr key={ex.id}>
-                              <td>{ex.orientacao_detalhes.titulo}</td>
-                              <td>{ex.series_planejadas}</td>
-                              <td>{ex.repeticoes_planejadas}</td>
-                              <td>{ex.carga_planejada}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                     <table className="tabela-exercicios">
+  <thead>
+    <tr>
+      <th>Exercício</th>
+      <th>Séries</th>
+      <th>Repetições</th>
+      <th>Carga</th>
+      <th>Observação</th>  {/* nova coluna */}
+    </tr>
+  </thead>
+  <tbody>
+    {t.exerciciosDoTreino.map(ex => (
+      <tr key={ex.id}>
+        <td>{ex.orientacao_detalhes.titulo}</td>
+        <td>{ex.series_planejadas}</td>
+        <td>{ex.repeticoes_planejadas}</td>
+        <td>{ex.carga_planejada}</td>
+        <td>{ex.observacao || '-'}</td> 
+      </tr>
+    ))}
+  </tbody>
+</table>
                     </div>
                   )}
 
