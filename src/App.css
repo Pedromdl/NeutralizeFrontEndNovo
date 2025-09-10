@@ -59,6 +59,7 @@ body {
   display: flex; /* padrão: um embaixo do outro */
   gap: 20px; /* espaço entre eles */
   width: 100%;
+  align-items: center;
 }
 
 /* Tamanhos por grid */

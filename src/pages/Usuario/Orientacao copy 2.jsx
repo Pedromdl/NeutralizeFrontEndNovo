@@ -22,9 +22,9 @@ export default function OrientacoesComPastas({ usuarioId }) {
   } = usePastas(usuarioId);
 
   // 🔹 Navegação
-  const entrarNaPasta = (pasta) => navigate(`/pastas/${pasta.id}`);
+  const entrarNaPasta = (pasta) => setPastaSelecionada(pasta);
   const voltarLista = () => setPastaSelecionada(null);
-  const abrirSecao = (secaoId) => navigate(`/pastas/${secaoId}`);
+  const abrirSecao = (secaoId) => navigate(`/treinos/${secaoId}`);
 
   // 🔹 Handlers para modais
   const handleCriarPasta = () => {
@@ -45,16 +45,14 @@ export default function OrientacoesComPastas({ usuarioId }) {
     <Card title="Orientações do Paciente" size="al">
       {!pastaSelecionada ? (
         <>
-          <button className="black" onClick={() => setModalPastaAberto(true)}>
-            + Criar Pasta
-          </button>
+          <button className='black' onClick={() => setModalPastaAberto(true)}>+ Criar Pasta</button>
 
           {modalPastaAberto && (
             <div style={modalStyle}>
               <div style={modalContentStyle}>
                 <h3>Criar Nova Pasta</h3>
                 <input
-                  className="input"
+                  className='input'
                   type="text"
                   value={novoNomePasta}
                   onChange={(e) => setNovoNomePasta(e.target.value)}
@@ -70,11 +68,7 @@ export default function OrientacoesComPastas({ usuarioId }) {
 
           <ul style={{ listStyle: 'none', padding: 0 }}>
             {pastas.map((pasta) => (
-              <li
-                key={pasta.id}
-                style={pastaItemStyle}
-                onClick={() => entrarNaPasta(pasta)}
-              >
+              <li key={pasta.id} style={pastaItemStyle} onClick={() => entrarNaPasta(pasta)}>
                 {pasta.nome}
               </li>
             ))}
@@ -82,17 +76,10 @@ export default function OrientacoesComPastas({ usuarioId }) {
         </>
       ) : (
         <>
-          <button onClick={voltarLista} style={{ marginBottom: '1rem' }}>
-            ← Voltar para pastas
-          </button>
+          <button onClick={voltarLista} style={{ marginBottom: '1rem' }}>← Voltar para pastas</button>
           <h2>{pastaSelecionada.nome}</h2>
 
-          <button
-            onClick={() => setModalSecaoAberto(true)}
-            style={{ marginBottom: '1rem' }}
-          >
-            + Criar Seção
-          </button>
+          <button onClick={() => setModalSecaoAberto(true)} style={{ marginBottom: '1rem'}}>+ Criar Seção</button>
 
           {modalSecaoAberto && (
             <div style={modalStyle}>
@@ -114,11 +101,7 @@ export default function OrientacoesComPastas({ usuarioId }) {
           )}
 
           {pastaSelecionada.secoes?.map((secao) => (
-            <div
-              key={secao.id}
-              onClick={() => abrirSecao(secao.id)}
-              style={secaoItemStyle}
-            >
+            <div key={secao.id} onClick={() => abrirSecao(secao.id)} style={secaoItemStyle}>
               <h3>{secao.titulo}</h3>
             </div>
           ))}
@@ -130,36 +113,14 @@ export default function OrientacoesComPastas({ usuarioId }) {
 
 // ======= Estilos =======
 const modalStyle = {
-  position: 'fixed',
-  top: 0,
-  left: 0,
-  width: '100%',
-  height: '100%',
-  backgroundColor: 'rgba(0,0,0,0.5)',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
+  position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+  backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center',
 };
 const modalContentStyle = {
-  backgroundColor: 'white',
-  padding: '2rem',
-  borderRadius: '8px',
-  minWidth: '300px',
-  display: 'flex',
-  flexDirection: 'column',
+  backgroundColor: 'white', padding: '2rem', borderRadius: '8px',
+  minWidth: '300px', display: 'flex', flexDirection: 'column',
 };
 const modalButtonGroupStyle = { display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' };
 const pastaItemStyle = { cursor: 'pointer', padding: '0.5rem 0', borderBottom: '1px solid #ddd' };
-const secaoItemStyle = {
-  cursor: 'pointer',
-  backgroundColor: '#f0f0f0',
-  padding: '1rem',
-  borderRadius: '6px',
-  marginBottom: '0.5rem',
-};
-const inputStyle = {
-  padding: '0.5rem',
-  borderRadius: '4px',
-  border: '1px solid #ccc',
-  width: '100%',
-};
+const secaoItemStyle = { cursor: 'pointer', backgroundColor: '#f0f0f0', padding: '1rem', borderRadius: '6px', marginBottom: '0.5rem' };
+const inputStyle = { padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc', width: '100%' };

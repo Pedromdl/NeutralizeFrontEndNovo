@@ -63,16 +63,15 @@ export default function DashboardPaciente() {
       </h1>
 
       <div className="cards-row">
-        <Card title="Treinos Executados" size="al">
-          <p style={{ fontSize: "48px", fontWeight: "bold", color: "#282829" }}>
+        <Card title="Treinos Realizados" size="al">
+          <p style={{ fontSize: "24px", fontWeight: "bold", color: "#282829" }}>
             {stats?.totalTreinosExecutados}
           </p>
         </Card>
 
-        <Card title="Último Treino" size="al">
-          <p className="font-medium">{stats?.ultimoTreino.nome}</p>
-          <p style={{ fontSize: "24px", color: "#282829", marginTop: "4px" }}>
-            📅 {stats?.ultimoTreino.data}
+        <Card title="Data do Último Treino" size="al">
+          <p style={{ fontSize: "24px", color: "#282829"}}>
+            {stats?.ultimoTreino.data}
           </p>
         </Card>
       </div>
