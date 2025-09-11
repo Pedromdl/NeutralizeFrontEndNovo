@@ -3,13 +3,7 @@ import axios from "axios";
 import Card from "../../components/Card";
 import { AuthContext } from "../../context/AuthContext";
 import {
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  Legend,
+  ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, Legend,
 } from "recharts";
 
 export default function DashboardPaciente() {
