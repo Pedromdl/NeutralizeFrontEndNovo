@@ -55,46 +55,45 @@ export default function DashboardPaciente() {
   }, [user, loading]);
 
   // 🔹 Buscar evolução do exercício selecionado (otimizado)
-  useEffect(() => {
-    if (!exercicioSelecionado || !user) return;
+useEffect(() => {
+  if (!exercicioSelecionado || !user) return;
 
-    axios
-      .get(`${import.meta.env.VITE_API_URL}/api/orientacoes/treinosexecutados/?paciente=${user.id}&exercicio=${exercicioSelecionado}`)
-      .then((res) => {
-              console.log("Resposta filtrada pelo exercício:", res.data); // 🔹 log aqui
+  axios
+    .get(`${import.meta.env.VITE_API_URL}/api/orientacoes/treinosexecutados/grafico/?exercicio=${exercicioSelecionado}`)
+    .then((res) => {
+      // resposta: [{id, data, max_repeticoes, max_carga, rpe}, ...]
+      const treinos = res.data;
 
-        const treinos = res.data;
+      const evolucaoPorDia = {};
 
-        const evolucaoPorData = {};
+      treinos.forEach(treino => {
+        const dia = new Date(treino.data).toLocaleDateString("pt-BR");
 
-        treinos.forEach((treino) => {
-          const dataFormatada = new Date(treino.data).toLocaleDateString("pt-BR");
+        if (!evolucaoPorDia[dia]) {
+          evolucaoPorDia[dia] = {
+            data: dia,
+            repeticoes: treino.max_repeticoes,
+            carga: treino.max_carga,
+            rpe: treino.rpe
+          };
+        } else {
+          // pegar máximo entre os treinos do mesmo dia
+          evolucaoPorDia[dia].repeticoes = Math.max(evolucaoPorDia[dia].repeticoes, treino.max_repeticoes);
+          evolucaoPorDia[dia].carga = Math.max(evolucaoPorDia[dia].carga, treino.max_carga);
+          if (treino.rpe != null) {
+            evolucaoPorDia[dia].rpe = evolucaoPorDia[dia].rpe != null 
+              ? Math.max(evolucaoPorDia[dia].rpe, treino.rpe) 
+              : treino.rpe;
+          }
+        }
+      });
 
-          treino.exercicios.forEach((ex) => {
-            if (ex.exercicio === Number(exercicioSelecionado)) {
-              const reps = ex.series[0]?.repeticoes ?? 0;
-              const carga = Number(ex.series[0]?.carga ?? 0);
-              const rpe = ex.rpe != null ? Number(ex.rpe) : null;
-
-              if (!evolucaoPorData[dataFormatada]) {
-                evolucaoPorData[dataFormatada] = { data: dataFormatada, repeticoes: reps, carga, rpe };
-              } else {
-                evolucaoPorData[dataFormatada].repeticoes = Math.max(evolucaoPorData[dataFormatada].repeticoes, reps);
-                evolucaoPorData[dataFormatada].carga = Math.max(evolucaoPorData[dataFormatada].carga, carga);
-                if (rpe != null) {
-                  evolucaoPorData[dataFormatada].rpe = evolucaoPorData[dataFormatada].rpe != null
-                    ? Math.max(evolucaoPorData[dataFormatada].rpe, rpe)
-                    : rpe;
-                }
-              }
-            }
-          });
-        });
-
-        setEvolucao(Object.values(evolucaoPorData).sort((a, b) => new Date(a.data) - new Date(b.data)));
-      })
-      .catch((err) => console.error("Erro ao buscar evolução do exercício:", err));
-  }, [exercicioSelecionado, user]);
+      // transformar em array ordenado por data
+      const evolucaoArray = Object.values(evolucaoPorDia).sort((a, b) => new Date(a.data) - new Date(b.data));
+      setEvolucao(evolucaoArray);
+    })
+    .catch((err) => console.error("Erro ao buscar gráfico:", err));
+}, [exercicioSelecionado, user]);
 
   // 🔹 Tooltip customizado
   const CustomTooltip = ({ active, payload, label }) => {
