@@ -1,88 +1,56 @@
-import React, { useState, useEffect, useContext, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useContext, useMemo } from 'react';
 import axios from 'axios';
 import Card from '../../components/Card';
 import { AuthContext } from '../../context/AuthContext';
 
-// -------------------
-// Componente Seção
-// -------------------
-const SecaoItem = React.memo(({ secao, onClickSecao }) => (
-  <div
-    onClick={() => onClickSecao(secao)}
-    style={{
-      cursor: 'pointer',
-      backgroundColor: '#f0f0f0',
-      padding: '1rem',
-      borderRadius: '6px',
-      marginBottom: '0.5rem',
-    }}
-  >
-    <h3>{secao.titulo}</h3>
-  </div>
-));
-
-// -------------------
-// Componente Pasta
-// -------------------
-const PastaItem = React.memo(({ pasta, onClickSecao }) => (
-  <li style={{ cursor: 'pointer', padding: '0.5rem 0', borderBottom: '1px solid #ddd' }}>
-    <h2>{pasta.nome}</h2>
-    <div>
-      {pasta.secoes.map((secao) => (
-        <SecaoItem key={secao.id} secao={secao} onClickSecao={onClickSecao} />
-      ))}
+function Secao({ secao, onClick }) {
+  return (
+    <div
+      onClick={() => onClick(secao)}
+      style={{ cursor: 'pointer', backgroundColor: '#f0f0f0', padding: '1rem', borderRadius: '6px', marginBottom: '0.5rem' }}
+    >
+      <h3>{secao.titulo}</h3>
+      {/* Renderize orientações apenas quando necessário */}
+      {secao.orientacoes?.length > 0 && (
+        <ul>
+          {secao.orientacoes.map((o) => (
+            <li key={o.id}>{o.titulo}</li>
+          ))}
+        </ul>
+      )}
     </div>
-  </li>
-));
+  );
+}
 
-// -------------------
-// Componente Pai
-// -------------------
 export default function OrientacoesPaciente() {
   const { user, loading } = useContext(AuthContext);
   const [pastas, setPastas] = useState([]);
   const [pastaSelecionada, setPastaSelecionada] = useState(null);
   const [erro, setErro] = useState(null);
-  const navigate = useNavigate();
 
-  // -------------------
-  // Função para clicar em uma seção
-  // -------------------
-  const handleClickSecao = useCallback(
-    (secao) => {
-      navigate(`/paciente/treinos/${secao.id}`);
-    },
-    [navigate]
-  );
-
-  // -------------------
-  // Buscar pastas do paciente
-  // -------------------
   useEffect(() => {
-    if (!loading) {
-      if (!user) {
-        setErro('Usuário não autenticado');
-        return;
-      }
-
+    if (!loading && user) {
       const source = axios.CancelToken.source();
 
-      axios
-        .get(`${import.meta.env.VITE_API_URL}/api/orientacoes/pastas/`, {
-          cancelToken: source.token,
-        })
-        .then((res) => setPastas(res.data))
-        .catch((err) => {
-          if (!axios.isCancel(err)) {
-            setErro('Não foi possível carregar as pastas');
-          }
-        });
+      axios.get(`${import.meta.env.VITE_API_URL}/api/orientacoes/pastas/`, {
+        cancelToken: source.token,
+      })
+      .then(res => setPastas(res.data))
+      .catch(err => {
+        if (!axios.isCancel(err)) setErro('Não foi possível carregar as pastas');
+      });
 
-      // Cancelar requisição se o componente desmontar
-      return () => source.cancel('Componente desmontou');
+      return () => source.cancel('Component unmounted');
     }
   }, [user, loading]);
+
+  // Pré-processa dados grandes fora do render
+  const pastasRender = useMemo(() => {
+    return pastas.map((pasta) => ({
+      ...pasta,
+      secoes: pasta.secoes || [],
+    }));
+  }, [pastas]);
 
   if (loading) return <Card title="Minhas Orientações" size="al">Carregando...</Card>;
   if (erro) return <Card title="Minhas Orientações" size="al">{erro}</Card>;
@@ -92,13 +60,12 @@ export default function OrientacoesPaciente() {
       <Card title="Minhas Orientações" size="al">
         {!pastaSelecionada ? (
           <ul style={{ listStyle: 'none', padding: 0 }}>
-            {pastas.length > 0 ? (
-              pastas.map((pasta) => (
-                <PastaItem key={pasta.id} pasta={pasta} onClickSecao={handleClickSecao} />
-              ))
-            ) : (
-              <li>Nenhuma pasta encontrada.</li>
-            )}
+            {pastasRender.length > 0 ? pastasRender.map((pasta) => (
+              <li key={pasta.id} style={{ cursor: 'pointer', padding: '0.5rem 0', borderBottom: '1px solid #ddd' }}
+                  onClick={() => setPastaSelecionada(pasta)}>
+                {pasta.nome}
+              </li>
+            )) : <li>Nenhuma pasta encontrada.</li>}
           </ul>
         ) : (
           <>
@@ -106,8 +73,8 @@ export default function OrientacoesPaciente() {
               ← Voltar para pastas
             </button>
             <h2>{pastaSelecionada.nome}</h2>
-            {pastaSelecionada.secoes?.map((secao) => (
-              <SecaoItem key={secao.id} secao={secao} onClickSecao={handleClickSecao} />
+            {pastaSelecionada.secoes.map(secao => (
+              <Secao key={secao.id} secao={secao} onClick={() => {}} />
             ))}
           </>
         )}
