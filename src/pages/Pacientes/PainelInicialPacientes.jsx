@@ -8,7 +8,6 @@ import {
 
 export default function DashboardPaciente() {
   const { user, loading } = useContext(AuthContext);
-
   const [stats, setStats] = useState(null);
   const [exercicios, setExercicios] = useState([]);
   const [exercicioSelecionado, setExercicioSelecionado] = useState(null);
@@ -21,8 +20,11 @@ export default function DashboardPaciente() {
   // 🔹 Buscar treinos do paciente para lista de exercícios
   useEffect(() => {
     if (!loading && user) {
-      axios
-        .get(`${import.meta.env.VITE_API_URL}/api/orientacoes/treinosexecutados/?paciente=${user.id}`)
+      const controller = new AbortController();
+
+      axios.get(`${import.meta.env.VITE_API_URL}/api/orientacoes/treinosexecutados/?paciente=${user.id}`, {
+        signal: controller.signal,
+      })
         .then((res) => {
           const data = res.data;
           const ordenados = [...data].sort((a, b) => new Date(a.data) - new Date(b.data));
@@ -50,50 +52,67 @@ export default function DashboardPaciente() {
               : { nome: "Nenhum treino", data: "-" },
           });
         })
-        .catch((err) => console.error("Erro ao buscar treinos executados:", err));
+        .catch((err) => {
+          if (err.name === "CanceledError") {
+            console.log("❌ Requisição de treinos cancelada");
+          } else {
+            console.error("Erro ao buscar treinos executados:", err);
+          }
+        });
+
+      // cleanup
+      return () => controller.abort();
     }
   }, [user, loading]);
 
-  // 🔹 Buscar evolução do exercício selecionado (otimizado)
-useEffect(() => {
-  if (!exercicioSelecionado || !user) return;
+  // 🔹 Buscar evolução do exercício selecionado
+  useEffect(() => {
+    if (!exercicioSelecionado || !user) return;
 
-  axios
-    .get(`${import.meta.env.VITE_API_URL}/api/orientacoes/treinosexecutados/grafico/?exercicio=${exercicioSelecionado}`)
-    .then((res) => {
-      // resposta: [{id, data, max_repeticoes, max_carga, rpe}, ...]
-      const treinos = res.data;
+    const controller = new AbortController();
 
-      const evolucaoPorDia = {};
+    axios.get(`${import.meta.env.VITE_API_URL}/api/orientacoes/treinosexecutados/grafico/?exercicio=${exercicioSelecionado}`, {
+      signal: controller.signal,
+    })
+      .then((res) => {
+        const treinos = res.data;
+        const evolucaoPorDia = {};
 
-      treinos.forEach(treino => {
-        const dia = new Date(treino.data).toLocaleDateString("pt-BR");
+        treinos.forEach(treino => {
+          const dia = new Date(treino.data).toLocaleDateString("pt-BR");
 
-        if (!evolucaoPorDia[dia]) {
-          evolucaoPorDia[dia] = {
-            data: dia,
-            repeticoes: treino.max_repeticoes,
-            carga: treino.max_carga,
-            rpe: treino.rpe
-          };
-        } else {
-          // pegar máximo entre os treinos do mesmo dia
-          evolucaoPorDia[dia].repeticoes = Math.max(evolucaoPorDia[dia].repeticoes, treino.max_repeticoes);
-          evolucaoPorDia[dia].carga = Math.max(evolucaoPorDia[dia].carga, treino.max_carga);
-          if (treino.rpe != null) {
-            evolucaoPorDia[dia].rpe = evolucaoPorDia[dia].rpe != null 
-              ? Math.max(evolucaoPorDia[dia].rpe, treino.rpe) 
-              : treino.rpe;
+          if (!evolucaoPorDia[dia]) {
+            evolucaoPorDia[dia] = {
+              data: dia,
+              repeticoes: treino.max_repeticoes,
+              carga: treino.max_carga,
+              rpe: treino.rpe,
+            };
+          } else {
+            evolucaoPorDia[dia].repeticoes = Math.max(evolucaoPorDia[dia].repeticoes, treino.max_repeticoes);
+            evolucaoPorDia[dia].carga = Math.max(evolucaoPorDia[dia].carga, treino.max_carga);
+            if (treino.rpe != null) {
+              evolucaoPorDia[dia].rpe = evolucaoPorDia[dia].rpe != null
+                ? Math.max(evolucaoPorDia[dia].rpe, treino.rpe)
+                : treino.rpe;
+            }
           }
+        });
+
+        const evolucaoArray = Object.values(evolucaoPorDia).sort((a, b) => new Date(a.data) - new Date(b.data));
+        setEvolucao(evolucaoArray);
+      })
+      .catch((err) => {
+        if (err.name === "CanceledError") {
+          console.log("❌ Requisição do gráfico cancelada");
+        } else {
+          console.error("Erro ao buscar gráfico:", err);
         }
       });
 
-      // transformar em array ordenado por data
-      const evolucaoArray = Object.values(evolucaoPorDia).sort((a, b) => new Date(a.data) - new Date(b.data));
-      setEvolucao(evolucaoArray);
-    })
-    .catch((err) => console.error("Erro ao buscar gráfico:", err));
-}, [exercicioSelecionado, user]);
+    // cleanup
+    return () => controller.abort();
+  }, [exercicioSelecionado, user]);
 
   // 🔹 Tooltip customizado
   const CustomTooltip = ({ active, payload, label }) => {
