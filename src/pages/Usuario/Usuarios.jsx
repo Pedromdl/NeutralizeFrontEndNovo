@@ -10,7 +10,7 @@ import GraficoTesteDor from '../../components/Dashboard/GraficoTestesDor';
 import GraficoEstabilidade from '../../components/Dashboard/GraficoEstabilidade';
 import GraficoEstabilidade2 from '../../components/Dashboard/GraficoEstabilidade2';
 import Card from '../../components/Card';
-import FiltroData from '../../components/FiltroData';
+import FiltroData from '../../components/Dashboard/FiltroData';
 import DadosUsuario from './DadosUsuario';
 import Orientacao from './Orientacao'
 import Avaliacoes from './Avaliacoes';

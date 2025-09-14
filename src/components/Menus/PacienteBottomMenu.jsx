@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import BottomSheetModal from "./BottomSheetModal";
-import "./css/BottomMenu.css";
-import Logo from '../images/logo3.png'; // 🔹 ajuste o caminho da imagem
+import BottomSheetModal from "../BottomSheetModal";
+import "../css/BottomMenu.css";
+import Logo from '../../images/logo3.png'; // 🔹 ajuste o caminho da imagem
 
 
 function PacienteBottomMenu() {

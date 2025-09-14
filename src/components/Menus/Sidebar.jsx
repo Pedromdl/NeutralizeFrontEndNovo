@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import './css/Sidebar.css';
+import '../css/Sidebar.css';
 import { NavLink } from 'react-router-dom';
-import Logo from '../images/logo2.png'; // 🔹 ajuste o caminho conforme sua pasta
+import Logo from '../../images/logo2.png'; // 🔹 ajuste o caminho conforme sua pasta
 
 function Sidebar() {
   const [aberto, setAberto] = useState(true);

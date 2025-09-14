@@ -1,55 +1,51 @@
-import { useState, useEffect } from 'react';
+import { useContext } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Line
 } from 'recharts';
+import { AuthContext } from '../../context/AuthContext';
 
-function GraficoTesteFuncao({ usuarioId, dataSelecionada }) { // adiciona dataSelecionada
-  const [dados, setDados] = useState([]);
-  const [carregando, setCarregando] = useState(true);
+function GraficoTesteFuncao({ usuarioId, dataSelecionada }) {
+  const { user } = useContext(AuthContext);
 
-  useEffect(() => {
-    if (usuarioId) {
-      setCarregando(true);
+  const { data: dados = [], isLoading, isError } = useQuery(
+    ['testeFuncao', usuarioId, dataSelecionada],
+    async () => {
+      if (!usuarioId) return [];
 
       const params = { paciente: usuarioId };
-      if (dataSelecionada) {
-        params.data_avaliacao = dataSelecionada;
-      }
+      if (dataSelecionada) params.data_avaliacao = dataSelecionada;
 
-      axios
-        .get(`${import.meta.env.VITE_API_URL}/api/testefuncao/`, { params }) // passa params aqui
-        .then(res => {
-          const dadosTransformados = res.data.map(item => {
-            const esquerdo = Number(item.lado_esquerdo);
-            const direito = Number(item.lado_direito);
-            const assimetria = Math.abs(esquerdo - direito) / Math.max(esquerdo, direito) * 100;
+      const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/testefuncao/`, { params });
 
-            return {
-              Teste: item.teste_nome,
-              Esquerdo: esquerdo,
-              Direito: direito,
-              Data: item.data_avaliacao,
-              Assimetria: Number(assimetria.toFixed(1)) // em porcentagem
-            };
-          });
+      return data.map(item => {
+        const esquerdo = Number(item.lado_esquerdo);
+        const direito = Number(item.lado_direito);
+        const assimetria = Math.abs(esquerdo - direito) / Math.max(esquerdo, direito) * 100;
 
-          setDados(dadosTransformados);
-          setCarregando(false);
-        })
-        .catch(err => {
-          console.error('Erro ao buscar testes de função:', err);
-          setCarregando(false);
-        });
+        return {
+          Teste: item.teste_nome,
+          Esquerdo: esquerdo,
+          Direito: direito,
+          Data: item.data_avaliacao,
+          Assimetria: Number(assimetria.toFixed(1)),
+        };
+      });
+    },
+    {
+      enabled: !!usuarioId,
+      staleTime: 1000 * 60 * 5, // 5 minutos de cache
+      refetchOnWindowFocus: false,
     }
-  }, [usuarioId, dataSelecionada]); // reexecuta ao mudar a data
+  );
 
-  if (carregando) return <p>Carregando dados de função...</p>;
+  if (isLoading) return <p>Carregando dados de função...</p>;
+  if (isError) return <p>Erro ao carregar dados de função.</p>;
   if (!dados.length) return <p>Nenhum dado encontrado.</p>;
 
   const CustomTooltip = ({ active, payload, label }) => {
     if (!active || !payload || payload.length === 0) return null;
-
     const dataAvaliacao = payload[0].payload.Data;
 
     return (
@@ -69,10 +65,7 @@ function GraficoTesteFuncao({ usuarioId, dataSelecionada }) { // adiciona dataSe
 
   return (
     <ResponsiveContainer width="100%" height={350}>
-      <BarChart
-        data={dados}
-        margin={{ top: 5, right: 5, left: 5, bottom: 5 }}
-      >
+      <BarChart data={dados} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="Teste" />
         <YAxis yAxisId="left" label={{ value: "Teste", angle: -90, position: "insideLeft" }} />

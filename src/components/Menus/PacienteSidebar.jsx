@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import './css/Sidebar.css';
+import '../css/Sidebar.css';
 import { NavLink } from 'react-router-dom';
 
 function PacienteSidebar() {

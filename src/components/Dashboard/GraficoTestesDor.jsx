@@ -1,47 +1,44 @@
-import { useState, useEffect } from 'react';
+import { useContext } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
+import { AuthContext } from '../../context/AuthContext';
 
-function GraficoTesteDor({ usuarioId, dataSelecionada }) { // recebe a dataSelecionada
-  const [dados, setDados] = useState([]);
-  const [carregando, setCarregando] = useState(true);
+function GraficoTesteDor({ usuarioId, dataSelecionada }) {
+  const { user } = useContext(AuthContext);
 
-  useEffect(() => {
-    if (usuarioId) {
-      setCarregando(true);
+  const { data: dados = [], isLoading, isError } = useQuery(
+    ['testesDor', usuarioId, dataSelecionada],
+    async () => {
+      if (!usuarioId) return [];
 
       const params = { paciente: usuarioId };
-      if (dataSelecionada) {
-        params.data_avaliacao = dataSelecionada; // inclui filtro de data
-      }
+      if (dataSelecionada) params.data_avaliacao = dataSelecionada;
 
-      axios
-        .get(`${import.meta.env.VITE_API_URL}/api/testedor/`, { params })
-        .then(res => {
-          const dadosTransformados = res.data.map(item => ({
-            id: item.id,
-            Teste: item.teste_nome,
-            Resultado: Number(item.resultado),
-            Data: item.data_avaliacao,
-            Observacao: item.observacao || 'Nenhuma',
-          }));
+      const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/testedor/`, { params });
 
-          setDados(dadosTransformados);
-          setCarregando(false);
-        })
-        .catch(err => {
-          console.error('Erro ao buscar testes de dor:', err);
-          setCarregando(false);
-        });
+      return data.map(item => ({
+        id: item.id,
+        Teste: item.teste_nome,
+        Resultado: Number(item.resultado),
+        Data: item.data_avaliacao,
+        Observacao: item.observacao || 'Nenhuma',
+      }));
+    },
+    {
+      enabled: !!usuarioId,
+      staleTime: 1000 * 60 * 5, // 5 minutos de cache
+      refetchOnWindowFocus: false,
     }
-  }, [usuarioId, dataSelecionada]); // reexecuta se mudar usuário ou data
+  );
 
-  if (carregando) return <p>Carregando dados de dor...</p>;
+  if (isLoading) return <p>Carregando dados de dor...</p>;
+  if (isError) return <p>Erro ao carregar dados de dor.</p>;
   if (!dados.length) return <p>Nenhum dado encontrado.</p>;
 
-  const CustomTooltip = ({ active, payload, label }) => {
+  const CustomTooltip = ({ active, payload }) => {
     if (!active || !payload || payload.length === 0) return null;
     const data = payload[0].payload;
 
@@ -49,7 +46,7 @@ function GraficoTesteDor({ usuarioId, dataSelecionada }) { // recebe a dataSelec
       <div style={{ backgroundColor: 'white', padding: 10, borderRadius: 20 }}>
         <p><strong>{data.Teste}</strong></p>
         <p>Resultado: {data.Resultado}</p>
-        <p>Observação: {data.Observacao || 'Nenhuma'}</p>
+        <p>Observação: {data.Observacao}</p>
         <p style={{ fontSize: '0.85rem', marginTop: 6, color: '#666' }}>
           Data da Avaliação: {data.Data}
         </p>

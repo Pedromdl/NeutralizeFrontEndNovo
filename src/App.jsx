@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 
-import Sidebar from './components/Sidebar';
-import PacienteSidebar from './components/PacienteSidebar';
-import BottomMenu from './components/BottomMenu';
-import PacienteBottomMenu from './components/PacienteBottomMenu';
+import Sidebar from './components/Menus/Sidebar';
+import PacienteSidebar from './components/Menus/PacienteSidebar';
+import BottomMenu from './components/Menus/BottomMenu';
+import PacienteBottomMenu from './components/Menus/PacienteBottomMenu';
 import PrivateRoute from './components/PrivateRoute';
 import './App.css';
 
