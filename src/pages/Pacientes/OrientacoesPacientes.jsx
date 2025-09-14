@@ -10,19 +10,39 @@ export default function OrientacoesPaciente() {
   const [pastaSelecionada, setPastaSelecionada] = useState(null);
   const [erro, setErro] = useState(null);
 
-  useEffect(() => {
-    if (!loading) {
-      if (!user) {
-        setErro('Usuário não autenticado');
-        return;
-      }
+useEffect(() => {
+  if (loading) return;
 
-      axios
-        .get(`${import.meta.env.VITE_API_URL}/api/orientacoes/pastas/`)
-        .then((res) => setPastas(res.data))
-        .catch(() => setErro('Não foi possível carregar as pastas'));
-    }
-  }, [user, loading]);
+  if (!user) {
+    setErro('Usuário não autenticado');
+    return;
+  }
+
+  const controller = new AbortController();
+  let ativo = true;
+
+  axios
+    .get(`${import.meta.env.VITE_API_URL}/api/orientacoes/pastas/`, {
+      signal: controller.signal,
+    })
+    .then((res) => {
+      if (ativo) setPastas(res.data);
+    })
+    .catch((err) => {
+      if (err.name === 'CanceledError') {
+        console.log('Requisição cancelada /pastas');
+      } else {
+        setErro('Não foi possível carregar as pastas');
+      }
+    });
+
+  // cleanup → roda quando troca de página ou desmonta
+  return () => {
+    ativo = false;
+    controller.abort();
+  };
+}, [user, loading]);
+
 
   if (loading)
     return <Card title="Minhas Orientações" size="al">Carregando...</Card>;
