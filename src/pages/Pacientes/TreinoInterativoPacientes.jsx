@@ -205,8 +205,8 @@ export default function TreinoInterativoPacientes() {
 
   const iniciarTreino = () => {
     if (!orientacoes.length) return;
-    const pastaId = orientacoes[0].pastaId;
-    const payload = { treino: pastaId };
+    const payload = { treino: treinoId };
+
 
     axios.post(`${import.meta.env.VITE_API_URL}/api/orientacoes/treinosexecutados/`, payload)
       .then(resExec => {
@@ -296,15 +296,15 @@ export default function TreinoInterativoPacientes() {
             <>
 
               {/* 🔹 Observação do exercício */}
-{exercicioAtual.observacao && (
-  <div className="observacao-box">
-    <p style={{ display: 'flex', flexDirection: 'column', fontSize: '12px', color: '#000' }}>
-      <strong>Observação:</strong> {exercicioAtual.observacao}
-    </p>
-  </div>
-)}
+              {exercicioAtual.observacao && (
+                <div className="observacao-box">
+                  <p style={{ display: 'flex', flexDirection: 'column', fontSize: '12px', color: '#000' }}>
+                    <strong>Observação:</strong> {exercicioAtual.observacao}
+                  </p>
+                </div>
+              )}
               <div className="autofill-container">
-                <p className="autofill-label" style={{ fontSize: '12px'}}>Preenchimento automático:</p>
+                <p className="autofill-label" style={{ fontSize: '12px' }}>Preenchimento automático:</p>
                 <div className="autofill-inputs">
                   <input type="number" placeholder="Reps" value={autoFill.repeticoes} onChange={(e) => setAutoFill({ ...autoFill, repeticoes: e.target.value })} />
                   <input type="number" placeholder="Kg" value={autoFill.carga} onChange={(e) => setAutoFill({ ...autoFill, carga: e.target.value })} />
@@ -312,39 +312,39 @@ export default function TreinoInterativoPacientes() {
                 </div>
               </div>
 
-<div className="series-container">
-  {/* 🔹 Cabeçalho */}
-  <div className="serie-header">
-    <span style={{ width: "60px", fontWeight: "bold" }}>Série</span>
-    <span style={{ width: "80px", fontWeight: "bold" }}>Reps</span>
-    <span style={{ width: "80px", fontWeight: "bold" }}>Carga</span>
-  </div>
+              <div className="series-container">
+                {/* 🔹 Cabeçalho */}
+                <div className="serie-header">
+                  <span style={{ width: "60px", fontWeight: "bold" }}>Série</span>
+                  <span style={{ width: "80px", fontWeight: "bold" }}>Reps</span>
+                  <span style={{ width: "80px", fontWeight: "bold" }}>Carga</span>
+                </div>
 
-  {/* 🔹 Linhas das séries */}
-  {resAtual.series.map((serie, sIndex) => (
-    <div key={sIndex} className="serie-item">
-      <span style={{ width: "60px" }}>{sIndex + 1}</span>
-      <input
-        type="number"
-        placeholder="Reps"
-        value={serie.repeticoes}
-        onChange={(e) => handleInputChange(indiceAtual, sIndex, 'repeticoes', e.target.value)}
-        style={{ width: "70px" }}
-      />
-      <input
-        type="number"
-        placeholder="Kg"
-        value={serie.carga}
-        onChange={(e) => handleInputChange(indiceAtual, sIndex, 'carga', e.target.value)}
-        style={{ width: "70px" }}
-      />
-    </div>
-  ))}
+                {/* 🔹 Linhas das séries */}
+                {resAtual.series.map((serie, sIndex) => (
+                  <div key={sIndex} className="serie-item">
+                    <span style={{ width: "60px" }}>{sIndex + 1}</span>
+                    <input
+                      type="number"
+                      placeholder="Reps"
+                      value={serie.repeticoes}
+                      onChange={(e) => handleInputChange(indiceAtual, sIndex, 'repeticoes', e.target.value)}
+                      style={{ width: "70px" }}
+                    />
+                    <input
+                      type="number"
+                      placeholder="Kg"
+                      value={serie.carga}
+                      onChange={(e) => handleInputChange(indiceAtual, sIndex, 'carga', e.target.value)}
+                      style={{ width: "70px" }}
+                    />
+                  </div>
+                ))}
 
-  <button className="btn-rpe" onClick={() => setModalRPEOpen(true)}>
-    {resAtual.rpe !== null ? `RPE: ${resAtual.rpe}` : 'Definir RPE'}
-  </button>
-</div>
+                <button className="btn-rpe" onClick={() => setModalRPEOpen(true)}>
+                  {resAtual.rpe !== null ? `RPE: ${resAtual.rpe}` : 'Definir RPE'}
+                </button>
+              </div>
 
               <div>
                 <button className="btn-principal btn-proximo" onClick={proximoExercicio}>Próximo Exercício</button>
