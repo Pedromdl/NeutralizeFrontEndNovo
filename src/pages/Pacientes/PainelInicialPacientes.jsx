@@ -9,37 +9,40 @@ export default function DashboardPaciente() {
 
   // 🔹 Buscar treinos do paciente (apenas estatísticas)
   useEffect(() => {
-    if (!loading && user) {
-      const controller = new AbortController();
+  if (!loading && user) {
+    const controller = new AbortController();
+    let ativo = true;
 
-      axios.get(`${import.meta.env.VITE_API_URL}/api/orientacoes/treinosexecutados/?paciente=${user.id}`, {
-        signal: controller.signal,
-      })
-        .then((res) => {
-          const data = res.data;
-
-          setStats({
-            totalTreinosExecutados: data.length,
-            ultimoTreino: data.length
-              ? {
-                  nome: data[data.length - 1].treino?.nome || "Treino",
-                  data: new Date(data[data.length - 1].data).toLocaleDateString("pt-BR"),
-                }
-              : { nome: "Nenhum treino", data: "-" },
-          });
-        })
-        .catch((err) => {
-          if (err.name === "CanceledError") {
-            console.log("❌ Requisição de treinos cancelada");
-          } else {
-            console.error("Erro ao buscar treinos executados:", err);
-          }
+    axios.get(`${import.meta.env.VITE_API_URL}/api/orientacoes/treinosexecutados/?paciente=${user.id}`, {
+      signal: controller.signal,
+    })
+      .then((res) => {
+        if (!ativo) return; // 🔹 evita setState após unmount
+        const data = res.data;
+        setStats({
+          totalTreinosExecutados: data.length,
+          ultimoTreino: data.length
+            ? {
+                nome: data[data.length - 1].treino?.nome || "Treino",
+                data: new Date(data[data.length - 1].data).toLocaleDateString("pt-BR"),
+              }
+            : { nome: "Nenhum treino", data: "-" },
         });
+      })
+      .catch((err) => {
+        if (err.name === "CanceledError") {
+          console.log("❌ Requisição de treinos cancelada");
+        } else {
+          console.error("Erro ao buscar treinos executados:", err);
+        }
+      });
 
-      // cleanup
-      return () => controller.abort();
-    }
-  }, [user, loading]);
+    return () => {
+      ativo = false;
+      controller.abort();
+    };
+  }
+}, [user, loading]);
 
   if (loading) return <Card title="Bem-vindo">Carregando...</Card>;
   if (!user) return <Card title="Bem-vindo">Usuário não autenticado.</Card>;
