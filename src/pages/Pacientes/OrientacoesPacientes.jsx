@@ -1,53 +1,36 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import Card from '../../components/Card';
 import { AuthContext } from '../../context/AuthContext';
 
 export default function OrientacoesPaciente() {
   const { user, loading } = useContext(AuthContext); // pega o paciente logado
-  const [pastas, setPastas] = useState([]);
   const [pastaSelecionada, setPastaSelecionada] = useState(null);
-  const [erro, setErro] = useState(null);
 
-useEffect(() => {
-  if (loading) return;
+  // 🔹 Fetch das pastas usando React Query
+  const { data: pastas = [], isLoading, isError } = useQuery(
+    ['pastas', user?.id],
+    async () => {
+      if (!user) return [];
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/orientacoes/pastas/`
+      );
+      return data;
+    },
+    {
+      enabled: !!user, // só roda se user existir
+      staleTime: 1000 * 60 * 5, // 5 minutos de cache
+      refetchOnWindowFocus: false,
+    }
+  );
 
-  if (!user) {
-    setErro('Usuário não autenticado');
-    return;
-  }
-
-  const controller = new AbortController();
-  let ativo = true;
-
-  axios
-    .get(`${import.meta.env.VITE_API_URL}/api/orientacoes/pastas/`, {
-      signal: controller.signal,
-    })
-    .then((res) => {
-      if (ativo) setPastas(res.data);
-    })
-    .catch((err) => {
-      if (err.name === 'CanceledError') {
-        console.log('Requisição cancelada /pastas');
-      } else {
-        setErro('Não foi possível carregar as pastas');
-      }
-    });
-
-  // cleanup → roda quando troca de página ou desmonta
-  return () => {
-    ativo = false;
-    controller.abort();
-  };
-}, [user, loading]);
-
-
-  if (loading)
+  if (loading || isLoading)
     return <Card title="Minhas Orientações" size="al">Carregando...</Card>;
-  if (erro)
-    return <Card title="Minhas Orientações" size="al">{erro}</Card>;
+
+  if (!user) return <Card title="Minhas Orientações" size="al">Usuário não autenticado</Card>;
+  if (isError) return <Card title="Minhas Orientações" size="al">Não foi possível carregar as pastas</Card>;
 
   return (
     <div className="conteudo">
@@ -80,7 +63,7 @@ useEffect(() => {
             {pastaSelecionada.secoes?.map((secao) => (
               <Link
                 key={secao.id}
-                to={`/paciente/treinos/${secao.id}`} // 👈 redirecionamento direto
+                to={`/paciente/treinos/${secao.id}`} 
                 style={{
                   display: 'block',
                   textDecoration: 'none',

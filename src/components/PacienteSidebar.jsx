@@ -61,6 +61,11 @@ function PacienteSidebar() {
                 💪 <span>Treinos</span>
               </NavLink>
             </li>
+                        <li>
+              <NavLink to="/perfil" className={({ isActive }) => (isActive ? 'ativo' : '')}>
+                👤 <span>Perfil</span>
+              </NavLink>
+            </li>
           </ul>
         )}
       </div>
