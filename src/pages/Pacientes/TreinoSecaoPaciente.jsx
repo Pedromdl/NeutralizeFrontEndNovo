@@ -1,24 +1,34 @@
-import { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import Card from '../../components/Card';
 
 export default function TreinosSecaoPaciente() {
   const { secaoId } = useParams();
-  const [treinos, setTreinos] = useState([]);
-  const [secao, setSecao] = useState(null);
 
-  useEffect(() => {
-    axios.get(`${import.meta.env.VITE_API_URL}/api/orientacoes/secoes/${secaoId}/`)
-      .then(res => setSecao(res.data))
-      .catch(err => console.error(err));
+  // 🔹 Fetch da seção
+  const { data: secao, isLoading: loadingSecao, isError: erroSecao } = useQuery(
+    ['secao', secaoId],
+    async () => {
+      const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/orientacoes/secoes/${secaoId}/`);
+      return data;
+    },
+    { enabled: !!secaoId }
+  );
 
-    axios.get(`${import.meta.env.VITE_API_URL}/api/orientacoes/treinos/?secao=${secaoId}`)
-      .then(res => setTreinos(res.data))
-      .catch(err => console.error(err));
-  }, [secaoId]);
+  // 🔹 Fetch dos treinos da seção
+  const { data: treinos = [], isLoading: loadingTreinos, isError: erroTreinos } = useQuery(
+    ['treinosSecao', secaoId],
+    async () => {
+      const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/orientacoes/treinos/?secao=${secaoId}`);
+      return data;
+    },
+    { enabled: !!secaoId }
+  );
 
-  if (!secao) return <p>Carregando seção...</p>;
+  if (loadingSecao || loadingTreinos) return <Card title="Treinos da Seção" size="al">Carregando...</Card>;
+  if (erroSecao) return <Card title="Treinos da Seção" size="al">Erro ao carregar a seção.</Card>;
+  if (erroTreinos) return <Card title="Treinos da Seção" size="al">Erro ao carregar os treinos.</Card>;
 
   return (
     <div className="conteudo">
@@ -27,21 +37,20 @@ export default function TreinosSecaoPaciente() {
           <ul style={{ listStyle: 'none', padding: 0 }}>
             {treinos.map(t => (
               <li key={t.id} style={{ marginBottom: '0.5rem' }}>
-                {/* Alterado para abrir TreinoInterativo */}
-<Link
-  to={`/paciente/treinos/${t.id}`} 
-  style={{
-    display: 'block',
-    textDecoration: 'none',
-    color: 'inherit',
-    backgroundColor: '#f0f0f0',
-    padding: '1rem',
-    borderRadius: '6px',
-    cursor: 'pointer',
-  }}
->
-  {t.nome || 'Treino sem nome'}
-</Link>
+                <Link
+                  to={`/paciente/treinos/${t.id}`} 
+                  style={{
+                    display: 'block',
+                    textDecoration: 'none',
+                    color: 'inherit',
+                    backgroundColor: '#f0f0f0',
+                    padding: '1rem',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  {t.nome || 'Treino sem nome'}
+                </Link>
               </li>
             ))}
           </ul>

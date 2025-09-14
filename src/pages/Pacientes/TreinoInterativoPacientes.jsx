@@ -110,8 +110,10 @@ export default function TreinoInterativoPacientes() {
         setHidratado(true);
       })
       .catch(() => setErro('Erro ao carregar exercícios.'));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [treinoId, loading, user]);
 
+  // 🔹 Demais hooks e funções permanecem iguais
   useEffect(() => { if (treinoIniciado) setTimerAtivo(true); }, [treinoIniciado]);
 
   useEffect(() => {
@@ -138,7 +140,6 @@ export default function TreinoInterativoPacientes() {
     setTreinoExecutadoId(null);
     setFinalizado(false);
   }
-
   // ---------------- Auxiliares ----------------
   const formatarTempo = (segundos) => {
     const min = Math.floor(segundos / 60);
@@ -204,7 +205,8 @@ export default function TreinoInterativoPacientes() {
 
   const iniciarTreino = () => {
     if (!orientacoes.length) return;
-    const payload = { treino: treinoId };
+    const pastaId = orientacoes[0].pastaId;
+    const payload = { treino: pastaId };
 
     axios.post(`${import.meta.env.VITE_API_URL}/api/orientacoes/treinosexecutados/`, payload)
       .then(resExec => {
@@ -245,7 +247,11 @@ export default function TreinoInterativoPacientes() {
   if (erro) return <Card title="Treino Interativo" size="al">{erro}</Card>;
   if (!orientacoes.length) return <Card title="Treino Interativo" size="al">Nenhum exercício encontrado.</Card>;
   if (!hidratado || !resultados.length || !resultados[indiceAtual]) {
-    return <Card title="Treino Interativo" size="al">Carregando treino...</Card>;
+    return (
+      <Card title="Treino Interativo" size="al">
+        Carregando treino...
+      </Card>
+    );
   }
 
   const exercicioAtual = orientacoes[indiceAtual];
@@ -275,7 +281,12 @@ export default function TreinoInterativoPacientes() {
           <div className="exercicio-titulo">
             <h3>{exercicioAtual.titulo}</h3>
             {exercicioAtual.videoUrl && (
-              <a href={exercicioAtual.videoUrl} target="_blank" rel="noopener noreferrer" className="btn-video">
+              <a
+                href={exercicioAtual.videoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-video"
+              >
                 <img src="/blackplay.png" alt="Abrir vídeo" style={{ width: '26px', height: '26px' }} />
               </a>
             )}
@@ -283,14 +294,15 @@ export default function TreinoInterativoPacientes() {
 
           {treinoIniciado ? (
             <>
-              {exercicioAtual.observacao && (
-                <div className="observacao-box">
-                  <p style={{ display: 'flex', flexDirection: 'column', fontSize: '12px', color: '#000' }}>
-                    <strong>Observação:</strong> {exercicioAtual.observacao}
-                  </p>
-                </div>
-              )}
 
+              {/* 🔹 Observação do exercício */}
+{exercicioAtual.observacao && (
+  <div className="observacao-box">
+    <p style={{ display: 'flex', flexDirection: 'column', fontSize: '12px', color: '#000' }}>
+      <strong>Observação:</strong> {exercicioAtual.observacao}
+    </p>
+  </div>
+)}
               <div className="autofill-container">
                 <p className="autofill-label" style={{ fontSize: '12px'}}>Preenchimento automático:</p>
                 <div className="autofill-inputs">
@@ -300,25 +312,39 @@ export default function TreinoInterativoPacientes() {
                 </div>
               </div>
 
-              <div className="series-container">
-                <div className="serie-header">
-                  <span style={{ width: "60px", fontWeight: "bold" }}>Série</span>
-                  <span style={{ width: "80px", fontWeight: "bold" }}>Reps</span>
-                  <span style={{ width: "80px", fontWeight: "bold" }}>Carga</span>
-                </div>
+<div className="series-container">
+  {/* 🔹 Cabeçalho */}
+  <div className="serie-header">
+    <span style={{ width: "60px", fontWeight: "bold" }}>Série</span>
+    <span style={{ width: "80px", fontWeight: "bold" }}>Reps</span>
+    <span style={{ width: "80px", fontWeight: "bold" }}>Carga</span>
+  </div>
 
-                {resAtual.series.map((serie, sIndex) => (
-                  <div key={sIndex} className="serie-item">
-                    <span style={{ width: "60px" }}>{sIndex + 1}</span>
-                    <input type="number" placeholder="Reps" value={serie.repeticoes} onChange={(e) => handleInputChange(indiceAtual, sIndex, 'repeticoes', e.target.value)} style={{ width: "70px" }} />
-                    <input type="number" placeholder="Kg" value={serie.carga} onChange={(e) => handleInputChange(indiceAtual, sIndex, 'carga', e.target.value)} style={{ width: "70px" }} />
-                  </div>
-                ))}
+  {/* 🔹 Linhas das séries */}
+  {resAtual.series.map((serie, sIndex) => (
+    <div key={sIndex} className="serie-item">
+      <span style={{ width: "60px" }}>{sIndex + 1}</span>
+      <input
+        type="number"
+        placeholder="Reps"
+        value={serie.repeticoes}
+        onChange={(e) => handleInputChange(indiceAtual, sIndex, 'repeticoes', e.target.value)}
+        style={{ width: "70px" }}
+      />
+      <input
+        type="number"
+        placeholder="Kg"
+        value={serie.carga}
+        onChange={(e) => handleInputChange(indiceAtual, sIndex, 'carga', e.target.value)}
+        style={{ width: "70px" }}
+      />
+    </div>
+  ))}
 
-                <button className="btn-rpe" onClick={() => setModalRPEOpen(true)}>
-                  {resAtual.rpe !== null ? `RPE: ${resAtual.rpe}` : 'Definir RPE'}
-                </button>
-              </div>
+  <button className="btn-rpe" onClick={() => setModalRPEOpen(true)}>
+    {resAtual.rpe !== null ? `RPE: ${resAtual.rpe}` : 'Definir RPE'}
+  </button>
+</div>
 
               <div>
                 <button className="btn-principal btn-proximo" onClick={proximoExercicio}>Próximo Exercício</button>
