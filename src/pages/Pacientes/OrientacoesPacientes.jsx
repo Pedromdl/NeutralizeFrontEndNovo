@@ -29,8 +29,11 @@ export default function OrientacoesPaciente() {
   if (loading || isLoading)
     return <Card title="Minhas Orientações" size="al">Carregando...</Card>;
 
-  if (!user) return <Card title="Minhas Orientações" size="al">Usuário não autenticado</Card>;
-  if (isError) return <Card title="Minhas Orientações" size="al">Não foi possível carregar as pastas</Card>;
+  if (!user)
+    return <Card title="Minhas Orientações" size="al">Usuário não autenticado</Card>;
+
+  if (isError)
+    return <Card title="Minhas Orientações" size="al">Não foi possível carregar as pastas</Card>;
 
   return (
     <div className="conteudo">
@@ -59,25 +62,34 @@ export default function OrientacoesPaciente() {
             >
               ← Voltar para pastas
             </button>
+
             <h2>{pastaSelecionada.nome}</h2>
-            {pastaSelecionada.secoes?.map((secao) => (
-              <Link
-                key={secao.id}
-                to={`/paciente/treinos/${secao.id}`} 
-                style={{
-                  display: 'block',
-                  textDecoration: 'none',
-                  color: 'inherit',
-                  backgroundColor: '#f0f0f0',
-                  padding: '1rem',
-                  borderRadius: '6px',
-                  marginBottom: '0.5rem',
-                  cursor: 'pointer',
-                }}
-              >
-                <h3>{secao.titulo}</h3>
-              </Link>
-            ))}
+
+            {/* Agora cada seção redireciona para a página TreinosSecaoPaciente */}
+            {pastaSelecionada.secoes?.length > 0 ? (
+              <ul style={{ listStyle: 'none', padding: 0 }}>
+                {pastaSelecionada.secoes.map((secao) => (
+                  <li key={secao.id} style={{ marginBottom: '0.5rem' }}>
+                    <Link
+                      to={`/paciente/secao/${secao.id}`}
+                      style={{
+                        display: 'block',
+                        textDecoration: 'none',
+                        color: 'inherit',
+                        backgroundColor: '#f0f0f0',
+                        padding: '1rem',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {secao.titulo}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>Nenhuma seção encontrada nesta pasta.</p>
+            )}
           </>
         )}
       </Card>

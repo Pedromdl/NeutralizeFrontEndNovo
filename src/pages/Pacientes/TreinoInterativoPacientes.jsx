@@ -11,34 +11,20 @@ function ModalRPE({ isOpen, onClose, onSelecionar }) {
   if (!isOpen) return null;
 
   return (
-<div className="modal-rpe-overlay">
-  <div className="modal-rpe-content">
-    <button className="fechar" onClick={onClose}>×</button>
-    <h3>Definir RPE</h3>
-    <input
-      type="range"
-      min={0} max={10} step={1}
-      value={rpe}
-      onChange={(e) => setRPE(Number(e.target.value))}
-    />
-    <div className="valor-rpe">RPE: {rpe}</div>
-    <button
-      className="btn-confirmar"
-      onClick={() => {
-        onSelecionar(rpe);
-        onClose();
-      }}
-    >
-      Confirmar
-    </button>
-  </div>
-</div>
-
+    <div className="modal-rpe-overlay">
+      <div className="modal-rpe-content">
+        <button className="fechar" onClick={onClose}>×</button>
+        <h3>Definir RPE</h3>
+        <input type="range" min={0} max={10} step={1} value={rpe} onChange={(e) => setRPE(Number(e.target.value))} />
+        <div className="valor-rpe">RPE: {rpe}</div>
+        <button className="btn-confirmar" onClick={() => { onSelecionar(rpe); onClose(); }}>Confirmar</button>
+      </div>
+    </div>
   );
 }
 
 export default function TreinoInterativoPacientes() {
-  const { secaoId } = useParams();
+  const { treinoId } = useParams(); // ✅ agora usamos treinoId
   const navigate = useNavigate();
   const { user, loading } = useContext(AuthContext);
 
@@ -58,7 +44,7 @@ export default function TreinoInterativoPacientes() {
   const [erro, setErro] = useState(null);
   const [hidratado, setHidratado] = useState(false);
 
-  const localStorageKey = `treino-${secaoId}-${user?.id}`;
+  const localStorageKey = `treino-${treinoId}-${user?.id}`; // ✅ key com treinoId
 
   // 🔹 Cronômetro
   useEffect(() => {
@@ -67,14 +53,13 @@ export default function TreinoInterativoPacientes() {
     return () => clearInterval(intervalo);
   }, [timerAtivo]);
 
-  // 🔹 Reidratar treino + carregar orientações
+  // 🔹 Carregar treino + reidratar
   useEffect(() => {
-    if (!secaoId || loading || !user) return;
+    if (!treinoId || loading || !user) return;
 
-    axios.get(`${import.meta.env.VITE_API_URL}/api/orientacoes/treinos/?secao=${secaoId}&paciente=${user.id}`)
+    axios.get(`${import.meta.env.VITE_API_URL}/api/orientacoes/treinos/${treinoId}/`)
       .then(res => {
-        const pasta = res.data[0];
-        const dados = pasta?.exercicios || [];
+        const dados = res.data.exercicios || [];
 
         const orientacoesFormatadas = dados.map(ex => ({
           id: ex.id,
@@ -84,11 +69,11 @@ export default function TreinoInterativoPacientes() {
           series: ex.series_planejadas,
           repeticoesPlanejada: ex.repeticoes_planejadas,
           cargaPlanejada: ex.carga_planejada,
-          observacao: ex.observacao,   // ✅ adiciona aqui
-          pastaId: pasta.id
+          observacao: ex.observacao,
+          treinoId: treinoId
         }));
 
-        // Tentar reidratar
+        // Reidratar localStorage
         const salvoRaw = localStorage.getItem(localStorageKey);
         if (salvoRaw) {
           try {
@@ -125,34 +110,15 @@ export default function TreinoInterativoPacientes() {
         setHidratado(true);
       })
       .catch(() => setErro('Erro ao carregar exercícios.'));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [secaoId, loading, user]);
+  }, [treinoId, loading, user]);
 
-  // 🔹 Iniciar cronômetro se treino já iniciado
-  useEffect(() => {
-    if (treinoIniciado) setTimerAtivo(true);
-  }, [treinoIniciado]);
+  useEffect(() => { if (treinoIniciado) setTimerAtivo(true); }, [treinoIniciado]);
 
-  // 🔹 Persistir no localStorage
   useEffect(() => {
     if (!user || !hidratado || !orientacoes.length || !resultados.length) return;
-
-    const dados = {
-      indiceAtual,
-      resultados,
-      realizados,
-      temposExercicio,
-      tempo,
-      treinoIniciado,
-      inicioExercicio,
-      treinoExecutadoId
-    };
+    const dados = { indiceAtual, resultados, realizados, temposExercicio, tempo, treinoIniciado, inicioExercicio, treinoExecutadoId };
     localStorage.setItem(localStorageKey, JSON.stringify(dados));
-  }, [
-    indiceAtual, resultados, realizados, temposExercicio, tempo,
-    treinoIniciado, inicioExercicio, treinoExecutadoId,
-    user, hidratado, orientacoes.length, localStorageKey
-  ]);
+  }, [indiceAtual, resultados, realizados, temposExercicio, tempo, treinoIniciado, inicioExercicio, treinoExecutadoId, user, hidratado, orientacoes.length, localStorageKey]);
 
   function inicializarResultados(orientacoesFormatadas) {
     setOrientacoes(orientacoesFormatadas);
@@ -161,10 +127,7 @@ export default function TreinoInterativoPacientes() {
     setResultados(
       orientacoesFormatadas.map(ex => ({
         id: ex.id,
-        series: Array.from({ length: ex.series }, () => ({
-          repeticoes: ex.repeticoesPlanejada,
-          carga: ex.cargaPlanejada
-        })),
+        series: Array.from({ length: ex.series }, () => ({ repeticoes: ex.repeticoesPlanejada, carga: ex.cargaPlanejada })),
         rpe: null
       }))
     );
@@ -241,8 +204,7 @@ export default function TreinoInterativoPacientes() {
 
   const iniciarTreino = () => {
     if (!orientacoes.length) return;
-    const pastaId = orientacoes[0].pastaId;
-    const payload = { treino: pastaId };
+    const payload = { treino: treinoId };
 
     axios.post(`${import.meta.env.VITE_API_URL}/api/orientacoes/treinosexecutados/`, payload)
       .then(resExec => {
@@ -283,11 +245,7 @@ export default function TreinoInterativoPacientes() {
   if (erro) return <Card title="Treino Interativo" size="al">{erro}</Card>;
   if (!orientacoes.length) return <Card title="Treino Interativo" size="al">Nenhum exercício encontrado.</Card>;
   if (!hidratado || !resultados.length || !resultados[indiceAtual]) {
-    return (
-      <Card title="Treino Interativo" size="al">
-        Carregando treino...
-      </Card>
-    );
+    return <Card title="Treino Interativo" size="al">Carregando treino...</Card>;
   }
 
   const exercicioAtual = orientacoes[indiceAtual];
@@ -317,12 +275,7 @@ export default function TreinoInterativoPacientes() {
           <div className="exercicio-titulo">
             <h3>{exercicioAtual.titulo}</h3>
             {exercicioAtual.videoUrl && (
-              <a
-                href={exercicioAtual.videoUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-video"
-              >
+              <a href={exercicioAtual.videoUrl} target="_blank" rel="noopener noreferrer" className="btn-video">
                 <img src="/blackplay.png" alt="Abrir vídeo" style={{ width: '26px', height: '26px' }} />
               </a>
             )}
@@ -330,15 +283,14 @@ export default function TreinoInterativoPacientes() {
 
           {treinoIniciado ? (
             <>
+              {exercicioAtual.observacao && (
+                <div className="observacao-box">
+                  <p style={{ display: 'flex', flexDirection: 'column', fontSize: '12px', color: '#000' }}>
+                    <strong>Observação:</strong> {exercicioAtual.observacao}
+                  </p>
+                </div>
+              )}
 
-              {/* 🔹 Observação do exercício */}
-{exercicioAtual.observacao && (
-  <div className="observacao-box">
-    <p style={{ display: 'flex', flexDirection: 'column', fontSize: '12px', color: '#000' }}>
-      <strong>Observação:</strong> {exercicioAtual.observacao}
-    </p>
-  </div>
-)}
               <div className="autofill-container">
                 <p className="autofill-label" style={{ fontSize: '12px'}}>Preenchimento automático:</p>
                 <div className="autofill-inputs">
@@ -348,39 +300,25 @@ export default function TreinoInterativoPacientes() {
                 </div>
               </div>
 
-<div className="series-container">
-  {/* 🔹 Cabeçalho */}
-  <div className="serie-header">
-    <span style={{ width: "60px", fontWeight: "bold" }}>Série</span>
-    <span style={{ width: "80px", fontWeight: "bold" }}>Reps</span>
-    <span style={{ width: "80px", fontWeight: "bold" }}>Carga</span>
-  </div>
+              <div className="series-container">
+                <div className="serie-header">
+                  <span style={{ width: "60px", fontWeight: "bold" }}>Série</span>
+                  <span style={{ width: "80px", fontWeight: "bold" }}>Reps</span>
+                  <span style={{ width: "80px", fontWeight: "bold" }}>Carga</span>
+                </div>
 
-  {/* 🔹 Linhas das séries */}
-  {resAtual.series.map((serie, sIndex) => (
-    <div key={sIndex} className="serie-item">
-      <span style={{ width: "60px" }}>{sIndex + 1}</span>
-      <input
-        type="number"
-        placeholder="Reps"
-        value={serie.repeticoes}
-        onChange={(e) => handleInputChange(indiceAtual, sIndex, 'repeticoes', e.target.value)}
-        style={{ width: "70px" }}
-      />
-      <input
-        type="number"
-        placeholder="Kg"
-        value={serie.carga}
-        onChange={(e) => handleInputChange(indiceAtual, sIndex, 'carga', e.target.value)}
-        style={{ width: "70px" }}
-      />
-    </div>
-  ))}
+                {resAtual.series.map((serie, sIndex) => (
+                  <div key={sIndex} className="serie-item">
+                    <span style={{ width: "60px" }}>{sIndex + 1}</span>
+                    <input type="number" placeholder="Reps" value={serie.repeticoes} onChange={(e) => handleInputChange(indiceAtual, sIndex, 'repeticoes', e.target.value)} style={{ width: "70px" }} />
+                    <input type="number" placeholder="Kg" value={serie.carga} onChange={(e) => handleInputChange(indiceAtual, sIndex, 'carga', e.target.value)} style={{ width: "70px" }} />
+                  </div>
+                ))}
 
-  <button className="btn-rpe" onClick={() => setModalRPEOpen(true)}>
-    {resAtual.rpe !== null ? `RPE: ${resAtual.rpe}` : 'Definir RPE'}
-  </button>
-</div>
+                <button className="btn-rpe" onClick={() => setModalRPEOpen(true)}>
+                  {resAtual.rpe !== null ? `RPE: ${resAtual.rpe}` : 'Definir RPE'}
+                </button>
+              </div>
 
               <div>
                 <button className="btn-principal btn-proximo" onClick={proximoExercicio}>Próximo Exercício</button>
