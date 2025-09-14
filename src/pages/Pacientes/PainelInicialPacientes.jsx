@@ -8,25 +8,23 @@ export default function DashboardPaciente() {
   const [stats, setStats] = useState(null);
 
   // 🔹 Buscar treinos do paciente (apenas estatísticas)
-  useEffect(() => {
+ useEffect(() => {
   if (!loading && user) {
     const controller = new AbortController();
     let ativo = true;
 
-    axios.get(`${import.meta.env.VITE_API_URL}/api/orientacoes/treinosexecutados/?paciente=${user.id}`, {
+    axios.get(`${import.meta.env.VITE_API_URL}/api/orientacoes/resumo_treinos/`, {
       signal: controller.signal,
     })
       .then((res) => {
-        if (!ativo) return; // 🔹 evita setState após unmount
+        if (!ativo) return; // evita setState após unmount
         const data = res.data;
         setStats({
-          totalTreinosExecutados: data.length,
-          ultimoTreino: data.length
-            ? {
-                nome: data[data.length - 1].treino?.nome || "Treino",
-                data: new Date(data[data.length - 1].data).toLocaleDateString("pt-BR"),
-              }
-            : { nome: "Nenhum treino", data: "-" },
+          totalTreinosExecutados: data.totalTreinosExecutados,
+          ultimoTreino: {
+            nome: "Último treino",
+            data: data.ultimoTreino?.data || "-",
+          },
         });
       })
       .catch((err) => {
@@ -43,6 +41,7 @@ export default function DashboardPaciente() {
     };
   }
 }, [user, loading]);
+
 
   if (loading) return <Card title="Bem-vindo">Carregando...</Card>;
   if (!user) return <Card title="Bem-vindo">Usuário não autenticado.</Card>;
