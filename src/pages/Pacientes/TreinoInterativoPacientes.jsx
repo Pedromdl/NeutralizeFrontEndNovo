@@ -28,6 +28,8 @@ export default function TreinoInterativoPacientes() {
   const navigate = useNavigate();
   const { user, loading } = useContext(AuthContext);
 
+  const [podeFinalizar, setPodeFinalizar] = useState(false);
+
   const [orientacoes, setOrientacoes] = useState([]);
   const [indiceAtual, setIndiceAtual] = useState(0);
   const [finalizado, setFinalizado] = useState(false);
@@ -43,6 +45,7 @@ export default function TreinoInterativoPacientes() {
   const [treinoIniciado, setTreinoIniciado] = useState(false);
   const [erro, setErro] = useState(null);
   const [hidratado, setHidratado] = useState(false);
+
 
   const localStorageKey = `treino-${treinoId}-${user?.id}`;
 
@@ -185,17 +188,17 @@ export default function TreinoInterativoPacientes() {
 
     setRealizados(prev => {
       const novo = [...prev];
-      novo[indiceAtual] = true;
-
-      const proximoNaoRealizado = novo.findIndex((feito, i) => !feito && i !== indiceAtual);
-      if (proximoNaoRealizado !== -1) setIndiceAtual(proximoNaoRealizado);
-      else {
-        setFinalizado(true);
-        setTimerAtivo(false);
-      }
-
+      novo[indiceAtual] = true; // marca atual como concluído
       return novo;
     });
+
+    if (indiceAtual < orientacoes.length - 1) {
+      setIndiceAtual(indiceAtual + 1);
+    } else {
+      // 🔹 Se for o último, não troca de exercício
+      // Apenas libera o botão de finalizar
+      setPodeFinalizar(true);
+    }
 
     setInicioExercicio(tempo);
   };
@@ -232,11 +235,27 @@ export default function TreinoInterativoPacientes() {
 
     axios.post(`${import.meta.env.VITE_API_URL}/api/orientacoes/treinosexecutados/${treinoExecutadoId}/finalizar/`, payload)
       .then(() => {
+        // 🔹 Remove qualquer persistência
         localStorage.removeItem(localStorageKey);
+
+        // 🔹 Reseta o estado do treino
+        setTreinoIniciado(false);
+        setTimerAtivo(false);
+        setIndiceAtual(0);
+        setResultados([]);
+        setRealizados([]);
+        setTemposExercicio([]);
+        setTreinoExecutadoId(null);
+
+        // 🔹 Mostra tela de finalizado
         setFinalizado(true);
       })
-      .catch(err => { console.error('Erro ao salvar treino:', err); alert('Erro ao salvar treino.'); });
+      .catch(err => {
+        console.error('Erro ao salvar treino:', err);
+        alert('Erro ao salvar treino.');
+      });
   };
+
 
   // ---------------- Render ----------------
   if (loading) return <Card title="Treino Interativo" size="al">Carregando...</Card>;
@@ -352,10 +371,16 @@ export default function TreinoInterativoPacientes() {
                   {resAtual.rpe !== null ? `RPE: ${resAtual.rpe}` : 'Definir RPE'}
                 </button>
               </div>
-
               <div>
-                <button className="btn-principal btn-proximo" onClick={proximoExercicio}>Próximo Exercício</button>
-                {realizados.every(Boolean) && <button className="btn-principal btn-finalizar" onClick={finalizarTreino}>Finalizar Treino</button>}
+                {!podeFinalizar ? (
+                  <button className="btn-principal btn-proximo" onClick={proximoExercicio}>
+                    Próximo Exercício
+                  </button>
+                ) : (
+                  <button className="btn-principal btn-finalizar" onClick={finalizarTreino}>
+                    Finalizar Treino
+                  </button>
+                )}
               </div>
             </>
           ) : (
