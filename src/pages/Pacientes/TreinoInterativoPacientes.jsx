@@ -24,7 +24,7 @@ function ModalRPE({ isOpen, onClose, onSelecionar }) {
 }
 
 export default function TreinoInterativoPacientes() {
-  const { treinoId } = useParams(); // ✅ agora usamos treinoId
+  const { treinoId } = useParams();
   const navigate = useNavigate();
   const { user, loading } = useContext(AuthContext);
 
@@ -44,12 +44,12 @@ export default function TreinoInterativoPacientes() {
   const [erro, setErro] = useState(null);
   const [hidratado, setHidratado] = useState(false);
 
-  const localStorageKey = `treino-${treinoId}-${user?.id}`; // ✅ key com treinoId
+  const localStorageKey = `treino-${treinoId}-${user?.id}`;
 
   // 🔹 Cronômetro
   useEffect(() => {
     let intervalo;
-    if (timerAtivo) intervalo = setInterval(() => setTempo((prev) => prev + 1), 1000);
+    if (timerAtivo) intervalo = setInterval(() => setTempo(prev => prev + 1), 1000);
     return () => clearInterval(intervalo);
   }, [timerAtivo]);
 
@@ -70,10 +70,9 @@ export default function TreinoInterativoPacientes() {
           repeticoesPlanejada: ex.repeticoes_planejadas,
           cargaPlanejada: ex.carga_planejada,
           observacao: ex.observacao,
-          treinoId: treinoId
+          treinoId
         }));
 
-        // Reidratar localStorage
         const salvoRaw = localStorage.getItem(localStorageKey);
         if (salvoRaw) {
           try {
@@ -110,10 +109,8 @@ export default function TreinoInterativoPacientes() {
         setHidratado(true);
       })
       .catch(() => setErro('Erro ao carregar exercícios.'));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [treinoId, loading, user]);
 
-  // 🔹 Demais hooks e funções permanecem iguais
   useEffect(() => { if (treinoIniciado) setTimerAtivo(true); }, [treinoIniciado]);
 
   useEffect(() => {
@@ -140,18 +137,18 @@ export default function TreinoInterativoPacientes() {
     setTreinoExecutadoId(null);
     setFinalizado(false);
   }
-  // ---------------- Auxiliares ----------------
-  const formatarTempo = (segundos) => {
+
+  const formatarTempo = segundos => {
     const min = Math.floor(segundos / 60);
     const seg = segundos % 60;
     return `${min.toString().padStart(2, '0')}:${seg.toString().padStart(2, '0')}`;
   };
 
-  const handleInputChange = (exercicioIndex, serieIndex, campo, valor) => {
+  const handleInputChange = (exIndex, sIndex, campo, valor) => {
     setResultados(prev => {
       const novo = [...prev];
-      if (!novo[exercicioIndex]) return prev;
-      novo[exercicioIndex].series[serieIndex][campo] = valor;
+      if (!novo[exIndex]) return prev;
+      novo[exIndex].series[sIndex][campo] = valor;
       return novo;
     });
   };
@@ -168,7 +165,7 @@ export default function TreinoInterativoPacientes() {
     });
   };
 
-  const definirRPE = (valor) => {
+  const definirRPE = valor => {
     setResultados(prev => {
       const novo = [...prev];
       if (!novo[indiceAtual]) return prev;
@@ -207,7 +204,6 @@ export default function TreinoInterativoPacientes() {
     if (!orientacoes.length) return;
     const payload = { treino: treinoId };
 
-
     axios.post(`${import.meta.env.VITE_API_URL}/api/orientacoes/treinosexecutados/`, payload)
       .then(resExec => {
         setTreinoExecutadoId(resExec.data.id);
@@ -236,8 +232,8 @@ export default function TreinoInterativoPacientes() {
 
     axios.post(`${import.meta.env.VITE_API_URL}/api/orientacoes/treinosexecutados/${treinoExecutadoId}/finalizar/`, payload)
       .then(() => {
-        alert('Treino salvo com sucesso!');
         localStorage.removeItem(localStorageKey);
+        setFinalizado(true);
       })
       .catch(err => { console.error('Erro ao salvar treino:', err); alert('Erro ao salvar treino.'); });
   };
@@ -246,6 +242,20 @@ export default function TreinoInterativoPacientes() {
   if (loading) return <Card title="Treino Interativo" size="al">Carregando...</Card>;
   if (erro) return <Card title="Treino Interativo" size="al">{erro}</Card>;
   if (!orientacoes.length) return <Card title="Treino Interativo" size="al">Nenhum exercício encontrado.</Card>;
+
+  // 🔹 Tela finalizada
+  if (finalizado) {
+    return (
+      <div className="treino-finalizado-container">
+        <Card size="al">
+          <h2>✅ Treino finalizado com sucesso!</h2>
+          <p>Parabéns por completar seu treino!</p>
+        </Card>
+      </div>
+    );
+  }
+
+  // 🔹 Tela carregando resultados
   if (!hidratado || !resultados.length || !resultados[indiceAtual]) {
     return (
       <Card title="Treino Interativo" size="al">
@@ -294,8 +304,6 @@ export default function TreinoInterativoPacientes() {
 
           {treinoIniciado ? (
             <>
-
-              {/* 🔹 Observação do exercício */}
               {exercicioAtual.observacao && (
                 <div className="observacao-box">
                   <p style={{ display: 'flex', flexDirection: 'column', fontSize: '12px', color: '#000' }}>
@@ -303,6 +311,7 @@ export default function TreinoInterativoPacientes() {
                   </p>
                 </div>
               )}
+
               <div className="autofill-container">
                 <p className="autofill-label" style={{ fontSize: '12px' }}>Preenchimento automático:</p>
                 <div className="autofill-inputs">
@@ -313,14 +322,12 @@ export default function TreinoInterativoPacientes() {
               </div>
 
               <div className="series-container">
-                {/* 🔹 Cabeçalho */}
                 <div className="serie-header">
                   <span style={{ width: "60px", fontWeight: "bold" }}>Série</span>
                   <span style={{ width: "80px", fontWeight: "bold" }}>Reps</span>
                   <span style={{ width: "80px", fontWeight: "bold" }}>Carga</span>
                 </div>
 
-                {/* 🔹 Linhas das séries */}
                 {resAtual.series.map((serie, sIndex) => (
                   <div key={sIndex} className="serie-item">
                     <span style={{ width: "60px" }}>{sIndex + 1}</span>
@@ -348,7 +355,7 @@ export default function TreinoInterativoPacientes() {
 
               <div>
                 <button className="btn-principal btn-proximo" onClick={proximoExercicio}>Próximo Exercício</button>
-                {finalizado && <button className="btn-principal btn-finalizar" onClick={finalizarTreino}>Finalizar Treino</button>}
+                {realizados.every(Boolean) && <button className="btn-principal btn-finalizar" onClick={finalizarTreino}>Finalizar Treino</button>}
               </div>
             </>
           ) : (
@@ -356,7 +363,6 @@ export default function TreinoInterativoPacientes() {
               <button className="btn-principal btn-iniciar" onClick={iniciarTreino}>Iniciar Treino</button>
             </div>
           )}
-
         </div>
 
         <ModalRPE isOpen={modalRPEOpen} onClose={() => setModalRPEOpen(false)} onSelecionar={definirRPE} />
