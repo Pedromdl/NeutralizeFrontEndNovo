@@ -63,6 +63,7 @@ export default function TreinoInterativo() {
   const [resultados, setResultados] = useState([]);
   const [treinoExecutadoId, setTreinoExecutadoId] = useState(null);
   const [treinoIniciado, setTreinoIniciado] = useState(false);
+  const [inicioTreino, setInicioTreino] = useState(null); // novo estado
 
   // 🔹 Carregar orientações da seção
   useEffect(() => {
@@ -99,12 +100,16 @@ export default function TreinoInterativo() {
       .catch(err => console.error('Erro ao carregar orientações:', err));
   }, [secaoId]);
 
-  // 🔹 Cronômetro
+  // 🔹 Cronômetro baseado em horário real
   useEffect(() => {
     let intervalo;
-    if (timerAtivo) intervalo = setInterval(() => setTempo(prev => prev + 1), 1000);
+    if (timerAtivo && inicioTreino) {
+      intervalo = setInterval(() => {
+        setTempo(Math.floor((Date.now() - inicioTreino) / 1000));
+      }, 1000);
+    }
     return () => clearInterval(intervalo);
-  }, [timerAtivo]);
+  }, [timerAtivo, inicioTreino]);
 
   const formatarTempo = (segundos) => {
     const min = Math.floor(segundos / 60);
@@ -156,32 +161,39 @@ export default function TreinoInterativo() {
 
   // 🔹 Iniciar treino
   const iniciarTreino = () => {
-  if (!orientacoes.length) return;
-  const pastaId = orientacoes[0].pastaId;
+    if (!orientacoes.length) return;
+    const pastaId = orientacoes[0].pastaId;
+    const usuario = JSON.parse(localStorage.getItem('usuarioSelecionado'));
 
-  const usuario = JSON.parse(localStorage.getItem('usuarioSelecionado')); // pegar o paciente
+    const payload = {
+      treino: pastaId,
+      paciente: usuario?.id
+    };
 
-  const payload = {
-    treino: pastaId,
-    paciente: usuario?.id
+    axios.post(`${import.meta.env.VITE_API_URL}/api/orientacoes/treinosexecutados/`, payload)
+      .then(resExec => {
+        setTreinoExecutadoId(resExec.data.id);
+        setTreinoIniciado(true);
+        const agora = Date.now();
+        setInicioTreino(agora); // salva horário de início
+        localStorage.setItem('inicioTreino', agora); // persiste horário de início
+        setTimerAtivo(true);
+      })
+      .catch(err => {
+        console.error('Erro ao iniciar execução:', err.response?.data || err);
+      });
   };
 
-  console.log("Payload enviado:", payload);  // aqui você verá exatamente o JSON
-  console.log("URL:", `${import.meta.env.VITE_API_URL}/api/orientacoes/treinosexecutados/`);
-
-  axios.post(`${import.meta.env.VITE_API_URL}/api/orientacoes/treinosexecutados/`, payload)
-    .then(resExec => {
-      setTreinoExecutadoId(resExec.data.id);
-      setTreinoIniciado(true);
-      setInicioExercicio(tempo);
+  // 🔹 Recupera horário de início ao carregar a página
+  useEffect(() => {
+    const salvo = localStorage.getItem('inicioTreino');
+    if (salvo && treinoIniciado) {
+      setInicioTreino(Number(salvo));
       setTimerAtivo(true);
-    })
-    .catch(err => {
-      console.error('Erro ao iniciar execução:', err.response?.data || err);
-    });
-};
+    }
+  }, [treinoIniciado]);
 
-  // 🔹 Finalizar treino
+  // 🔹 Finalizar treino (limpa horário salvo)
   const finalizarTreino = () => {
     if (!treinoExecutadoId) return alert('Execução do treino não iniciada.');
 
@@ -199,7 +211,10 @@ export default function TreinoInterativo() {
     };
 
     axios.post(`${import.meta.env.VITE_API_URL}/api/orientacoes/treinosexecutados/${treinoExecutadoId}/finalizar/`, payload)
-      .then(() => alert('Treino salvo com sucesso!'))
+      .then(() => {
+        alert('Treino salvo com sucesso!');
+        localStorage.removeItem('inicioTreino'); // limpa horário salvo
+      })
       .catch(err => {
         console.error('Erro ao salvar treino:', err);
         alert('Erro ao salvar treino.');
