@@ -305,10 +305,9 @@ export default function TreinoInterativoPacientes() {
     <div className="conteudo">
       <Card size="al">
         <div className="treino-container">
-          {/* Removido temporariamente a renderização do cronômetro */}
-          {/* <p style={{ fontWeight: 'bold', fontSize: '16px', textAlign: 'center' }}>
+          <p style={{ fontWeight: 'bold', fontSize: '16px', textAlign: 'center' }}>
             Tempo decorrido: {formatarTempo(tempo)}
-          </p> */}
+          </p>
 
           <div className="progress-bar-container">
             <div className="progress-bar">
