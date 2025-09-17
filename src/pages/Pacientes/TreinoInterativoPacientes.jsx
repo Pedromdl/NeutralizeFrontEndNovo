@@ -45,16 +45,21 @@ export default function TreinoInterativoPacientes() {
   const [treinoIniciado, setTreinoIniciado] = useState(false);
   const [erro, setErro] = useState(null);
   const [hidratado, setHidratado] = useState(false);
+  const [inicioTreino, setInicioTreino] = useState(null);
 
 
   const localStorageKey = `treino-${treinoId}-${user?.id}`;
 
-  // 🔹 Cronômetro
+  // 🔹 Cronômetro baseado em horário real
   useEffect(() => {
     let intervalo;
-    if (timerAtivo) intervalo = setInterval(() => setTempo(prev => prev + 1), 1000);
+    if (timerAtivo && inicioTreino) {
+      intervalo = setInterval(() => {
+        setTempo(Math.floor((Date.now() - inicioTreino) / 1000));
+      }, 1000);
+    }
     return () => clearInterval(intervalo);
-  }, [timerAtivo]);
+  }, [timerAtivo, inicioTreino]);
 
   // 🔹 Carregar treino + reidratar
   useEffect(() => {
@@ -203,6 +208,7 @@ export default function TreinoInterativoPacientes() {
     setInicioExercicio(tempo);
   };
 
+  // 🔹 Iniciar treino (salva horário de início)
   const iniciarTreino = () => {
     if (!orientacoes.length) return;
     const payload = { treino: treinoId };
@@ -211,12 +217,24 @@ export default function TreinoInterativoPacientes() {
       .then(resExec => {
         setTreinoExecutadoId(resExec.data.id);
         setTreinoIniciado(true);
-        setInicioExercicio(tempo);
+        const agora = Date.now();
+        setInicioTreino(agora);
+        localStorage.setItem(`${localStorageKey}-inicioTreino`, agora); // persiste horário de início
         setTimerAtivo(true);
       })
       .catch(err => console.error('Erro ao iniciar execução:', err.response?.data || err));
   };
 
+  // 🔹 Recupera horário de início ao carregar a página
+  useEffect(() => {
+    const salvo = localStorage.getItem(`${localStorageKey}-inicioTreino`);
+    if (salvo && treinoIniciado) {
+      setInicioTreino(Number(salvo));
+      setTimerAtivo(true);
+    }
+  }, [treinoIniciado, localStorageKey]);
+
+  // 🔹 Finalizar treino (limpa horário salvo)
   const finalizarTreino = () => {
     if (!treinoExecutadoId) return alert('Execução do treino não iniciada.');
 
@@ -235,10 +253,8 @@ export default function TreinoInterativoPacientes() {
 
     axios.post(`${import.meta.env.VITE_API_URL}/api/orientacoes/treinosexecutados/${treinoExecutadoId}/finalizar/`, payload)
       .then(() => {
-        // 🔹 Remove qualquer persistência
         localStorage.removeItem(localStorageKey);
-
-        // 🔹 Reseta o estado do treino
+        localStorage.removeItem(`${localStorageKey}-inicioTreino`);
         setTreinoIniciado(false);
         setTimerAtivo(false);
         setIndiceAtual(0);
@@ -246,8 +262,6 @@ export default function TreinoInterativoPacientes() {
         setRealizados([]);
         setTemposExercicio([]);
         setTreinoExecutadoId(null);
-
-        // 🔹 Mostra tela de finalizado
         setFinalizado(true);
       })
       .catch(err => {
