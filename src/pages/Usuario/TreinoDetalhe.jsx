@@ -2,38 +2,53 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Card from '../../components/Card';
+import { Edit, X } from 'lucide-react'; // 🔹 ícones
 
-// 🔹 Modal para adicionar exercício
-function ModalAdicionarExercicio({ isOpen, onClose, exerciciosDisponiveis, onSalvar }) {
-  const [exercicioSelecionado, setExercicioSelecionado] = useState(null);
-  const [observacao, setObservacao] = useState(''); // ✅ aqui
-  const [series, setSeries] = useState(1);
-  const [repeticoes, setRepeticoes] = useState(10);
-  const [carga, setCarga] = useState(0);
+// 🔹 Modal para adicionar/editar exercício
+function ModalExercicio({ isOpen, onClose, exerciciosDisponiveis, onSalvar, exercicioAtual }) {
+  const [exercicioSelecionado, setExercicioSelecionado] = useState(exercicioAtual?.orientacao_detalhes || null);
+  const [observacao, setObservacao] = useState(exercicioAtual?.observacao || '');
+  const [series, setSeries] = useState(exercicioAtual?.series_planejadas || 1);
+  const [repeticoes, setRepeticoes] = useState(exercicioAtual?.repeticoes_planejadas || 10);
+  const [carga, setCarga] = useState(exercicioAtual?.carga_planejada || 0);
+
+  useEffect(() => {
+    if (exercicioAtual) {
+      setExercicioSelecionado(exercicioAtual.orientacao_detalhes);
+      setObservacao(exercicioAtual.observacao);
+      setSeries(exercicioAtual.series_planejadas);
+      setRepeticoes(exercicioAtual.repeticoes_planejadas);
+      setCarga(exercicioAtual.carga_planejada);
+    } else {
+      setExercicioSelecionado(null);
+      setObservacao('');
+      setSeries(1);
+      setRepeticoes(10);
+      setCarga(0);
+    }
+  }, [exercicioAtual]);
 
   if (!isOpen) return null;
 
   const handleSalvar = () => {
     if (!exercicioSelecionado) return;
+
     onSalvar({
-      ...exercicioSelecionado,
+      id: exercicioAtual?.id,
+      orientacao: exercicioSelecionado.id,
       series_planejadas: series,
       repeticoes_planejadas: repeticoes,
       carga_planejada: carga,
-      observacao: observacao
+      observacao,
     });
-    setExercicioSelecionado(null);
-    setSeries(1);
-    setRepeticoes(10);
-    setCarga(0);
+
     onClose();
   };
 
   return (
     <div className="modal-backdrop">
       <div className="modal-conteudo">
-        <h2>Adicionar Exercício</h2>
-
+        <h2>{exercicioAtual ? 'Editar Exercício' : 'Adicionar Exercício'}</h2>
         <div className="modal-form">
           <label>
             Exercício
@@ -50,7 +65,6 @@ function ModalAdicionarExercicio({ isOpen, onClose, exerciciosDisponiveis, onSal
               ))}
             </select>
           </label>
-
           <div className="modal-inputs">
             <label>
               Séries
@@ -66,11 +80,10 @@ function ModalAdicionarExercicio({ isOpen, onClose, exerciciosDisponiveis, onSal
             </label>
             <label>
               Observação
-              <input type="text" value={observacao} onChange={(e) => setObservacao(e.target.value)} />
+              <input type="text" value={observacao} onChange={e => setObservacao(e.target.value)} />
             </label>
           </div>
         </div>
-
         <div className="modal-botoes">
           <button className="btn-salvar" onClick={handleSalvar}>Salvar</button>
           <button className="btn-cancelar" onClick={onClose}>Cancelar</button>
@@ -80,49 +93,56 @@ function ModalAdicionarExercicio({ isOpen, onClose, exerciciosDisponiveis, onSal
   );
 }
 
-
 export default function TreinoDetalhe() {
-  const { id } = useParams(); // id da seção
+  const { id } = useParams();
   const navigate = useNavigate();
 
   const [secao, setSecao] = useState(null);
   const [treinosSecao, setTreinosSecao] = useState([]);
   const [treinoNome, setTreinoNome] = useState('');
-  const [treinoCriado, setTreinoCriado] = useState(null);
   const [exerciciosDisponiveis, setExerciciosDisponiveis] = useState([]);
   const [modalAberto, setModalAberto] = useState(false);
   const [treinoSelecionadoParaAdicionar, setTreinoSelecionadoParaAdicionar] = useState(null);
+  const [exercicioSelecionadoParaEditar, setExercicioSelecionadoParaEditar] = useState(null);
 
-  // Carrega a seção
+  // 🔹 Carrega treinos da seção
   useEffect(() => {
-    axios.get(`${import.meta.env.VITE_API_URL}/api/orientacoes/secoes/${id}/`)
-      .then(res => setSecao(res.data))
-      .catch(err => console.error(err));
-  }, [id]);
+    const fetchTreinos = async () => {
+      try {
+        const resTreinos = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/orientacoes/treinos/?secao=${id}`
+        );
+        const tituloSecao = resTreinos.data[0]?.secao_titulo || 'Seção';
 
-  // Carrega os treinos da seção
-  useEffect(() => {
-    axios.get(`${import.meta.env.VITE_API_URL}/api/orientacoes/treinos/?secao=${id}`)
-      .then(res => {
-        // adiciona campo local para controlar se o card está expandido e exercícios já adicionados
-        const treinosComEstado = res.data.map(t => ({
+        const treinosComExpandido = resTreinos.data.map(t => ({
           ...t,
           expandido: false,
           exerciciosDoTreino: t.exercicios || []
         }));
-        setTreinosSecao(treinosComEstado);
-      })
-      .catch(err => console.error(err));
+
+        setSecao({ id, titulo: tituloSecao });
+        setTreinosSecao(treinosComExpandido);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchTreinos();
   }, [id]);
 
-  // Carrega banco de exercícios disponíveis
+  // 🔹 Carrega exercícios disponíveis
   useEffect(() => {
-    axios.get(`${import.meta.env.VITE_API_URL}/api/orientacoes/bancoexercicios/`)
-      .then(res => setExerciciosDisponiveis(res.data))
-      .catch(err => console.error(err));
+    const fetchExercicios = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/orientacoes/bancoexercicios/`);
+        setExerciciosDisponiveis(res.data);
+      } catch (err) {
+        console.error('Erro ao buscar exercícios:', err);
+      }
+    };
+    fetchExercicios();
   }, []);
 
-  // Criar treino
+  // 🔹 Criar treino
   const criarTreino = async () => {
     if (!treinoNome.trim()) return;
     try {
@@ -130,7 +150,6 @@ export default function TreinoDetalhe() {
         secao: id,
         nome: treinoNome
       });
-      setTreinoCriado(response.data);
       setTreinosSecao([...treinosSecao, { ...response.data, expandido: false, exerciciosDoTreino: [] }]);
       setTreinoNome('');
     } catch (err) {
@@ -138,29 +157,77 @@ export default function TreinoDetalhe() {
     }
   };
 
-  // Abrir modal de adicionar exercício
-  const abrirModal = (treino) => {
+  // 🔹 Abrir modal adicionar
+  const abrirModalAdicionar = (treino) => {
     setTreinoSelecionadoParaAdicionar(treino);
+    setExercicioSelecionadoParaEditar(null);
     setModalAberto(true);
   };
 
-  // Salvar exercício no treino
-  const salvarExercicioNoTreino = async (ex) => {
+  // 🔹 Abrir modal editar
+  const abrirModalEditar = (exercicio, treino) => {
+    setTreinoSelecionadoParaAdicionar(treino);
+    setExercicioSelecionadoParaEditar(exercicio);
+    setModalAberto(true);
+  };
+
+  // 🔹 Salvar exercício
+  const salvarExercicio = async (ex) => {
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/orientacoes/exerciciosprescritos/`, {
-        treino: treinoSelecionadoParaAdicionar.id,
-        orientacao: ex.id,
-        series_planejadas: ex.series_planejadas,
-        repeticoes_planejadas: ex.repeticoes_planejadas,
-        carga_planejada: ex.carga_planejada,
-        observacao: ex.observacao  // ← novo campo
-      });
-      // atualiza localmente
+      if (ex.id) {
+        const res = await axios.put(
+          `${import.meta.env.VITE_API_URL}/api/orientacoes/exerciciosprescritos/${ex.id}/`,
+          {
+            treino: treinoSelecionadoParaAdicionar.id,
+            orientacao: ex.orientacao,
+            series_planejadas: ex.series_planejadas,
+            repeticoes_planejadas: ex.repeticoes_planejadas,
+            carga_planejada: ex.carga_planejada,
+            observacao: ex.observacao,
+          }
+        );
+
+        setTreinosSecao(treinosSecao.map(t => {
+          if (t.id === treinoSelecionadoParaAdicionar.id) {
+            return {
+              ...t,
+              exerciciosDoTreino: t.exerciciosDoTreino.map(e =>
+                e.id === ex.id ? res.data : e
+              ),
+            };
+          }
+          return t;
+        }));
+      } else {
+        const res = await axios.post(
+          `${import.meta.env.VITE_API_URL}/api/orientacoes/exerciciosprescritos/`,
+          { treino: treinoSelecionadoParaAdicionar.id, ...ex }
+        );
+
+        setTreinosSecao(treinosSecao.map(t => {
+          if (t.id === treinoSelecionadoParaAdicionar.id) {
+            return {
+              ...t,
+              exerciciosDoTreino: [...t.exerciciosDoTreino, res.data],
+            };
+          }
+          return t;
+        }));
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // 🔹 Excluir exercício
+  const excluirExercicio = async (exercicioId, treinoId) => {
+    try {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/orientacoes/exerciciosprescritos/${exercicioId}/`);
       setTreinosSecao(treinosSecao.map(t => {
-        if (t.id === treinoSelecionadoParaAdicionar.id) {
+        if (t.id === treinoId) {
           return {
             ...t,
-            exerciciosDoTreino: [...t.exerciciosDoTreino, response.data]
+            exerciciosDoTreino: t.exerciciosDoTreino.filter(e => e.id !== exercicioId),
           };
         }
         return t;
@@ -174,78 +241,90 @@ export default function TreinoDetalhe() {
 
   return (
     <div className="conteudo">
-      {/* Card superior: criar treino */}
-      <Card title={`${secao.titulo}`} size="al">
+      <Card title={secao.titulo} size="al">
         <div className="user-search">
           <input
             className="input"
             type="text"
             value={treinoNome}
             onChange={(e) => setTreinoNome(e.target.value)}
-          placeholder="Nome do treino"
-        />
+            placeholder="Nome do treino"
+          />
         </div>
         <button onClick={criarTreino}>Salvar Treino</button>
       </Card>
 
-      {/* Lista de treinos existentes */}
-      {treinosSecao.length > 0 && (
-        <div style={{ width: '100%', marginTop: '1rem' }}>
-          {treinosSecao.map(t => (
-            <Card key={t.id} title={t.nome || 'Treino sem nome'} size="al">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <button onClick={() => setTreinosSecao(
-                  treinosSecao.map(tr => tr.id === t.id ? { ...tr, expandido: !tr.expandido } : tr)
-                )}>
-                  {t.expandido ? '▼' : '►'}
-                </button>
-                <button onClick={() => navigate(`/treinos/${t.id}/editar`)}>Editar</button>
-              </div>
+      {treinosSecao.map(t => (
+        <Card key={t.id} title={t.nome || 'Treino sem nome'} size="al">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <button onClick={() =>
+              setTreinosSecao(
+                treinosSecao.map(tr => tr.id === t.id ? { ...tr, expandido: !tr.expandido } : tr)
+              )
+            }>
+              {t.expandido ? '▼' : '►'}
+            </button>
+            <button onClick={() => navigate(`/treinos/${t.id}/editar`)}>Editar</button>
+          </div>
 
-              {t.expandido && (
-                <div style={{ marginTop: '1rem' }}>
-                  {/* Lista de exercícios do treino */}
-                  {t.exerciciosDoTreino.length > 0 && (
-                    <div className="tabela-exercicios-wrapper">
-                     <table className="tabela-exercicios">
-  <thead>
-    <tr>
-      <th>Exercício</th>
-      <th>Séries</th>
-      <th>Repetições</th>
-      <th>Carga</th>
-      <th>Observação</th>  {/* nova coluna */}
-    </tr>
-  </thead>
-  <tbody>
-    {t.exerciciosDoTreino.map(ex => (
-      <tr key={ex.id}>
-        <td>{ex.orientacao_detalhes.titulo}</td>
-        <td>{ex.series_planejadas}</td>
-        <td>{ex.repeticoes_planejadas}</td>
-        <td>{ex.carga_planejada}</td>
-        <td>{ex.observacao || '-'}</td> 
-      </tr>
-    ))}
-  </tbody>
-</table>
-                    </div>
-                  )}
-
-                  <button onClick={() => abrirModal(t)}>Adicionar Exercício</button>
+          {t.expandido && (
+            <div style={{ marginTop: '1rem' }}>
+              {t.exerciciosDoTreino.length > 0 ? (
+                <div className="tabela-exercicios-wrapper">
+                  <table className="tabela-exercicios">
+                    <thead>
+                      <tr>
+                        <th>Exercício</th>
+                        <th>Séries</th>
+                        <th>Repetições</th>
+                        <th>Carga</th>
+                        <th>Observação</th>
+                        <th>Ações</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {t.exerciciosDoTreino.map(ex => (
+                        <tr key={ex.id}>
+                          <td>{ex.orientacao_detalhes?.titulo}</td>
+                          <td>{ex.series_planejadas}</td>
+                          <td>{ex.repeticoes_planejadas}</td>
+                          <td>{ex.carga_planejada}</td>
+                          <td>{ex.observacao || '-'}</td>
+                          <td>
+                            <button 
+                              onClick={() => abrirModalEditar(ex, t)} 
+                              style={{ background: 'none', border: 'none', cursor: 'pointer', marginRight: '0.5rem' }}
+                            >
+                              <Edit size={18} />
+                            </button>
+                            <button 
+                              onClick={() => excluirExercicio(ex.id, t.id)} 
+                              style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+                            >
+                              <X size={18} />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
+              ) : (
+                <p>Nenhum exercício adicionado ainda.</p>
               )}
-            </Card>
-          ))}
-        </div>
-      )}
 
-      {/* Modal */}
-      <ModalAdicionarExercicio
+              <button onClick={() => abrirModalAdicionar(t)}>Adicionar Exercício</button>
+            </div>
+          )}
+        </Card>
+      ))}
+
+      <ModalExercicio
         isOpen={modalAberto}
         onClose={() => setModalAberto(false)}
         exerciciosDisponiveis={exerciciosDisponiveis}
-        onSalvar={salvarExercicioNoTreino}
+        onSalvar={salvarExercicio}
+        exercicioAtual={exercicioSelecionadoParaEditar}
       />
     </div>
   );

@@ -59,7 +59,6 @@ body {
   display: flex; /* padrão: um embaixo do outro */
   gap: 20px; /* espaço entre eles */
   width: 100%;
-  align-items: center;
 }
 
 /* Tamanhos por grid */
@@ -436,6 +435,61 @@ button.black:hover {
   padding: 24px;
   text-align: center;
 }
+
+.minicalendar .rdp-day {
+  padding: 2px;
+  border: none;
+}
+
+.minicalendar .rdp-day.treinos {
+  margin: 1px auto;
+}
+
+
+/* DAYPICKER - calendário */
+.rdp-caption_label {
+  font-weight: 600;
+  font-size: 15px !important;
+  color: #333;
+}
+
+.rdp-weekday {
+  font-weight: 600;
+  color: #666;
+  font-size: 10px !important;
+}
+/* tamanho compacto do calendário */
+.rd-day-picker {
+  font-size: 0.8rem;
+}
+
+.rdp-chevron {
+  fill: #282829 !important;
+  width: 16px;
+}
+
+
+/* destaque para o dia de treino: apenas círculo verde */
+.treino-dia {
+  width: 24px;   /* tamanho fixo */
+  height: 24px;  /* tamanho fixo */
+  border: 2px solid #34D399;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 0;
+}
+
+/* força o conteúdo do dia a estar centralizado na célula */
+.rd-day-picker .rdp-day {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+}
+
 
 @keyframes fadeIn {
   from { opacity: 0; transform: scale(0.95); }
