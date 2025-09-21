@@ -38,7 +38,7 @@ function PacienteBottomMenu() {
         </NavLink>
 
         <NavLink
-          to="/paciente/treinos/1"
+          to="/paciente/historico"
           className={({ isActive }) => (isActive ? "ativo" : "")}
         >
           <Dumbbell size={20} />

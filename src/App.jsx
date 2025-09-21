@@ -31,6 +31,7 @@ import OrientacoesPaciente from './pages/Pacientes/OrientacoesPacientes';
 import TreinoInterativoPacientes from './pages/Pacientes/TreinoInterativoPacientes';
 import PainelInicialPaciente from "./pages/Pacientes/PainelInicialPacientes";
 import TreinosSecaoPaciente from './pages/Pacientes/TreinoSecaoPaciente';
+import HistoricodeTreinos from './pages/Pacientes/HistoricodeTreinos';
 
 function LayoutComSidebar({ children }) {
   const location = useLocation();
@@ -97,6 +98,7 @@ function AppRoutes() {
           <Route path="/paciente/treinos/:treinoId" element={<TreinoInterativoPacientes />} />
           <Route path="/paciente" element={<PainelInicialPaciente />} />
           <Route path="/paciente/secao/:secaoId" element={<TreinosSecaoPaciente />} />
+          <Route path="/paciente/historico" element={<HistoricodeTreinos />} />
         </Routes>
       </LayoutComSidebar>
     </PrivateRoute>
