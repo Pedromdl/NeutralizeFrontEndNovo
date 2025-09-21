@@ -1,0 +1,25 @@
+.btn-atalho-treino {
+  display: flex;
+  justify-content: flex-start;
+  padding: 20px 20px;
+  font-size: 18px;
+  color: #fff;
+  background-color: #282829; /* padrão ativo */
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  width: 100%;
+  height: 100px;
+  gap: 12px;
+  position: relative;
+  transition: background-color 0.2s ease;
+}
+
+.btn-atalho-treino:disabled {
+  background-color: #888;
+  cursor: not-allowed;
+}
+
+.btn-atalho-treino span {
+  display: inline-block;
+}

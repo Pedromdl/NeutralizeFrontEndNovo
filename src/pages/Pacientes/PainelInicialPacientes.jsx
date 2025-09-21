@@ -4,52 +4,59 @@ import Card from "../../components/Card";
 import { AuthContext } from "../../context/AuthContext";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
-import { ptBR } from 'date-fns/locale';
+import { ptBR } from "date-fns/locale";
+import { useNavigate } from "react-router-dom";
+import { Dumbbell } from "lucide-react";
+import "../../components/css/PaginaInicialPaciente.css"; // importe o CSS
 
 
 export default function DashboardPaciente() {
   const { user, loading } = useContext(AuthContext);
   const [stats, setStats] = useState(null);
   const [treinosDias, setTreinosDias] = useState([]);
+  const [ultimaSecaoId, setUltimaSecaoId] = useState(null);
+  const navigate = useNavigate();
 
+  // 🔹 Busca stats e treinos
   useEffect(() => {
     if (!loading && user) {
-      const controller = new AbortController();
-      let ativo = true;
-
-      axios.get(`${import.meta.env.VITE_API_URL}/api/orientacoes/resumo_treinos/`, {
-        signal: controller.signal,
-      })
+      axios
+        .get(`${import.meta.env.VITE_API_URL}/api/orientacoes/resumo_treinos/`)
         .then((res) => {
-          if (!ativo) return;
-
           const data = res.data;
-
-          setStats({  
+          setStats({
             totalTreinosExecutados: data.totalTreinosExecutados,
             ultimoTreino: data.ultimoTreino,
           });
 
-          // transforma todas as datas "dd/mm/yyyy" em objetos Date
-          const dias = data.treinosExecutados?.map(d => {
-            const [dia, mes, ano] = d.split('/');
-            return new Date(Number(ano), Number(mes) - 1, Number(dia));
-          }) || [];
-
+          const dias =
+            data.treinosExecutados?.map((d) => {
+              const [dia, mes, ano] = d.split("/");
+              return new Date(Number(ano), Number(mes) - 1, Number(dia));
+            }) || [];
           setTreinosDias(dias);
         })
-        .catch((err) => {
-          if (err.name === "CanceledError") {
-            console.log("❌ Requisição de treinos cancelada");
-          } else {
-            console.error("Erro ao buscar treinos executados:", err);
-          }
-        });
+        .catch((err) => console.error("Erro ao buscar treinos:", err));
+    }
+  }, [user, loading]);
 
-      return () => {
-        ativo = false;
-        controller.abort();
-      };
+  // 🔹 Busca última seção dentro da pasta do paciente
+  useEffect(() => {
+    if (!loading && user) {
+      axios
+        .get(`${import.meta.env.VITE_API_URL}/api/orientacoes/pastas/`)
+        .then((res) => {
+          const pastas = res.data;
+          if (pastas.length > 0) {
+            // pega a primeira pasta do paciente (ou escolha outra lógica se houver múltiplas)
+            const pasta = pastas[0];
+            if (pasta.secoes && pasta.secoes.length > 0) {
+              const ultimaSecao = pasta.secoes[pasta.secoes.length - 1]; // última criada
+              setUltimaSecaoId(ultimaSecao.id);
+            }
+          }
+        })
+        .catch((err) => console.error("Erro ao buscar última seção:", err));
     }
   }, [user, loading]);
 
@@ -61,7 +68,7 @@ export default function DashboardPaciente() {
       <h1 className="text-2xl font-bold">Olá, {user?.first_name || "Paciente"} 👋</h1>
 
       <div className="cards-row">
-        <Card title="Treinos Realizados" style={{ fontSize: "12px" }}  size="al">
+        <Card title="Treinos Realizados" style={{ fontSize: "12px" }} size="al">
           <p style={{ fontSize: "20px", fontWeight: "bold", color: "#282829" }}>
             {stats?.totalTreinosExecutados}
           </p>
@@ -75,16 +82,29 @@ export default function DashboardPaciente() {
       </div>
 
       <Card size="md">
-    <DayPicker
-      fromDate={new Date(new Date().getFullYear(), new Date().getMonth(), 1)}
-      toDate={new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)}
-      showOutsideDays={false}
-      modifiers={{ treinos: treinosDias }}
-      modifiersClassNames={{ treinos: "treino-dia" }}
-      components={{ Caption: () => null }}
-      locale={ptBR} // ← adiciona o idioma
-    />
+        <DayPicker
+          fromDate={new Date(new Date().getFullYear(), new Date().getMonth(), 1)}
+          toDate={new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)}
+          showOutsideDays={false}
+          modifiers={{ treinos: treinosDias }}
+          modifiersClassNames={{ treinos: "treino-dia" }}
+          components={{ Caption: () => null }}
+          locale={ptBR}
+        />
       </Card>
+
+      {/* 🔹 Botão de Atalho Rápido para Treino */}
+      <div style={{ marginTop: "16px", textAlign: "center", width: "100%" }}>
+        <button
+          onClick={() => ultimaSecaoId && navigate(`/paciente/secao/${ultimaSecaoId}`)}
+          disabled={!ultimaSecaoId}
+          className="btn-atalho-treino"
+        >
+          <Dumbbell size={24} />
+          <span>Atalho rápido para treino</span>
+        </button>
+      </div>
+
     </div>
   );
 }
