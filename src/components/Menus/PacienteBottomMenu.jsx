@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { House, File, Dumbbell, Cog } from "lucide-react";
 import BottomSheetModal from "../BottomSheetModal";
 import "../css/BottomMenu.css";
 import Logo from '../../images/logo3.png'; // 🔹 ajuste o caminho da imagem
-
 
 function PacienteBottomMenu() {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,18 +16,17 @@ function PacienteBottomMenu() {
 
   return (
     <>
-    
       <nav className="bottom-menu">
-
-                <div className="bottom-menu-logo">
-                  <img src={Logo} alt="Logo" />
-                </div>
+        {/* 🔹 Logo à esquerda */}
+        <div className="bottom-menu-logo">
+          <img src={Logo} alt="Logo" />
+        </div>
 
         <NavLink
           to="/paciente"
           className={({ isActive }) => (isActive ? "ativo" : "")}
         >
-          🏠
+          <House size={20} />
           <span>Início</span>
         </NavLink>
 
@@ -35,7 +34,7 @@ function PacienteBottomMenu() {
           to="/paciente/orientacoes"
           className={({ isActive }) => (isActive ? "ativo" : "")}
         >
-          📖
+          <File size={20} />
           <span>Orientações</span>
         </NavLink>
 
@@ -43,13 +42,13 @@ function PacienteBottomMenu() {
           to="/paciente/treinos/1"
           className={({ isActive }) => (isActive ? "ativo" : "")}
         >
-          💪
+          <Dumbbell size={20} />
           <span>Treinos</span>
         </NavLink>
 
-        {/* Menu extra opcional (Configurações do paciente, por exemplo) */}
+        {/* Menu extra */}
         <button className="bottom-menu-extra" onClick={() => setIsOpen(true)}>
-          ⚙️
+          <Cog color="#ffff" size={20} />
           <span>Mais</span>
         </button>
       </nav>
