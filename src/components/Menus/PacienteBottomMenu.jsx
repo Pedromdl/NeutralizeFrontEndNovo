@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { House, File, Dumbbell, Cog } from "lucide-react";
+import { House, File, Dumbbell, Cog, UserPen, X } from "lucide-react";
 import BottomSheetModal from "../BottomSheetModal";
 import "../css/BottomMenu.css";
-import Logo from '../../images/logo3.png'; // 🔹 ajuste o caminho da imagem
+import Logo from '../../images/logo3.png';
 
 function PacienteBottomMenu() {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,7 +17,6 @@ function PacienteBottomMenu() {
   return (
     <>
       <nav className="bottom-menu">
-        {/* 🔹 Logo à esquerda */}
         <div className="bottom-menu-logo">
           <img src={Logo} alt="Logo" />
         </div>
@@ -46,7 +45,6 @@ function PacienteBottomMenu() {
           <span>Treinos</span>
         </NavLink>
 
-        {/* Menu extra */}
         <button className="bottom-menu-extra" onClick={() => setIsOpen(true)}>
           <Cog color="#ffff" size={20} />
           <span>Mais</span>
@@ -57,10 +55,16 @@ function PacienteBottomMenu() {
         <h2>Mais opções</h2>
         <ul>
           <li>
-            <button onClick={() => irPara("/perfil")}>Perfil</button>
+            <button onClick={() => irPara("/perfil")} className="modal-btn">
+              <UserPen size={18} style={{ marginRight: '8px' }} />
+              Perfil
+            </button>
           </li>
           <li>
-            <button onClick={() => setIsOpen(false)}>Fechar</button>
+            <button onClick={() => setIsOpen(false)} className="modal-btn">
+              <X size={18} style={{ marginRight: '8px' }} />
+              Fechar
+            </button>
           </li>
         </ul>
       </BottomSheetModal>
