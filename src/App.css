@@ -22,7 +22,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100px;
+  height: 20px;
   /* altura fixa para o container da logo */
 }
 
@@ -262,6 +262,7 @@ button {
 
 button:hover {
   background-color: #e0e0e0;
+  color: black;
 }
 
 button.ativo {

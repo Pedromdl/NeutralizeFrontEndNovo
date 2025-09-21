@@ -11,7 +11,7 @@ export default function TreinosSecaoPaciente() {
     ['treinosSecao', secaoId],
     async () => {
       const { data } = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/orientacoes/treinos/?secao=${secaoId}`
+        `${import.meta.env.VITE_API_URL}/api/orientacoes/treinos/por_secao/?secao=${secaoId}`
       );
       return data;
     },
