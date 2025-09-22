@@ -4,12 +4,12 @@ import Card from '../../components/Card';
 import { Link } from 'react-router-dom';
 
 export default function HistoricoTreinos() {
-  // 🔹 Fetch dos treinos executados do paciente
-  const { data: treinosExecutados = [], isLoading, isError } = useQuery(
-    ['treinosExecutadosPaciente'],
+  // 🔹 Fetch dos treinos executados do paciente (apenas nome + data)
+  const { data: treinos = [], isLoading, isError } = useQuery(
+    ['treinosHistoricoRapido'],
     async () => {
       const { data } = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/orientacoes/treinosexecutados/`
+        `${import.meta.env.VITE_API_URL}/api/orientacoes/historico_treinos/`
       );
       return data;
     }
@@ -21,9 +21,9 @@ export default function HistoricoTreinos() {
   return (
     <div className="conteudo">
       <Card title="Histórico de Treinos" size="al">
-        {treinosExecutados.length > 0 ? (
+        {treinos.length > 0 ? (
           <ul style={{ listStyle: 'none', padding: 0 }}>
-            {treinosExecutados.map(t => (
+            {treinos.map(t => (
                 <li key={t.id} style={{ marginBottom: '0.5rem' }}>
                     <Link
                         to={`/paciente/treinosexecutados/${t.id}`}
@@ -35,10 +35,9 @@ export default function HistoricoTreinos() {
                             padding: '1rem',
                             borderRadius: '6px',
                             cursor: 'pointer',
-
                         }}
                     >
-                        {t.treino_detalhes?.nome || 'Treino executado sem nome'} - {t.data ? new Date(t.data).toLocaleDateString() : '-'}
+                        {t.treino_nome || 'Treino executado sem nome'} - {t.data ? new Date(t.data).toLocaleDateString() : '-'}
                     </Link>
               </li>
             ))}
