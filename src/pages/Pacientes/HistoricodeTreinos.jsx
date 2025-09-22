@@ -35,9 +35,10 @@ export default function HistoricoTreinos() {
                             padding: '1rem',
                             borderRadius: '6px',
                             cursor: 'pointer',
+
                         }}
                     >
-                        {t.treino?.nome || 'Treino executado sem nome'} - {t.data ? new Date(t.data).toLocaleDateString() : '-'}
+                        {t.treino_detalhes?.nome || 'Treino executado sem nome'} - {t.data ? new Date(t.data).toLocaleDateString() : '-'}
                     </Link>
               </li>
             ))}
