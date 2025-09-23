@@ -5,6 +5,16 @@ import Card from '../../components/Card';
 import { AuthContext } from '../../context/AuthContext';
 import './TreinoInterativo.css';
 
+// 🔹 Spinner minimalista
+function Spinner() {
+  return (
+    <div className="spinner-container">
+      <div className="spinner"></div>
+      <p>Carregando treino...</p>
+    </div>
+  );
+}
+
 // 🔹 ModalRPE
 function ModalRPE({ isOpen, onClose, onSelecionar }) {
   const [rpe, setRPE] = useState(0);
@@ -15,9 +25,24 @@ function ModalRPE({ isOpen, onClose, onSelecionar }) {
       <div className="modal-rpe-content">
         <button className="fechar" onClick={onClose}>×</button>
         <h3>Definir RPE</h3>
-        <input type="range" min={0} max={10} step={1} value={rpe} onChange={(e) => setRPE(Number(e.target.value))} />
+        <input
+          type="range"
+          min={0}
+          max={10}
+          step={1}
+          value={rpe}
+          onChange={(e) => setRPE(Number(e.target.value))}
+        />
         <div className="valor-rpe">RPE: {rpe}</div>
-        <button className="btn-confirmar" onClick={() => { onSelecionar(rpe); onClose(); }}>Confirmar</button>
+        <button
+          className="btn-confirmar"
+          onClick={() => {
+            onSelecionar(rpe);
+            onClose();
+          }}
+        >
+          Confirmar
+        </button>
       </div>
     </div>
   );
@@ -28,6 +53,7 @@ export default function TreinoInterativoPacientes() {
   const navigate = useNavigate();
   const { user, loading } = useContext(AuthContext);
 
+  const [loadingTreino, setLoadingTreino] = useState(true); // 🔹 novo estado de carregamento
   const [podeFinalizar, setPodeFinalizar] = useState(false);
 
   const [orientacoes, setOrientacoes] = useState([]);
@@ -47,7 +73,6 @@ export default function TreinoInterativoPacientes() {
   const [hidratado, setHidratado] = useState(false);
   const [inicioTreino, setInicioTreino] = useState(null);
 
-
   const localStorageKey = `treino-${treinoId}-${user?.id}`;
 
   // 🔹 Cronômetro baseado em horário real
@@ -65,11 +90,14 @@ export default function TreinoInterativoPacientes() {
   useEffect(() => {
     if (!treinoId || loading || !user) return;
 
-    axios.get(`${import.meta.env.VITE_API_URL}/api/orientacoes/treinos/${treinoId}/`)
-      .then(res => {
+    setLoadingTreino(true);
+
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/orientacoes/treinos/${treinoId}/`)
+      .then((res) => {
         const dados = res.data.exercicios || [];
 
-        const orientacoesFormatadas = dados.map(ex => ({
+        const orientacoesFormatadas = dados.map((ex) => ({
           id: ex.id,
           titulo: ex.orientacao_detalhes.titulo,
           descricao: ex.orientacao_detalhes.descricao,
@@ -78,21 +106,21 @@ export default function TreinoInterativoPacientes() {
           repeticoesPlanejada: ex.repeticoes_planejadas,
           cargaPlanejada: ex.carga_planejada,
           observacao: ex.observacao,
-          treinoId
+          treinoId,
         }));
 
         const salvoRaw = localStorage.getItem(localStorageKey);
         if (salvoRaw) {
           try {
             const salvo = JSON.parse(salvoRaw);
-            const byId = new Map((salvo.resultados || []).map(r => [r.id, r]));
-            const resultadosHydrated = orientacoesFormatadas.map(ex => {
+            const byId = new Map((salvo.resultados || []).map((r) => [r.id, r]));
+            const resultadosHydrated = orientacoesFormatadas.map((ex) => {
               const saved = byId.get(ex.id);
               const series = Array.from({ length: ex.series }, (_, i) => {
                 const s = saved?.series?.[i];
                 return {
                   repeticoes: s?.repeticoes ?? ex.repeticoesPlanejada ?? '',
-                  carga: s?.carga ?? ex.cargaPlanejada ?? ''
+                  carga: s?.carga ?? ex.cargaPlanejada ?? '',
                 };
               });
               return { id: ex.id, rpe: saved?.rpe ?? null, series };
@@ -100,8 +128,15 @@ export default function TreinoInterativoPacientes() {
 
             setOrientacoes(orientacoesFormatadas);
             setResultados(resultadosHydrated);
-            setRealizados(Array.from({ length: orientacoesFormatadas.length }, (_, i) => !!salvo.realizados?.[i]));
-            setTemposExercicio(Array.from({ length: orientacoesFormatadas.length }, (_, i) => salvo.temposExercicio?.[i] ?? 0));
+            setRealizados(
+              Array.from({ length: orientacoesFormatadas.length }, (_, i) => !!salvo.realizados?.[i])
+            );
+            setTemposExercicio(
+              Array.from(
+                { length: orientacoesFormatadas.length },
+                (_, i) => salvo.temposExercicio?.[i] ?? 0
+              )
+            );
             setIndiceAtual(Math.min(salvo.indiceAtual ?? 0, orientacoesFormatadas.length - 1));
             setTempo(salvo.tempo ?? 0);
             setTreinoIniciado(!!salvo.treinoIniciado);
@@ -116,26 +151,54 @@ export default function TreinoInterativoPacientes() {
 
         setHidratado(true);
       })
-      .catch(() => setErro('Erro ao carregar exercícios.'));
+      .catch(() => setErro('Erro ao carregar exercícios.'))
+      .finally(() => setLoadingTreino(false));
   }, [treinoId, loading, user]);
 
-  useEffect(() => { if (treinoIniciado) setTimerAtivo(true); }, [treinoIniciado]);
+  useEffect(() => {
+    if (treinoIniciado) setTimerAtivo(true);
+  }, [treinoIniciado]);
 
   useEffect(() => {
     if (!user || !hidratado || !orientacoes.length || !resultados.length) return;
-    const dados = { indiceAtual, resultados, realizados, temposExercicio, tempo, treinoIniciado, inicioExercicio, treinoExecutadoId };
+    const dados = {
+      indiceAtual,
+      resultados,
+      realizados,
+      temposExercicio,
+      tempo,
+      treinoIniciado,
+      inicioExercicio,
+      treinoExecutadoId,
+    };
     localStorage.setItem(localStorageKey, JSON.stringify(dados));
-  }, [indiceAtual, resultados, realizados, temposExercicio, tempo, treinoIniciado, inicioExercicio, treinoExecutadoId, user, hidratado, orientacoes.length, localStorageKey]);
+  }, [
+    indiceAtual,
+    resultados,
+    realizados,
+    temposExercicio,
+    tempo,
+    treinoIniciado,
+    inicioExercicio,
+    treinoExecutadoId,
+    user,
+    hidratado,
+    orientacoes.length,
+    localStorageKey,
+  ]);
 
   function inicializarResultados(orientacoesFormatadas) {
     setOrientacoes(orientacoesFormatadas);
     setTemposExercicio(orientacoesFormatadas.map(() => 0));
     setRealizados(orientacoesFormatadas.map(() => false));
     setResultados(
-      orientacoesFormatadas.map(ex => ({
+      orientacoesFormatadas.map((ex) => ({
         id: ex.id,
-        series: Array.from({ length: ex.series }, () => ({ repeticoes: ex.repeticoesPlanejada, carga: ex.cargaPlanejada })),
-        rpe: null
+        series: Array.from({ length: ex.series }, () => ({
+          repeticoes: ex.repeticoesPlanejada,
+          carga: ex.cargaPlanejada,
+        })),
+        rpe: null,
       }))
     );
     setIndiceAtual(0);
@@ -146,14 +209,14 @@ export default function TreinoInterativoPacientes() {
     setFinalizado(false);
   }
 
-  const formatarTempo = segundos => {
+  const formatarTempo = (segundos) => {
     const min = Math.floor(segundos / 60);
     const seg = segundos % 60;
     return `${min.toString().padStart(2, '0')}:${seg.toString().padStart(2, '0')}`;
   };
 
   const handleInputChange = (exIndex, sIndex, campo, valor) => {
-    setResultados(prev => {
+    setResultados((prev) => {
       const novo = [...prev];
       if (!novo[exIndex]) return prev;
       novo[exIndex].series[sIndex][campo] = valor;
@@ -162,19 +225,19 @@ export default function TreinoInterativoPacientes() {
   };
 
   const aplicarAutoFill = () => {
-    setResultados(prev => {
+    setResultados((prev) => {
       const novo = [...prev];
       if (!novo[indiceAtual]) return prev;
       novo[indiceAtual].series = novo[indiceAtual].series.map(() => ({
         repeticoes: autoFill.repeticoes,
-        carga: autoFill.carga
+        carga: autoFill.carga,
       }));
       return novo;
     });
   };
 
-  const definirRPE = valor => {
-    setResultados(prev => {
+  const definirRPE = (valor) => {
+    setResultados((prev) => {
       const novo = [...prev];
       if (!novo[indiceAtual]) return prev;
       novo[indiceAtual].rpe = valor;
@@ -185,47 +248,44 @@ export default function TreinoInterativoPacientes() {
   const proximoExercicio = () => {
     const tempoGasto = tempo - inicioExercicio;
 
-    setTemposExercicio(prev => {
+    setTemposExercicio((prev) => {
       const novo = [...prev];
       novo[indiceAtual] = tempoGasto;
       return novo;
     });
 
-    setRealizados(prev => {
+    setRealizados((prev) => {
       const novo = [...prev];
-      novo[indiceAtual] = true; // marca atual como concluído
+      novo[indiceAtual] = true;
       return novo;
     });
 
     if (indiceAtual < orientacoes.length - 1) {
       setIndiceAtual(indiceAtual + 1);
     } else {
-      // 🔹 Se for o último, não troca de exercício
-      // Apenas libera o botão de finalizar
       setPodeFinalizar(true);
     }
 
     setInicioExercicio(tempo);
   };
 
-  // 🔹 Iniciar treino (salva horário de início)
   const iniciarTreino = () => {
     if (!orientacoes.length) return;
     const payload = { treino: treinoId };
 
-    axios.post(`${import.meta.env.VITE_API_URL}/api/orientacoes/treinosexecutados/`, payload)
-      .then(resExec => {
+    axios
+      .post(`${import.meta.env.VITE_API_URL}/api/orientacoes/treinosexecutados/`, payload)
+      .then((resExec) => {
         setTreinoExecutadoId(resExec.data.id);
         setTreinoIniciado(true);
         const agora = Date.now();
         setInicioTreino(agora);
-        localStorage.setItem(`${localStorageKey}-inicioTreino`, agora); // persiste horário de início
+        localStorage.setItem(`${localStorageKey}-inicioTreino`, agora);
         setTimerAtivo(true);
       })
-      .catch(err => console.error('Erro ao iniciar execução:', err.response?.data || err));
+      .catch((err) => console.error('Erro ao iniciar execução:', err.response?.data || err));
   };
 
-  // 🔹 Recupera horário de início ao carregar a página
   useEffect(() => {
     const salvo = localStorage.getItem(`${localStorageKey}-inicioTreino`);
     if (salvo && treinoIniciado) {
@@ -234,24 +294,27 @@ export default function TreinoInterativoPacientes() {
     }
   }, [treinoIniciado, localStorageKey]);
 
-  // 🔹 Finalizar treino (limpa horário salvo)
   const finalizarTreino = () => {
     if (!treinoExecutadoId) return alert('Execução do treino não iniciada.');
 
     const payload = {
       tempo_total: tempo,
-      series: resultados.map(exercicio => ({
+      series: resultados.map((exercicio) => ({
         exercicio_id: exercicio.id,
         rpe: exercicio.rpe,
         series: exercicio.series.map((s, index) => ({
           numero: index + 1,
           repeticoes: s.repeticoes,
           carga: s.carga,
-        }))
-      }))
+        })),
+      })),
     };
 
-    axios.post(`${import.meta.env.VITE_API_URL}/api/orientacoes/treinosexecutados/${treinoExecutadoId}/finalizar/`, payload)
+    axios
+      .post(
+        `${import.meta.env.VITE_API_URL}/api/orientacoes/treinosexecutados/${treinoExecutadoId}/finalizar/`,
+        payload
+      )
       .then(() => {
         localStorage.removeItem(localStorageKey);
         localStorage.removeItem(`${localStorageKey}-inicioTreino`);
@@ -264,19 +327,24 @@ export default function TreinoInterativoPacientes() {
         setTreinoExecutadoId(null);
         setFinalizado(true);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error('Erro ao salvar treino:', err);
         alert('Erro ao salvar treino.');
       });
   };
 
-
   // ---------------- Render ----------------
-  if (loading) return <Card title="Treino Interativo" size="al">Carregando...</Card>;
+  if (loading || loadingTreino) {
+    return (
+      <Card title="Treino Interativo" size="al">
+        <Spinner />
+      </Card>
+    );
+  }
+
   if (erro) return <Card title="Treino Interativo" size="al">{erro}</Card>;
   if (!orientacoes.length) return <Card title="Treino Interativo" size="al">Nenhum exercício encontrado.</Card>;
 
-  // 🔹 Tela finalizada
   if (finalizado) {
     return (
       <div className="treino-finalizado-container">
@@ -288,11 +356,10 @@ export default function TreinoInterativoPacientes() {
     );
   }
 
-  // 🔹 Tela carregando resultados
   if (!hidratado || !resultados.length || !resultados[indiceAtual]) {
     return (
       <Card title="Treino Interativo" size="al">
-        Carregando treino...
+        <Spinner />
       </Card>
     );
   }
@@ -305,16 +372,15 @@ export default function TreinoInterativoPacientes() {
     <div className="conteudo">
       <Card size="al">
         <div className="treino-container">
-          {/* Removido temporariamente a renderização do cronômetro */}
-          {/* <p style={{ fontWeight: 'bold', fontSize: '16px', textAlign: 'center' }}>
-            Tempo decorrido: {formatarTempo(tempo)}
-          </p> */}
-
           <div className="progress-bar-container">
             <div className="progress-bar">
               {orientacoes.map((ex, index) => (
-                <div key={ex.id} onClick={() => setIndiceAtual(index)}
-                  className={`progress-step ${index === indiceAtual ? 'atual' : realizados[index] ? 'concluido' : 'pendente'}`}
+                <div
+                  key={ex.id}
+                  onClick={() => setIndiceAtual(index)}
+                  className={`progress-step ${
+                    index === indiceAtual ? 'atual' : realizados[index] ? 'concluido' : 'pendente'
+                  }`}
                   title={ex.titulo}
                 />
               ))}
@@ -349,35 +415,45 @@ export default function TreinoInterativoPacientes() {
               <div className="autofill-container">
                 <p className="autofill-label" style={{ fontSize: '12px' }}>Preenchimento automático:</p>
                 <div className="autofill-inputs">
-                  <input type="number" placeholder="Reps" value={autoFill.repeticoes} onChange={(e) => setAutoFill({ ...autoFill, repeticoes: e.target.value })} />
-                  <input type="number" placeholder="Kg" value={autoFill.carga} onChange={(e) => setAutoFill({ ...autoFill, carga: e.target.value })} />
+                  <input
+                    type="number"
+                    placeholder="Reps"
+                    value={autoFill.repeticoes}
+                    onChange={(e) => setAutoFill({ ...autoFill, repeticoes: e.target.value })}
+                  />
+                  <input
+                    type="number"
+                    placeholder="Kg"
+                    value={autoFill.carga}
+                    onChange={(e) => setAutoFill({ ...autoFill, carga: e.target.value })}
+                  />
                   <button onClick={aplicarAutoFill}>Aplicar</button>
                 </div>
               </div>
 
               <div className="series-container">
                 <div className="serie-header">
-                  <span style={{ width: "60px", fontWeight: "bold" }}>Série</span>
-                  <span style={{ width: "80px", fontWeight: "bold" }}>Reps</span>
-                  <span style={{ width: "80px", fontWeight: "bold" }}>Carga</span>
+                  <span style={{ width: '60px', fontWeight: 'bold' }}>Série</span>
+                  <span style={{ width: '80px', fontWeight: 'bold' }}>Reps</span>
+                  <span style={{ width: '80px', fontWeight: 'bold' }}>Carga</span>
                 </div>
 
                 {resAtual.series.map((serie, sIndex) => (
                   <div key={sIndex} className="serie-item">
-                    <span style={{ width: "60px" }}>{sIndex + 1}</span>
+                    <span style={{ width: '60px' }}>{sIndex + 1}</span>
                     <input
                       type="number"
                       placeholder="Reps"
                       value={serie.repeticoes}
                       onChange={(e) => handleInputChange(indiceAtual, sIndex, 'repeticoes', e.target.value)}
-                      style={{ width: "70px" }}
+                      style={{ width: '70px' }}
                     />
                     <input
                       type="number"
                       placeholder="Kg"
                       value={serie.carga}
                       onChange={(e) => handleInputChange(indiceAtual, sIndex, 'carga', e.target.value)}
-                      style={{ width: "70px" }}
+                      style={{ width: '70px' }}
                     />
                   </div>
                 ))}
@@ -400,12 +476,18 @@ export default function TreinoInterativoPacientes() {
             </>
           ) : (
             <div style={{ textAlign: 'center', marginTop: '20px' }}>
-              <button className="btn-principal btn-iniciar" onClick={iniciarTreino}>Iniciar Treino</button>
+              <button className="btn-principal btn-iniciar" onClick={iniciarTreino}>
+                Iniciar Treino
+              </button>
             </div>
           )}
         </div>
 
-        <ModalRPE isOpen={modalRPEOpen} onClose={() => setModalRPEOpen(false)} onSelecionar={definirRPE} />
+        <ModalRPE
+          isOpen={modalRPEOpen}
+          onClose={() => setModalRPEOpen(false)}
+          onSelecionar={definirRPE}
+        />
       </Card>
     </div>
   );
