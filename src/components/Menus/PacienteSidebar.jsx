@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import '../css/Sidebar.css';
 import { NavLink } from 'react-router-dom';
 
+// 🔹 Ícones lucide-react
+import { House, File, Dumbbell, UserPen } from 'lucide-react';
+
 function PacienteSidebar() {
   const [aberto, setAberto] = useState(true);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -24,7 +27,7 @@ function PacienteSidebar() {
         <div className="overlay" onClick={handleOverlayClick}></div>
       )}
 
-      {!aberto && window.innerWidth <= 768 && (
+      {!aberto && isMobile && (
         <button className="botao-toggle-global" onClick={toggleSidebar}>
           ☰
         </button>
@@ -35,39 +38,44 @@ function PacienteSidebar() {
           {aberto ? '←' : '→'}
         </button>
 
-        {aberto && (
-          <ul className="menu">
-            <li>
-              <NavLink
-                to="/paciente"
-                className={({ isActive }) => (isActive ? 'ativo' : '')}
-              >
-                🏠 <span>Início</span>
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/paciente/orientacoes"
-                className={({ isActive }) => (isActive ? 'ativo' : '')}
-              >
-                📖 <span>Orientações</span>
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to="/paciente/treinos/1"
-                className={({ isActive }) => (isActive ? 'ativo' : '')}
-              >
-                💪 <span>Treinos</span>
-              </NavLink>
-            </li>
-                        <li>
-              <NavLink to="/perfil" className={({ isActive }) => (isActive ? 'ativo' : '')}>
-                👤 <span>Perfil</span>
-              </NavLink>
-            </li>
-          </ul>
-        )}
+        <ul className="menu">
+          <li>
+            <NavLink
+              to="/paciente"
+              className={({ isActive }) => (isActive ? 'ativo' : '')}
+            >
+              <House size={20} />
+              {aberto && <span>Início</span>}
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="/paciente/orientacoes"
+              className={({ isActive }) => (isActive ? 'ativo' : '')}
+            >
+              <File size={20} />
+              {aberto && <span>Orientações</span>}
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="/paciente/historico"
+              className={({ isActive }) => (isActive ? 'ativo' : '')}
+            >
+              <Dumbbell size={20} />
+              {aberto && <span>Treinos</span>}
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="/perfil"
+              className={({ isActive }) => (isActive ? 'ativo' : '')}
+            >
+              <UserPen size={20} />
+              {aberto && <span>Perfil</span>}
+            </NavLink>
+          </li>
+        </ul>
       </div>
     </>
   );

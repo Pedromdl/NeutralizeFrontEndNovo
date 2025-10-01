@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { House, File, Dumbbell, Cog, UserPen, X } from "lucide-react";
+import { House, File, Dumbbell, Cog, UserPen, CircleX } from "lucide-react";
 import BottomSheetModal from "../BottomSheetModal";
 import "../css/BottomMenu.css";
 import Logo from '../../images/logo3.png';
@@ -62,7 +62,7 @@ function PacienteBottomMenu() {
           </li>
           <li>
             <button onClick={() => setIsOpen(false)} className="modal-btn">
-              <X size={18} style={{ marginRight: '8px' }} />
+              <CircleX size={18} style={{ marginRight: '8px' }} />
               Fechar
             </button>
           </li>

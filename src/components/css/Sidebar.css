@@ -12,7 +12,7 @@
 }
 
 .sidebar.fechada {
-  width: 20px;
+  width: 60px;
 }
 
 .botao-toggle-global {
@@ -116,7 +116,7 @@
   border-radius: 6px;
   transition: background-color 0.3s, transform 0.1s;
   font-weight: 600;
-  font-size: 15px;
+  font-size: 12px;
 }
 
 .menu li a:hover {

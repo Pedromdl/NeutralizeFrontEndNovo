@@ -81,6 +81,18 @@ export default function DashboardPaciente() {
         </Card>
       </div>
 
+            {/* 🔹 Botão de Atalho Rápido para Treino */}
+      <div style={{ marginBottom: "16px", textAlign: "center", width: "100%" }}>
+        <button
+          onClick={() => ultimaSecaoId && navigate(`/paciente/secao/${ultimaSecaoId}`)}
+          disabled={!ultimaSecaoId}
+          className="btn-atalho-treino"
+        >
+          <Dumbbell size={24} />
+          <span>Atalho rápido para treino</span>
+        </button>
+      </div>
+
       <Card size="md">
         <DayPicker
           fromDate={new Date(new Date().getFullYear(), new Date().getMonth(), 1)}
@@ -92,18 +104,6 @@ export default function DashboardPaciente() {
           locale={ptBR}
         />
       </Card>
-
-      {/* 🔹 Botão de Atalho Rápido para Treino */}
-      <div style={{ marginTop: "16px", textAlign: "center", width: "100%" }}>
-        <button
-          onClick={() => ultimaSecaoId && navigate(`/paciente/secao/${ultimaSecaoId}`)}
-          disabled={!ultimaSecaoId}
-          className="btn-atalho-treino"
-        >
-          <Dumbbell size={24} />
-          <span>Atalho rápido para treino</span>
-        </button>
-      </div>
 
     </div>
   );

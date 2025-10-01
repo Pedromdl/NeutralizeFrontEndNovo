@@ -28,7 +28,7 @@ export default function useFuncaoCalendario() {
   const { data: eventosApi = [] } = useQuery(
     ['eventos'],
     async () => {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/eventos/`);
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/eventosagenda/`);
       return response.data;
     },
     {
@@ -54,9 +54,9 @@ export default function useFuncaoCalendario() {
   const salvarEdicaoMutation = useMutation(
     async (dados) => {
       if (dados.id) {
-        return axios.put(`${import.meta.env.VITE_API_URL}/api/eventos/${dados.id}/`, dados);
+        return axios.put(`${import.meta.env.VITE_API_URL}/api/eventosagenda/${dados.id}/`, dados);
       } else {
-        return axios.post(`${import.meta.env.VITE_API_URL}/api/eventos/`, dados);
+        return axios.post(`${import.meta.env.VITE_API_URL}/api/eventosagenda/`, dados);
       }
     },
     {
@@ -66,7 +66,7 @@ export default function useFuncaoCalendario() {
 
   // 🔹 Mutação para excluir evento
   const excluirEventoMutation = useMutation(
-    async (id) => axios.delete(`${import.meta.env.VITE_API_URL}/api/eventos/${id}/`),
+    async (id) => axios.delete(`${import.meta.env.VITE_API_URL}/api/eventosagenda/${id}/`),
     {
       onSuccess: () => queryClient.invalidateQueries(['eventos']),
     }
