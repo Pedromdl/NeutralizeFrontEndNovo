@@ -45,8 +45,10 @@ export default function useFuncaoCalendario() {
     end: ev.hora_fim ? `${ev.data}T${ev.hora_fim}` : undefined,
     extendedProps: { ...ev },
     color:
-      ev.status === 'Realizado' ? '#b7de42' :
-      ev.status === 'Confirmado' ? '#25CED1' :
+      ev.status === 'realizado' ? '#b7de42' :
+      ev.status === 'confirmado' ? '#25CED1' :
+      ev.status === 'cancelado' ? '#FF5C5C' :
+
       'grey',
   }));
 
@@ -106,7 +108,7 @@ export default function useFuncaoCalendario() {
       paciente: null,
       paciente_nome: '',
       tipo: '',
-      status: 'Pendente',
+      status: 'pendente',
       data,
       hora_inicio,
       hora_fim,
@@ -120,6 +122,8 @@ export default function useFuncaoCalendario() {
     setEventoSelecionado(null);
     setModalAberto(true);
   };
+
+  
 
   const fecharModal = () => {
     setModalAberto(false);

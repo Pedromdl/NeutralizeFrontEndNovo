@@ -1,16 +1,21 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import '../css/Sidebar.css';
 import { NavLink } from 'react-router-dom';
 import Logo from '../../images/logo2.png';
 
 // 🔹 Ícones do lucide-react
-import { House, Users, BarChart3, FileText, CalendarDays, Settings } from 'lucide-react';
+import { House, Users, BarChart3, FileText, CalendarDays, Settings, DollarSign } from 'lucide-react';
+
+// 🔹 Contexto de autenticação
+import { AuthContext } from '../../context/AuthContext';
 
 function Sidebar() {
+  const { user } = useContext(AuthContext); // pega o usuário logado
+  console.log('Usuário logado:', user); // 🔹 veja o que está chegando
+
   const [aberto, setAberto] = useState(true);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
-  // Detectar resize para saber se é mobile
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener('resize', handleResize);
@@ -35,7 +40,6 @@ function Sidebar() {
           {aberto ? '←' : '→'}
         </button>
 
-        {/* 🔹 Logo só aparece quando está aberto */}
         {aberto && (
           <div className="sidebar-logo">
             <img src={Logo} alt="Logo" />
@@ -73,6 +77,17 @@ function Sidebar() {
               {aberto && <span>Agenda</span>}
             </NavLink>
           </li>
+
+          {/* 🔹 Financeiro só aparece se is_staff */}
+          {user?.is_staff && (
+            <li>
+              <NavLink to="/financeiro" className={({ isActive }) => (isActive ? 'ativo' : '')}>
+                <DollarSign size={20} />
+                {aberto && <span>Financeiro</span>}
+              </NavLink>
+            </li>
+          )}
+
           <li>
             <NavLink to="/configuracoes" className={({ isActive }) => (isActive ? 'ativo' : '')}>
               <Settings size={20} />

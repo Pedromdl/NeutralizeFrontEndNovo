@@ -22,7 +22,7 @@ export default function OrientacoesComPastas({ usuarioId }) {
   } = usePastas(usuarioId);
 
   // 🔹 Navegação
-  const entrarNaPasta = (pasta) => navigate(`/pastas/${pasta.id}`);
+  const entrarNaPasta = (pasta) => navigate(`/pastas/${pasta.id}`, { state: { usuarioId } });
   const voltarLista = () => setPastaSelecionada(null);
   const abrirSecao = (secaoId) => navigate(`/pastas/${secaoId}`);
 
@@ -48,6 +48,7 @@ export default function OrientacoesComPastas({ usuarioId }) {
           <button className="black" onClick={() => setModalPastaAberto(true)}>
             + Criar Pasta
           </button>
+          
 
           {modalPastaAberto && (
             <div style={modalStyle}>
