@@ -247,6 +247,11 @@ body {
   /* padrão desktop */
 }
 
+.fc .fc-timegrid-slot {
+  border-top: 1px solid #e5e7eb;
+  height: 3rem;
+  /* linhas horizontais mais claras */
+}
 
 button {
   padding: 0.5rem 1rem;

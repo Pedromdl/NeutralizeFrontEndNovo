@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 
 export default function useFuncaoCalendario() {
@@ -24,33 +24,33 @@ export default function useFuncaoCalendario() {
     responsavel: '',
   });
 
-  // 🔹 Busca eventos com React Query
-  const { data: eventosApi = [] } = useQuery(
-    ['eventos'],
-    async () => {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/eventosagenda/`);
-      return response.data;
-    },
-    {
-      staleTime: 1000 * 60 * 5,
-      cacheTime: 1000 * 60 * 10,
-    }
-  );
+  // 🔹 Eventos antigos (desativados)
+  // const { data: eventosApi = [] } = useQuery(
+  //   ['eventos'],
+  //   async () => {
+  //     const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/eventosagenda/`);
+  //     return response.data;
+  //   },
+  //   {
+  //     staleTime: 1000 * 60 * 5,
+  //     cacheTime: 1000 * 60 * 10,
+  //   }
+  // );
 
   // 🔹 Formata eventos para o calendário
-  const eventos = eventosApi.map(ev => ({
-    id: ev.id.toString(),
-    title: `${ev.paciente_nome || ev.paciente}`,
-    start: `${ev.data}T${ev.hora_inicio}`,
-    end: ev.hora_fim ? `${ev.data}T${ev.hora_fim}` : undefined,
-    extendedProps: { ...ev },
-    color:
-      ev.status === 'realizado' ? '#b7de42' :
-      ev.status === 'confirmado' ? '#25CED1' :
-      ev.status === 'cancelado' ? '#FF5C5C' :
-
-      'grey',
-  }));
+  // Comentei, será usado diretamente pelo FullCalendar via fetch
+  // const eventos = eventosApi.map(ev => ({
+  //   id: ev.id.toString(),
+  //   title: `${ev.paciente_nome || ev.paciente}`,
+  //   start: `${ev.data}T${ev.hora_inicio}`,
+  //   end: ev.hora_fim ? `${ev.data}T${ev.hora_fim}` : undefined,
+  //   extendedProps: { ...ev },
+  //   color:
+  //     ev.status === 'realizado' ? '#b7de42' :
+  //     ev.status === 'confirmado' ? '#25CED1' :
+  //     ev.status === 'cancelado' ? '#FF5C5C' :
+  //     'grey',
+  // }));
 
   // 🔹 Mutação para salvar ou editar evento
   const salvarEdicaoMutation = useMutation(
@@ -123,8 +123,6 @@ export default function useFuncaoCalendario() {
     setModalAberto(true);
   };
 
-  
-
   const fecharModal = () => {
     setModalAberto(false);
     setEventoSelecionado(null);
@@ -176,7 +174,8 @@ export default function useFuncaoCalendario() {
   };
 
   return {
-    eventos,
+    // 🔹 Removemos eventos estáticos; FullCalendar chamará via fetch
+    // eventos,
     modalAberto,
     eventoSelecionado,
     editando,

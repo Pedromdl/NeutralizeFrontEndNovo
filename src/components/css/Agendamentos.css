@@ -1,160 +1,104 @@
+/* Overlay do modal */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0,0,0,0.5);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
 }
 
-/* Modal em si */
-.google-calendar-modal {
-  background: white;
-  border-radius: 8px;
-  padding: 20px 30px;
-  width: 400px;
-  max-width: 90%;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
 
-  /* Alinhar conteúdo à esquerda */
-  text-align: left;
+/* Modal principal */
+.google-calendar-modal {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px 25px;
+  width: 380px;
+  max-width: 90%;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 10px;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.3s ease;
 }
 
+/* Pequena animação ao hover */
+.google-calendar-modal:hover {
+  transform: translateY(-1px);
+}
+
+/* Top bar com ícones */
 .top-bar {
   display: flex;
   justify-content: flex-end;
+  gap: 12px;
+  margin-bottom: 10px;
 }
 
-/* Container dos ícones */
-.icons {
-  display: flex;
-  gap: 16px; /* Espaço entre os ícones */
-}
-
-.icon:hover {
-  color: #b7de42;
-}
-
-.icon {
+.icons .icon {
+  margin-inline: 8px;
   cursor: pointer;
   color: #555;
-  font-size: 20px;
-  transition: color 0.2s;
+  font-size: 1.25em;
+  transition: all 0.2s ease;
 }
 
-.paciente-nome {
+.icons .icon:hover {
+  color: #b7de42;
+  transform: scale(1.15);
+}
+
+/* Linhas de informação com ícone */
+.google-calendar-modal h3 {
+  display: flex;
   margin: 0;
-  font-weight: 600;
-  font-size: 1.4rem;
+  font-size: 1.25rem;
+  color: #111;
+}
+.google-calendar-modal p {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 0.75rem;
   color: #222;
 }
 
-
-.data-hora, .recorrencia, .responsavel {
-  margin: 0;
+/* Destaque para o nome do paciente */
+.paciente-nome {
+  font-weight: 700;
   font-size: 1rem;
+}
+
+/* Info adicional */
+.data-hora,
+.recorrencia,
+.responsavel,
+.status {
   color: #444;
-}
-
-.botao-link {
-  background: #eaf1fb;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-size: 14px;
-  cursor: pointer;
-  margin-bottom: 12px;
-}
-
-.lembretes p {
-  margin: 4px 0;
-  font-size: 14px;
-  color: #333;
-}
-
-.fc-event {
-  padding: 6px 8px !important;       /* Espaçamento interno */
-  font-size: 0.85rem !important;     /* Fonte um pouco menor, mais legível */
-  line-height: 1.2 !important;       /* Melhor espaçamento das linhas */
-  white-space: normal !important;    /* Permitir quebra de linha no texto */
-  overflow: visible !important;      /* Evitar que o conteúdo seja cortado */
-  border-radius: 6px !important;     /* Deixar com cantos arredondados */
-  box-sizing: border-box !important;
-}
-
-.fc .fc-timegrid-slot {
-    border-bottom: 0px;
-    height: 3rem;
-}
-
-.form-group {
-  margin-bottom: 0.25rem !important;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 0.25rem;
   font-weight: 500;
-  color: #ccc;
 }
 
-.form-input,
-.form-select {
-  width: 100%;
-  padding: 0.5rem 0.75rem;
-  background-color: #fff;
-  border: 1px solid #444;
-  border-radius: 0.375rem;
-  color: black;
-  font-size: 1rem;
-  transition: border 0.2s, box-shadow 0.2s;
-}
-
-.form-input:focus,
-.form-select:focus {
-  border-color: #22d3ee;
-  box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.5);
-  outline: none;
-}
-
-.user-search input {
-  background: white !important;
-}
-
-.user-search.modal input {
-    width: 100%;
-    height: 25px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 1rem;
-    transition: border-color 0.3s;
-}
-
-.user-search.modal input:focus {
-    border-color: #b7de42;
-    outline: none;
-}
-
+/* Botões de ação */
 .btn {
   padding: 8px 16px;
   border: none;
-  color: white;
-  cursor: pointer;
+  border-radius: 6px;
   font-weight: 600;
-  border-radius: 4px;
-  margin-right: 8px;
+  cursor: pointer;
+  margin-top: 10px;
   transition: background-color 0.3s ease;
 }
 
 .btn-save {
-  background-color: #28a745; /* verde */
+  background-color: #28a745;
+  color: white;
 }
 
 .btn-save:hover {
@@ -162,30 +106,49 @@
 }
 
 .btn-cancel {
-  background-color: #dc3545 !important; /* vermelho */
+  background-color: #dc3545;
+  color: white;
 }
 
 .btn-cancel:hover {
-  background-color: #c82333 !important;
+  background-color: #c82333;
 }
 
+/* Inputs e selects do formulário */
+.form-group {
+  margin-bottom: 8px;
+}
+
+.form-input,
+.form-select {
+  width: 100%;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 0.95rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-input:focus,
+.form-select:focus {
+  border-color: #22d3ee;
+  box-shadow: 0 0 0 2px rgba(34,211,238,0.4);
+  outline: none;
+}
+
+/* Checkbox inline */
+.form-group label input[type="checkbox"] {
+  margin-right: 6px;
+}
+
+/* Responsividade */
 @media (max-width: 768px) {
-
-  .fc {
-    font-size: 6px;
-
-  }
-
-  .fc .fc-toolbar.fc-header-toolbar {
-    gap: 10px;
-    align-items: center;
-  }
-
   .google-calendar-modal {
     width: 95vw;
     max-height: 90vh;
     overflow-y: auto;
     padding: 16px;
+    margin: 20px;
   }
 
   .form-row {
@@ -194,16 +157,112 @@
 
   .form-group {
     width: 100%;
-    margin-bottom: 12px;
   }
 
-  .btn-save {
+  .btn-save, .btn-cancel {
     width: 100%;
   }
+
+    /* 🔹 Oculta o texto padrão dos botões */
+/* 🔹 Oculta o texto apenas dos botões de visualização */
+  .fc .fc-dayGridMonth-button,
+  .fc .fc-timeGridWeek-button,
+  .fc .fc-timeGridThreeDay-button,
+  .fc .fc-timeGridDay-button {
+    font-size: 0 !important;
+    position: relative;
+    min-width: 32px;
+    padding: 6px 8px;
+  }
+
+  .fc .fc-toolbar.fc-header-toolbar {
+  margin-bottom: 15px;
+  font-size: 0.5rem;
+  }
+
+    /* 🔹 Letras específicas para cada botão */
+  .fc .fc-dayGridMonth-button::after {
+    content: "M";
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .fc .fc-timeGridWeek-button::after {
+    content: "S";
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .fc .fc-timeGridThreeDay-button::after {
+    content: "3D";
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .fc .fc-timeGridDay-button::after {
+    content: "D";
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .fc .fc-toolbar-title {
+  display: none !important;
 }
 
-@media (max-width: 768px) {
-  .fc-view-harness {
-    overflow-x: auto;
+  .fc .fc-col-header-cell-cushion {
+    font-size: 0.6rem !important;
   }
 }
+
+
+/* 🔹 Estilo dos eventos no FullCalendar */
+.fc-event {
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 4px 6px !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+  color: #fff !important;
+  overflow: hidden;
+}
+
+/* 🔹 Para manter o texto centralizado e limpo */
+.fc-event-main-frame {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+}
+
+/* 🔹 Tempo do evento (hora) */
+.fc-event-time {
+  font-size: 0.65rem !important;
+  opacity: 0.9;
+  margin-bottom: 2px;
+}
+
+/* 🔹 Nome do paciente (título) */
+.fc-event-title {
+  font-size: 0.8rem !important;
+  white-space: normal !important;
+  line-height: 1.1;
+}
+
+/* 🔹 Ajuste para não “encolher” os eventos */
+.fc-timegrid-event-harness-inset {
+  margin: 0 2px;
+}
+
+/* 🔹 Retira qualquer sombra ou borda dupla do container do evento */
+.fc-timegrid-event {
+  border: none !important;
+}
+
+/* 🔹 Em hover, destaca levemente */
+.fc-event:hover {
+  filter: brightness(1.1);
+  transform: scale(1.02);
+  transition: all 0.15s ease;
+}
+
