@@ -1,11 +1,8 @@
 import { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 
-export default function useFuncaoCalendario() {
-  const queryClient = useQueryClient();
-
-  // 🔹 Estado do modal e formulário
+export default function useFuncaoCalendario(calendarRef) {
   const [modalAberto, setModalAberto] = useState(false);
   const [eventoSelecionado, setEventoSelecionado] = useState(null);
   const [editando, setEditando] = useState(false);
@@ -24,35 +21,7 @@ export default function useFuncaoCalendario() {
     responsavel: '',
   });
 
-  // 🔹 Eventos antigos (desativados)
-  // const { data: eventosApi = [] } = useQuery(
-  //   ['eventos'],
-  //   async () => {
-  //     const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/eventosagenda/`);
-  //     return response.data;
-  //   },
-  //   {
-  //     staleTime: 1000 * 60 * 5,
-  //     cacheTime: 1000 * 60 * 10,
-  //   }
-  // );
-
-  // 🔹 Formata eventos para o calendário
-  // Comentei, será usado diretamente pelo FullCalendar via fetch
-  // const eventos = eventosApi.map(ev => ({
-  //   id: ev.id.toString(),
-  //   title: `${ev.paciente_nome || ev.paciente}`,
-  //   start: `${ev.data}T${ev.hora_inicio}`,
-  //   end: ev.hora_fim ? `${ev.data}T${ev.hora_fim}` : undefined,
-  //   extendedProps: { ...ev },
-  //   color:
-  //     ev.status === 'realizado' ? '#b7de42' :
-  //     ev.status === 'confirmado' ? '#25CED1' :
-  //     ev.status === 'cancelado' ? '#FF5C5C' :
-  //     'grey',
-  // }));
-
-  // 🔹 Mutação para salvar ou editar evento
+  // 🔹 Salvar ou editar evento
   const salvarEdicaoMutation = useMutation(
     async (dados) => {
       if (dados.id) {
@@ -62,19 +31,43 @@ export default function useFuncaoCalendario() {
       }
     },
     {
-      onSuccess: () => queryClient.invalidateQueries(['eventos']),
+      onSuccess: (res, dados) => {
+        const novoEvento = {
+          id: res.data.id.toString(),
+          title: dados.paciente_nome || 'Horário ocupado',
+          start: `${dados.data}T${dados.hora_inicio}`,
+          end: dados.hora_fim ? `${dados.data}T${dados.hora_fim}` : undefined,
+          extendedProps: dados,
+          backgroundColor:
+            dados.status?.toLowerCase() === 'realizado' ? '#b7de42' :
+            dados.status?.toLowerCase() === 'confirmado' ? '#25CED1' :
+            dados.status?.toLowerCase() === 'cancelado' ? '#FF5C5C' :
+            'grey',
+          borderColor: 'transparent',
+        };
+
+        if (calendarRef?.current) {
+          const eventoExistente = calendarRef.current.getApi().getEventById(novoEvento.id);
+          if (eventoExistente) eventoExistente.remove();
+          calendarRef.current.getApi().addEvent(novoEvento);
+        }
+      },
     }
   );
 
-  // 🔹 Mutação para excluir evento
+  // 🔹 Excluir evento
   const excluirEventoMutation = useMutation(
     async (id) => axios.delete(`${import.meta.env.VITE_API_URL}/api/eventosagenda/${id}/`),
     {
-      onSuccess: () => queryClient.invalidateQueries(['eventos']),
+      onSuccess: (_, id) => {
+        if (calendarRef?.current) {
+          const evento = calendarRef.current.getApi().getEventById(id.toString());
+          if (evento) evento.remove();
+        }
+      },
     }
   );
 
-  // 🔹 Ações do modal
   const handleClickEvento = (info) => {
     const ev = info.event.extendedProps;
     setEventoSelecionado(ev);
@@ -97,10 +90,9 @@ export default function useFuncaoCalendario() {
   };
 
   const handleDateClick = (info) => {
-    const dataHora = info.date;
     const data = info.dateStr.split('T')[0];
     const hora_inicio = info.dateStr.split('T')[1]?.slice(0, 5) || '08:00';
-    const fim = new Date(dataHora.getTime() + 60 * 60 * 1000);
+    const fim = new Date(info.date.getTime() + 60 * 60 * 1000);
     const hora_fim = fim.toTimeString().slice(0, 5);
 
     setForm({
@@ -129,7 +121,6 @@ export default function useFuncaoCalendario() {
     setEditando(false);
   };
 
-  // 🔹 Salvar ou editar evento
   const salvarEdicao = () => {
     const dadosParaEnviar = {
       ...form,
@@ -139,18 +130,11 @@ export default function useFuncaoCalendario() {
     fecharModal();
   };
 
-  // 🔹 Excluir evento
-  const excluirEvento = () => {
-    if (!eventoSelecionado?.id) return;
-
-    const confirmar = window.confirm('Tem certeza que deseja excluir este evento?');
-    if (!confirmar) return;
-
-    excluirEventoMutation.mutate(eventoSelecionado.id);
+  const excluirEvento = (id) => {
+    excluirEventoMutation.mutate(id || eventoSelecionado.id);
     fecharModal();
   };
 
-  // 🔹 Input change
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
 
@@ -174,8 +158,6 @@ export default function useFuncaoCalendario() {
   };
 
   return {
-    // 🔹 Removemos eventos estáticos; FullCalendar chamará via fetch
-    // eventos,
     modalAberto,
     eventoSelecionado,
     editando,

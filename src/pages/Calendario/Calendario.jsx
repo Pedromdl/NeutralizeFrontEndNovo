@@ -1,23 +1,35 @@
-import { useCallback, useState, useRef } from 'react';
+import { useCallback, useState, useRef, useEffect } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import ptBr from '@fullcalendar/core/locales/pt-br';
-import Card from '../../components/Card';
 
-export default function Calendario({ onEventClick, onDateClick }) {
+export default function Calendario({ onEventClick, onDateClick, calendarRef }) {
   const [loading, setLoading] = useState(false);
+  const [initialView, setInitialView] = useState('timeGridWeek');
 
-  // 🔹 Guardar intervalo de eventos já carregado
   const cacheIntervalo = useRef({ start: null, end: null });
   const cacheEventos = useRef([]);
+
+  // 🔹 Detecta se é mobile para usar 3 dias
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 768) {
+        setInitialView('timeGridThreeDay');
+      } else {
+        setInitialView('timeGridWeek');
+      }
+    };
+
+    handleResize(); // executa uma vez na montagem
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const fetchEventos = useCallback(async (fetchInfo, successCallback, failureCallback) => {
     try {
       setLoading(true);
-
-      // 🔹 Checa se a data visível está fora do intervalo cacheado
       const visivelStart = new Date(fetchInfo.start);
       const visivelEnd = new Date(fetchInfo.end);
 
@@ -27,15 +39,12 @@ export default function Calendario({ onEventClick, onDateClick }) {
         visivelStart >= cacheIntervalo.current.start &&
         visivelEnd <= cacheIntervalo.current.end
       ) {
-        // ✅ Usar cache local
         successCallback(cacheEventos.current);
         return;
       }
 
-      // 🔹 Atualiza intervalo para 15 dias antes e depois da data visível
       const startDate = new Date(visivelStart);
       startDate.setDate(startDate.getDate() - 15);
-
       const endDate = new Date(visivelEnd);
       endDate.setDate(endDate.getDate() + 15);
 
@@ -65,7 +74,6 @@ export default function Calendario({ onEventClick, onDateClick }) {
         borderColor: 'transparent',
       }));
 
-      // 🔹 Atualiza cache
       cacheIntervalo.current = { start: startDate, end: endDate };
       cacheEventos.current = eventosFormatados;
 
@@ -79,16 +87,19 @@ export default function Calendario({ onEventClick, onDateClick }) {
   }, []);
 
   return (
-    <Card title="Agenda Geral" size="lg">
+    <div>
+      <h2>Agenda Geral</h2>
       {loading && <p style={{ padding: '8px', color: '#666' }}>Carregando eventos...</p>}
 
       <FullCalendar
+        ref={calendarRef}
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-        initialView="timeGridWeek"
+        initialView={initialView}
         slotDuration="01:00:00"
         slotLabelInterval="01:00"
         slotMinTime="06:00:00"
         slotMaxTime="24:00:00"
+        allDaySlot={false}
         headerToolbar={{
           left: 'prev,next today',
           center: 'title',
@@ -112,6 +123,6 @@ export default function Calendario({ onEventClick, onDateClick }) {
         }}
         height="auto"
       />
-    </Card>
+    </div>
   );
 }

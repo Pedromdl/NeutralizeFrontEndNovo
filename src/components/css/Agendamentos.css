@@ -58,7 +58,7 @@
 .google-calendar-modal h3 {
   display: flex;
   margin: 0;
-  font-size: 1.25rem;
+  font-size: .065rem;
   color: #111;
 }
 .google-calendar-modal p {
@@ -142,76 +142,67 @@
 }
 
 /* Responsividade */
+/* Responsividade */
+/* ===== Ajuste fino para mobile ===== */
 @media (max-width: 768px) {
-  .google-calendar-modal {
-    width: 95vw;
-    max-height: 90vh;
-    overflow-y: auto;
-    padding: 16px;
-    margin: 20px;
+  .fc {
+    font-size: 10px !important;
+    width: 100% !important;
+    max-width: 360px;
+  }
+  /* Ajuste dos eventos em si */
+  .fc-event {
+    font-size: 8px !important;
+    padding: 1px 2px !important;
+    border-radius: 4px !important;
+    line-height: 1.1 !important;
   }
 
-  .form-row {
-    flex-direction: column;
+  /* Reduz o cabeçalho e espaçamentos */
+  .fc-toolbar {
+    flex-direction: column !important;
+    gap: 4px !important;
   }
 
-  .form-group {
-    width: 100%;
+  .fc-col-header-cell {
+    font-size: 9px !important;
+    padding: 2px !important;
   }
 
-  .btn-save, .btn-cancel {
-    width: 100%;
-  }
-
-    /* 🔹 Oculta o texto padrão dos botões */
-/* 🔹 Oculta o texto apenas dos botões de visualização */
-  .fc .fc-dayGridMonth-button,
-  .fc .fc-timeGridWeek-button,
-  .fc .fc-timeGridThreeDay-button,
-  .fc .fc-timeGridDay-button {
-    font-size: 0 !important;
-    position: relative;
-    min-width: 32px;
-    padding: 6px 8px;
-  }
-
-  .fc .fc-toolbar.fc-header-toolbar {
-  margin-bottom: 15px;
-  font-size: 0.5rem;
-  }
-
-    /* 🔹 Letras específicas para cada botão */
-  .fc .fc-dayGridMonth-button::after {
-    content: "M";
-    font-size: 12px;
-    font-weight: 600;
-  }
-
-  .fc .fc-timeGridWeek-button::after {
-    content: "S";
-    font-size: 12px;
-    font-weight: 600;
-  }
-
-  .fc .fc-timeGridThreeDay-button::after {
-    content: "3D";
-    font-size: 12px;
-    font-weight: 600;
-  }
-
-  .fc .fc-timeGridDay-button::after {
-    content: "D";
-    font-size: 12px;
-    font-weight: 600;
-  }
-
-  .fc .fc-toolbar-title {
-  display: none !important;
+  /* ======== Controle da largura do eixo e área dos eventos ======== */
+.fc-timegrid-axis {
+  width: 15px !important;      /* 🔹 Reduz largura da coluna de horários */
+  min-width: 15px !important;
+  max-width: 15px !important;
+  text-align: right !important;
+  padding-right: 2px !important;
+  font-size: 10px !important;
 }
 
-  .fc .fc-col-header-cell-cushion {
-    font-size: 0.6rem !important;
-  }
+/* 🔹 Faz o grid dos eventos ocupar o resto do espaço */
+.fc-timegrid-cols {
+  width: calc(100% - 35px) !important;
+}
+
+/* 🔹 (opcional) deixar os eventos um pouco mais largos visualmente */
+.fc-event {
+  margin: 1px 2px !important;
+  padding: 2px !important;
+  font-size: 10px !important;
+}
+
+/* 🔹 Tempo do evento (hora) */
+.fc-event-time {
+  font-size: 0.65rem !important;
+  opacity: 0.9;
+  margin-bottom: 2px;
+}
+
+.fc .fc-toolbar-title {
+  font-size: 0.8rem !important;
+  font-weight: 700 !important;
+}
+
 }
 
 
@@ -227,21 +218,6 @@
   overflow: hidden;
 }
 
-/* 🔹 Para manter o texto centralizado e limpo */
-.fc-event-main-frame {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  height: 100%;
-}
-
-/* 🔹 Tempo do evento (hora) */
-.fc-event-time {
-  font-size: 0.65rem !important;
-  opacity: 0.9;
-  margin-bottom: 2px;
-}
-
 /* 🔹 Nome do paciente (título) */
 .fc-event-title {
   font-size: 0.8rem !important;
@@ -249,10 +225,7 @@
   line-height: 1.1;
 }
 
-/* 🔹 Ajuste para não “encolher” os eventos */
-.fc-timegrid-event-harness-inset {
-  margin: 0 2px;
-}
+
 
 /* 🔹 Retira qualquer sombra ou borda dupla do container do evento */
 .fc-timegrid-event {
@@ -264,5 +237,32 @@
   filter: brightness(1.1);
   transform: scale(1.02);
   transition: all 0.15s ease;
+}
+
+/* 🔹 Faz o grid de dias ocupar largura fixa maior */
+.fc-timegrid .fc-scrollgrid {
+  min-width: auto !important; /* Aumente este valor para mais colunas visíveis */
+  min-height: auto !important;
+}
+
+/* 🔹 Faz o container permitir rolagem horizontal se necessário */
+.fc {
+  overflow-x: auto !important;
+}
+
+/* 🔹 Ajuste da largura dos eventos e colunas */
+.fc-timegrid-cols {
+  width: auto !important;
+}
+
+.fc-timegrid-col {
+  min-width: 50px !important; /* aumenta a largura de cada dia */
+}
+
+/* 🔹 Ajuste dos eventos para acompanhar o novo tamanho */
+.fc-event {
+  font-size: 0.85rem !important;
+  padding: 4px 6px !important;
+  border-radius: 6px !important;
 }
 

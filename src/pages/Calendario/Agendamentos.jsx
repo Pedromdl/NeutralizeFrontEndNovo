@@ -1,10 +1,15 @@
 import { Edit, Trash2, MoreHorizontal, User, Calendar, Repeat, CheckCircle } from 'lucide-react';
+import React, { useRef, useState, useEffect } from 'react';
+
 import UserSearch from '../../components/UserSearch';
 import Calendario from './Calendario';
 import useFuncaoCalendario from './useFuncaoCalendario';
 import '../../components/css/Agendamentos.css';
 
 function Agendamentos() {
+
+  const calendarRef = useRef(null); // 🔹 Referência para o calendário
+
   const {
     modalAberto,
     eventoSelecionado,
@@ -18,14 +23,15 @@ function Agendamentos() {
     handleInputChange,
     salvarEdicao,
     setEditando,
-    setEventoSelecionado,
-  } = useFuncaoCalendario();
+
+  } = useFuncaoCalendario(calendarRef);
 
   return (
     <div className="conteudo">
       <Calendario
         onEventClick={handleClickEvento}
         onDateClick={handleDateClick}
+        calendarRef={calendarRef}
       />
 
       {modalAberto && (
