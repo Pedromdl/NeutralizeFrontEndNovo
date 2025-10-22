@@ -11,6 +11,7 @@ export default function Calendario({ onEventClick, onDateClick, calendarRef }) {
 
   const cacheIntervalo = useRef({ start: null, end: null });
   const cacheEventos = useRef([]);
+  window.__cacheEventos = cacheEventos; // 🔹 Torna o cache acessível ao hook
 
   // 🔹 Detecta se é mobile para usar 3 dias
   useEffect(() => {

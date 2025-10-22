@@ -21,36 +21,70 @@ export default function useFuncaoCalendario(calendarRef) {
     responsavel: '',
   });
 
-  // 🔹 Salvar ou editar evento
+  // 🔹 Helper para criar objetos Date válidos
+  const criarDate = (data, hora) => {
+    if (!data || !hora) return null;
+    return new Date(`${data}T${hora}`);
+  };
+
+  // ✅ Salvar ou editar evento
   const salvarEdicaoMutation = useMutation(
-    async (dados) => {
-      if (dados.id) {
-        return axios.put(`${import.meta.env.VITE_API_URL}/api/eventosagenda/${dados.id}/`, dados);
+    async (dadosParaEnviar) => {
+      if (dadosParaEnviar.id) {
+        // Edição
+        return axios.put(
+          `${import.meta.env.VITE_API_URL}/api/eventosagenda/${dadosParaEnviar.id}/`,
+          dadosParaEnviar
+        );
       } else {
-        return axios.post(`${import.meta.env.VITE_API_URL}/api/eventosagenda/`, dados);
+        // Novo evento
+        return axios.post(
+          `${import.meta.env.VITE_API_URL}/api/eventosagenda/`,
+          dadosParaEnviar
+        );
       }
     },
     {
-      onSuccess: (res, dados) => {
-        const novoEvento = {
-          id: res.data.id.toString(),
-          title: dados.paciente_nome || 'Horário ocupado',
-          start: `${dados.data}T${dados.hora_inicio}`,
-          end: dados.hora_fim ? `${dados.data}T${dados.hora_fim}` : undefined,
-          extendedProps: dados,
-          backgroundColor:
-            dados.status?.toLowerCase() === 'realizado' ? '#b7de42' :
-            dados.status?.toLowerCase() === 'confirmado' ? '#25CED1' :
-            dados.status?.toLowerCase() === 'cancelado' ? '#FF5C5C' :
-            'grey',
-          borderColor: 'transparent',
-        };
+      onSuccess: (response, dadosParaEnviar) => {
+        fecharModal();
 
-        if (calendarRef?.current) {
-          const eventoExistente = calendarRef.current.getApi().getEventById(novoEvento.id);
-          if (eventoExistente) eventoExistente.remove();
-          calendarRef.current.getApi().addEvent(novoEvento);
+        const calendarApi = calendarRef?.current?.getApi();
+
+        // Corrige caso o backend retorne array
+        const novoEvento = Array.isArray(response.data)
+          ? response.data[0]
+          : response.data;
+
+        console.log("✅ Evento criado com sucesso:", novoEvento);
+
+        // Remove evento antigo se estiver editando
+        if (dadosParaEnviar.id) {
+          const eventoAntigo = calendarApi?.getEventById(dadosParaEnviar.id.toString());
+          eventoAntigo?.remove();
         }
+
+        // Adiciona evento visualmente no calendário
+        calendarApi?.addEvent({
+          id: novoEvento.id,
+          title: novoEvento.paciente_nome || 'Horário ocupado',
+          start: criarDate(novoEvento.data, novoEvento.hora_inicio),
+          end: criarDate(novoEvento.data, novoEvento.hora_fim),
+          allDay: false,
+          extendedProps: novoEvento,
+          backgroundColor:
+            novoEvento.status?.toLowerCase() === 'realizado' ? '#b7de42' :
+              novoEvento.status?.toLowerCase() === 'confirmado' ? '#25CED1' :
+                novoEvento.status?.toLowerCase() === 'cancelado' ? '#FF5C5C' :
+                  'grey',
+          borderColor: 'transparent',
+        });
+      },
+      onError: (error) => {
+        console.error("❌ Erro ao criar evento:", error.response?.data || error.message);
+      },
+
+      onError: (error) => {
+        console.error("❌ Erro ao criar evento:", error.response?.data || error.message);
       },
     }
   );
@@ -60,10 +94,9 @@ export default function useFuncaoCalendario(calendarRef) {
     async (id) => axios.delete(`${import.meta.env.VITE_API_URL}/api/eventosagenda/${id}/`),
     {
       onSuccess: (_, id) => {
-        if (calendarRef?.current) {
-          const evento = calendarRef.current.getApi().getEventById(id.toString());
-          if (evento) evento.remove();
-        }
+        const calendarApi = calendarRef?.current?.getApi();
+        const evento = calendarApi?.getEventById(id.toString());
+        evento?.remove();
       },
     }
   );
@@ -127,7 +160,6 @@ export default function useFuncaoCalendario(calendarRef) {
       paciente: form.paciente ? Number(form.paciente) : null,
     };
     salvarEdicaoMutation.mutate(dadosParaEnviar);
-    fecharModal();
   };
 
   const excluirEvento = (id) => {
@@ -144,13 +176,13 @@ export default function useFuncaoCalendario(calendarRef) {
       novaData.setHours(hora + 1, minuto);
       const novaHoraFim = novaData.toTimeString().slice(0, 5);
 
-      setForm(prev => ({
+      setForm((prev) => ({
         ...prev,
         hora_inicio: value,
         hora_fim: novaHoraFim,
       }));
     } else {
-      setForm(prev => ({
+      setForm((prev) => ({
         ...prev,
         [name]: type === 'checkbox' ? checked : value,
       }));
