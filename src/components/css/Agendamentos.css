@@ -23,9 +23,19 @@
   box-shadow: 0 8px 25px rgba(0,0,0,0.3);
   display: flex;
   flex-direction: column;
-  gap: 10px;
   font-family: 'Inter', sans-serif;
   transition: all 0.3s ease;
+  max-height: 80vh; /* limita a altura do modal */
+  overflow-y: auto; /* ativa scroll vertical interno */
+
+}
+
+@media (max-width: 728px) {
+  .google-calendar-modal {
+    padding: 15px 20px;
+    width: 220px;
+    
+  }
 }
 
 /* Pequena animação ao hover */
@@ -114,18 +124,23 @@
   background-color: #c82333;
 }
 
-/* Inputs e selects do formulário */
 .form-group {
-  margin-bottom: 8px;
+  margin-bottom: 0.25rem !important;
+}
+
+/* Inputs e selects do formulário */
+.form-group label {
+  font-weight: 600;
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
 }
 
 .form-input,
 .form-select {
   width: 100%;
-  padding: 0.4rem 0.6rem;
   border-radius: 6px;
   border: 1px solid #ccc;
-  font-size: 0.95rem;
+  font-size: 0.75rem;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 

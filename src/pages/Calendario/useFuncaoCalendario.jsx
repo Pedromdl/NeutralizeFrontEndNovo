@@ -38,11 +38,14 @@ export default function useFuncaoCalendario(calendarRef) {
         );
       } else {
         // Novo evento
+        const payload = { ...dadosParaEnviar };
+        delete payload.id; // 🚫 evita conflito de chave primária
         return axios.post(
           `${import.meta.env.VITE_API_URL}/api/eventosagenda/`,
-          dadosParaEnviar
+          payload
         );
       }
+
     },
     {
       onSuccess: (response, dadosParaEnviar) => {
@@ -82,10 +85,7 @@ export default function useFuncaoCalendario(calendarRef) {
       onError: (error) => {
         console.error("❌ Erro ao criar evento:", error.response?.data || error.message);
       },
-
-      onError: (error) => {
-        console.error("❌ Erro ao criar evento:", error.response?.data || error.message);
-      },
+      
     }
   );
 
