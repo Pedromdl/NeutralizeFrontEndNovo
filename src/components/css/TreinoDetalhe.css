@@ -1,0 +1,158 @@
+/* Container do título do treino */
+.treino-titulo-container {
+  position: relative;
+  width: 100%;
+}
+
+/* Título centralizado */
+.treino-titulo-texto {
+  display: block;
+  text-align: center;
+  width: 100%;
+}
+
+/* Input editável centralizado */
+.treino-titulo-input {
+  display: block;
+  margin: 0 auto;
+  text-align: center;
+  width: 80%;
+}
+
+/* Ícone de edição (lápis) */
+.treino-titulo-icone {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+/* Botões de expandir e editar */
+.treino-header-botoes {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+/* Wrapper da tabela de exercícios */
+.tabela-exercicios-wrapper {/* Container do título do treino */
+.treino-titulo-container {
+  position: relative;
+  width: 100%;
+}
+
+/* Título centralizado */
+.treino-titulo-texto {
+  display: block;
+  text-align: center;
+  width: 100%;
+  font-size: 1.2rem;
+  word-break: break-word; /* evita overflow em títulos longos */
+}
+
+/* Input editável centralizado */
+.treino-titulo-input {
+  display: block;
+  margin: 0 auto;
+  text-align: center;
+  width: 80%;
+  font-size: 1.1rem;
+  padding: 0.25rem 0.5rem;
+  box-sizing: border-box;
+}
+
+/* Ícone de edição (lápis) */
+.treino-titulo-icone {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+/* Botões de expandir e editar */
+.treino-header-botoes {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+  gap: 0.5rem;
+}
+
+/* Wrapper da tabela de exercícios */
+.tabela-exercicios-wrapper {
+  overflow-x: auto;
+  margin-top: 1rem;
+}
+
+/* Botão de adicionar exercício */
+.btn-adicionar-exercicio {
+  margin-top: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+}
+
+/* ================= Responsividade ================= */
+@media (max-width: 768px) {
+  .treino-titulo-texto,
+  .treino-titulo-input {
+    font-size: 1rem;
+    width: 90%;
+  }
+
+  .treino-titulo-icone {
+    right: 0.25rem;
+  }
+
+  .treino-header-botoes {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .btn-adicionar-exercicio {
+    width: 100%;
+    font-size: 0.9rem;
+  }
+
+  .tabela-exercicios {
+    font-size: 0.85rem;
+    min-width: 600px; /* força scroll horizontal se necessário */
+  }
+
+  .tabela-exercicios th,
+  .tabela-exercicios td {
+    padding: 0.3rem 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .treino-titulo-texto,
+  .treino-titulo-input {
+    font-size: 0.95rem;
+    width: 95%;
+  }
+
+  .treino-titulo-icone {
+    right: 0.15rem;
+  }
+
+  .treino-header-botoes {
+    gap: 0.3rem;
+  }
+
+  .tabela-exercicios th,
+  .tabela-exercicios td {
+    padding: 0.2rem 0.3rem;
+  }
+}
+
+  overflow-x: auto;
+  margin-top: 1rem;
+}
+
+/* Botão de adicionar exercício */
+.btn-adicionar-exercicio {
+  margin-top: 0.5rem;
+}

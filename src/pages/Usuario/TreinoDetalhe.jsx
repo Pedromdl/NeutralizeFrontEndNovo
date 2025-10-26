@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Card from '../../components/Card';
-import { Edit, X } from 'lucide-react'; // 🔹 ícones
+import "../../components/css/TreinoDetalhe.css";
+import { Edit, X, Check } from 'lucide-react'; // 🔹 ícones
 
 // 🔹 Modal para adicionar/editar exercício
 function ModalExercicio({ isOpen, onClose, exerciciosDisponiveis, onSalvar, exercicioAtual }) {
@@ -255,69 +256,117 @@ export default function TreinoDetalhe() {
       </Card>
 
       {treinosSecao.map(t => (
-        <Card key={t.id} title={t.nome || 'Treino sem nome'} size="al">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <button onClick={() =>
-              setTreinosSecao(
-                treinosSecao.map(tr => tr.id === t.id ? { ...tr, expandido: !tr.expandido } : tr)
-              )
-            }>
-              {t.expandido ? '▼' : '►'}
-            </button>
-            <button onClick={() => navigate(`/treinos/${t.id}/editar`)}>Editar</button>
-          </div>
-
-          {t.expandido && (
-            <div style={{ marginTop: '1rem' }}>
-              {t.exerciciosDoTreino.length > 0 ? (
-                <div className="tabela-exercicios-wrapper">
-                  <table className="tabela-exercicios">
-                    <thead>
-                      <tr>
-                        <th>Exercício</th>
-                        <th>Séries</th>
-                        <th>Repetições</th>
-                        <th>Carga</th>
-                        <th>Observação</th>
-                        <th>Ações</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {t.exerciciosDoTreino.map(ex => (
-                        <tr key={ex.id}>
-                          <td>{ex.orientacao_detalhes?.titulo}</td>
-                          <td>{ex.series_planejadas}</td>
-                          <td>{ex.repeticoes_planejadas}</td>
-                          <td>{ex.carga_planejada}</td>
-                          <td>{ex.observacao || '-'}</td>
-                          <td>
-                            <button 
-                              onClick={() => abrirModalEditar(ex, t)} 
-                              style={{ background: 'none', border: 'none', cursor: 'pointer', marginRight: '0.5rem' }}
-                            >
-                              <Edit size={18} />
-                            </button>
-                            <button 
-                              onClick={() => excluirExercicio(ex.id, t.id)} 
-                              style={{ background: 'none', border: 'none', cursor: 'pointer' }}
-                            >
-                              <X size={18} />
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              ) : (
-                <p>Nenhum exercício adicionado ainda.</p>
+  <Card 
+    key={t.id} 
+    title={
+      <div className="treino-titulo-container">
+        {t.editandoNome ? (
+          <input
+            type="text"
+            value={t.nome}
+            autoFocus
+            className="treino-titulo-input"
+            onChange={e => setTreinosSecao(
+              treinosSecao.map(tr => tr.id === t.id ? { ...tr, nome: e.target.value } : tr)
+            )}
+            onBlur={async () => {
+              try {
+                const res = await axios.patch(
+                  `${import.meta.env.VITE_API_URL}/api/orientacoes/treinos/${t.id}/`,
+                  { nome: t.nome }
+                );
+                setTreinosSecao(treinosSecao.map(tr => tr.id === t.id ? { ...tr, nome: res.data.nome, editandoNome: false } : tr));
+              } catch (err) {
+                console.error(err);
+              }
+            }}
+            onKeyDown={e => { if (e.key === 'Enter') e.target.blur(); }}
+          />
+        ) : (
+          <>
+            <span className="treino-titulo-texto">{t.nome || 'Treino sem nome'}</span>
+            <Edit 
+              size={18} 
+              className="treino-titulo-icone"
+              onClick={() => setTreinosSecao(
+                treinosSecao.map(tr => tr.id === t.id ? { ...tr, editandoNome: true } : tr)
               )}
+            />
+          </>
+        )}
+      </div>
+    } 
+    size="al"
+  >
+    {/* =================== AQUI MANTÉM O CONTEÚDO ORIGINAL =================== */}
+    <div className="treino-header-botoes">
+      <button onClick={() =>
+        setTreinosSecao(
+          treinosSecao.map(tr => tr.id === t.id ? { ...tr, expandido: !tr.expandido } : tr)
+        )
+      }>
+        {t.expandido ? '▼' : '►'}
+      </button>
+      <button onClick={() => navigate(`/treinos/${t.id}/editar`)}>Editar</button>
+    </div>
 
-              <button onClick={() => abrirModalAdicionar(t)}>Adicionar Exercício</button>
-            </div>
-          )}
-        </Card>
-      ))}
+    {t.expandido && (
+      <div>
+        {t.exerciciosDoTreino.length > 0 ? (
+          <div className="tabela-exercicios-wrapper">
+            <table className="tabela-exercicios">
+              <thead>
+                <tr>
+                  <th>Exercício</th>
+                  <th>Séries</th>
+                  <th>Repetições</th>
+                  <th>Carga</th>
+                  <th>Observação</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {t.exerciciosDoTreino.map(ex => (
+                  <tr key={ex.id}>
+                    <td>{ex.orientacao_detalhes?.titulo}</td>
+                    <td>{ex.series_planejadas}</td>
+                    <td>{ex.repeticoes_planejadas}</td>
+                    <td>{ex.carga_planejada}</td>
+                    <td>{ex.observacao || '-'}</td>
+                    <td>
+                      <button 
+                        onClick={() => abrirModalEditar(ex, t)} 
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', marginRight: '0.5rem' }}
+                      >
+                        <Edit size={18} />
+                      </button>
+                      <button 
+                        onClick={() => excluirExercicio(ex.id, t.id)} 
+                        style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+                      >
+                        <X size={18} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p>Nenhum exercício adicionado ainda.</p>
+        )}
+
+        <button 
+          className="btn-adicionar-exercicio"
+          onClick={() => abrirModalAdicionar(t)}
+        >
+          Adicionar Exercício
+        </button>
+      </div>
+    )}
+    {/* ======================================================================= */}
+  </Card>
+))}
 
       <ModalExercicio
         isOpen={modalAberto}
