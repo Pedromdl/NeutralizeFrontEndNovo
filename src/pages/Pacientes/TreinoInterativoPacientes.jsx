@@ -53,9 +53,8 @@ export default function TreinoInterativoPacientes() {
   const navigate = useNavigate();
   const { user, loading } = useContext(AuthContext);
 
-  const [loadingTreino, setLoadingTreino] = useState(true); // 🔹 novo estado de carregamento
+  const [loadingTreino, setLoadingTreino] = useState(true);
   const [podeFinalizar, setPodeFinalizar] = useState(false);
-
   const [orientacoes, setOrientacoes] = useState([]);
   const [indiceAtual, setIndiceAtual] = useState(0);
   const [finalizado, setFinalizado] = useState(false);
@@ -75,7 +74,7 @@ export default function TreinoInterativoPacientes() {
 
   const localStorageKey = `treino-${treinoId}-${user?.id}`;
 
-  // 🔹 Cronômetro baseado em horário real
+  // 🔹 Cronômetro
   useEffect(() => {
     let intervalo;
     if (timerAtivo && inicioTreino) {
@@ -86,7 +85,7 @@ export default function TreinoInterativoPacientes() {
     return () => clearInterval(intervalo);
   }, [timerAtivo, inicioTreino]);
 
-  // 🔹 Carregar treino + reidratar
+  // 🔹 Carregar treino
   useEffect(() => {
     if (!treinoId || loading || !user) return;
 
@@ -96,7 +95,6 @@ export default function TreinoInterativoPacientes() {
       .get(`${import.meta.env.VITE_API_URL}/api/orientacoes/treinos/${treinoId}/`)
       .then((res) => {
         const dados = res.data.exercicios || [];
-
         const orientacoesFormatadas = dados.map((ex) => ({
           id: ex.id,
           titulo: ex.orientacao_detalhes.titulo,
@@ -132,10 +130,7 @@ export default function TreinoInterativoPacientes() {
               Array.from({ length: orientacoesFormatadas.length }, (_, i) => !!salvo.realizados?.[i])
             );
             setTemposExercicio(
-              Array.from(
-                { length: orientacoesFormatadas.length },
-                (_, i) => salvo.temposExercicio?.[i] ?? 0
-              )
+              Array.from({ length: orientacoesFormatadas.length }, (_, i) => salvo.temposExercicio?.[i] ?? 0)
             );
             setIndiceAtual(Math.min(salvo.indiceAtual ?? 0, orientacoesFormatadas.length - 1));
             setTempo(salvo.tempo ?? 0);
@@ -336,18 +331,37 @@ export default function TreinoInterativoPacientes() {
   // ---------------- Render ----------------
   if (loading || loadingTreino) {
     return (
-      <Card title="Treino Interativo" size="al">
-        <Spinner />
-      </Card>
+      <div className="conteudo">
+        <Card size="al" title="Treino Interativo">
+          <Spinner />
+        </Card>
+      </div>
     );
   }
 
-  if (erro) return <Card title="Treino Interativo" size="al">{erro}</Card>;
-  if (!orientacoes.length) return <Card title="Treino Interativo" size="al">Nenhum exercício encontrado.</Card>;
+  if (erro) {
+    return (
+      <div className="conteudo">
+        <Card size="al" title="Treino Interativo">
+          <p>{erro}</p>
+        </Card>
+      </div>
+    );
+  }
+
+  if (!orientacoes.length) {
+    return (
+      <div className="conteudo">
+        <Card size="al" title="Treino Interativo">
+          <p>Nenhum exercício encontrado.</p>
+        </Card>
+      </div>
+    );
+  }
 
   if (finalizado) {
     return (
-      <div className="treino-finalizado-container">
+      <div className="conteudo">
         <Card size="al">
           <h2>✅ Treino finalizado com sucesso!</h2>
           <p>Parabéns por completar seu treino!</p>
@@ -356,21 +370,13 @@ export default function TreinoInterativoPacientes() {
     );
   }
 
-  if (!hidratado || !resultados.length || !resultados[indiceAtual]) {
-    return (
-      <Card title="Treino Interativo" size="al">
-        <Spinner />
-      </Card>
-    );
-  }
-
   const exercicioAtual = orientacoes[indiceAtual];
-  const porcentagem = Math.round((realizados.filter(Boolean).length / orientacoes.length) * 100);
   const resAtual = resultados[indiceAtual];
+  const porcentagem = Math.round((realizados.filter(Boolean).length / orientacoes.length) * 100);
 
   return (
     <div className="conteudo">
-      <Card size="al">
+      <Card size="al" title="Treino Interativo">
         <div className="treino-container">
           <div className="progress-bar-container">
             <div className="progress-bar">
@@ -462,6 +468,7 @@ export default function TreinoInterativoPacientes() {
                   {resAtual.rpe !== null ? `RPE: ${resAtual.rpe}` : 'Definir RPE'}
                 </button>
               </div>
+
               <div>
                 {!podeFinalizar ? (
                   <button className="btn-principal btn-proximo" onClick={proximoExercicio}>
@@ -482,13 +489,13 @@ export default function TreinoInterativoPacientes() {
             </div>
           )}
         </div>
-
-        <ModalRPE
-          isOpen={modalRPEOpen}
-          onClose={() => setModalRPEOpen(false)}
-          onSelecionar={definirRPE}
-        />
       </Card>
+
+      <ModalRPE
+        isOpen={modalRPEOpen}
+        onClose={() => setModalRPEOpen(false)}
+        onSelecionar={definirRPE}
+      />
     </div>
   );
 }

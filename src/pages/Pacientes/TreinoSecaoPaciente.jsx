@@ -2,11 +2,11 @@ import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import Card from '../../components/Card';
+import '../../components/css/TreinosSecaoPaciente.css';
 
 export default function TreinosSecaoPaciente() {
   const { secaoId } = useParams();
 
-  // 🔹 Apenas fetch dos treinos da seção
   const { data: treinos = [], isLoading, isError } = useQuery(
     ['treinosSecao', secaoId],
     async () => {
@@ -18,37 +18,29 @@ export default function TreinosSecaoPaciente() {
     { enabled: !!secaoId }
   );
 
-  if (isLoading) return <Card title="Treinos da Seção" size="al">Carregando...</Card>;
-  if (isError) return <Card title="Treinos da Seção" size="al">Erro ao carregar os treinos.</Card>;
-
   return (
     <div className="conteudo">
-      <Card title="Treinos da Seção" size="al">
-        {treinos.length > 0 ? (
-          <ul style={{ listStyle: 'none', padding: 0 }}>
-            {treinos.map(t => (
-              <li key={t.id} style={{ marginBottom: '0.5rem' }}>
-                <Link
-                  to={`/paciente/treinos/${t.id}`} 
-                  style={{
-                    display: 'block',
-                    textDecoration: 'none',
-                    color: 'inherit',
-                    backgroundColor: '#f0f0f0',
-                    padding: '1rem',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                  }}
-                >
-                  {t.nome || 'Treino sem nome'}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>Nenhum treino disponível nesta seção.</p>
-        )}
-      </Card>
+      {isLoading ? (
+        <p className="treinos-secao-status">Carregando...</p>
+      ) : isError ? (
+        <p className="treinos-secao-status">Erro ao carregar os treinos.</p>
+      ) : (
+        <Card title="Treinos da Seção" size="al">
+          {treinos.length > 0 ? (
+            <ul className="treinos-secao-list">
+              {treinos.map((t) => (
+                <li key={t.id} className="treinos-secao-item">
+                  <Link to={`/paciente/treinos/${t.id}`} className="treinos-secao-link">
+                    {t.nome || 'Treino sem nome'}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="treinos-secao-status">Nenhum treino disponível nesta seção.</p>
+          )}
+        </Card>
+      )}
     </div>
   );
 }

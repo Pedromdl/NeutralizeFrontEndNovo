@@ -1,0 +1,32 @@
+/* ==================== TREINOS DA SEÇÃO ==================== */
+
+.treinos-secao-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.treinos-secao-item {
+  margin-bottom: 0.5rem;
+}
+
+.treinos-secao-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  background-color: #f0f0f0;
+  padding: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.treinos-secao-link:hover {
+  background-color: #e0e0e0;
+}
+
+.treinos-secao-status {
+  font-size: 1rem;
+  color: #333;
+  padding: 1rem 0;
+}
