@@ -1,0 +1,33 @@
+/* ==================== HISTÓRICO DE TREINOS ==================== */
+
+.historico-treinos-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.historico-treinos-item {
+  margin-bottom: 0.5rem;
+}
+
+.historico-treinos-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  background-color: #f0f0f0;
+  padding: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.historico-treinos-link:hover {
+  background-color: #e0e0e0;
+}
+
+/* Mensagens de carregamento / erro */
+.historico-treinos-status {
+  font-size: 1rem;
+  color: #333;
+  padding: 1rem 0;
+}

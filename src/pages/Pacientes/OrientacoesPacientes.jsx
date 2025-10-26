@@ -20,39 +20,41 @@ export default function OrientacoesPaciente() {
       return data;
     },
     {
-      enabled: !!user, // só roda se user existir
-      staleTime: 1000 * 60 * 5, // 5 minutos de cache
+      enabled: !!user,
+      staleTime: 1000 * 60 * 5,
       refetchOnWindowFocus: false,
     }
   );
 
-  if (loading || isLoading)
-    return <Card title="Minhas Orientações" size="al">Carregando...</Card>;
-
-  if (!user)
-    return <Card title="Minhas Orientações" size="al">Usuário não autenticado</Card>;
-
-  if (isError)
-    return <Card title="Minhas Orientações" size="al">Não foi possível carregar as pastas</Card>;
-
   return (
     <div className="conteudo">
       <Card title="Minhas Orientações" size="al">
-        {!pastaSelecionada ? (
+        {/* Conteúdo do Card */}
+        {loading || isLoading ? (
+          "Carregando..."
+        ) : !user ? (
+          "Usuário não autenticado"
+        ) : isError ? (
+          "Não foi possível carregar as pastas"
+        ) : !pastaSelecionada ? (
           <ul style={{ listStyle: 'none', padding: 0 }}>
-            {pastas.length > 0 ? pastas.map((pasta) => (
-              <li
-                key={pasta.id}
-                style={{
-                  cursor: 'pointer',
-                  padding: '0.5rem 0',
-                  borderBottom: '1px solid #ddd',
-                }}
-                onClick={() => setPastaSelecionada(pasta)}
-              >
-                {pasta.nome}
-              </li>
-            )) : <li>Nenhuma pasta encontrada.</li>}
+            {pastas.length > 0 ? (
+              pastas.map((pasta) => (
+                <li
+                  key={pasta.id}
+                  style={{
+                    cursor: 'pointer',
+                    padding: '0.5rem 0',
+                    borderBottom: '1px solid #ddd',
+                  }}
+                  onClick={() => setPastaSelecionada(pasta)}
+                >
+                  {pasta.nome}
+                </li>
+              ))
+            ) : (
+              <li>Nenhuma pasta encontrada.</li>
+            )}
           </ul>
         ) : (
           <>
@@ -65,7 +67,6 @@ export default function OrientacoesPaciente() {
 
             <h2>{pastaSelecionada.nome}</h2>
 
-            {/* Agora cada seção redireciona para a página TreinosSecaoPaciente */}
             {pastaSelecionada.secoes?.length > 0 ? (
               <ul style={{ listStyle: 'none', padding: 0 }}>
                 {pastaSelecionada.secoes.map((secao) => (

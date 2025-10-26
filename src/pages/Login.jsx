@@ -1,20 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from "../context/AuthContext"; // ajuste o caminho
-import { useContext } from "react";
-
+import { AuthContext } from "../context/AuthContext";
 import '../components/css/Login.css';
 import Logo from './../images/logo.png';
-
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [erro, setErro] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
-
 
   // Inicializa Google Identity Services
   useEffect(() => {
@@ -38,39 +35,41 @@ export default function Login() {
 
   // Callback do Google
   const handleGoogleCallback = async (response) => {
-      console.log("Credential do Google:", response.credential);
-
+    setErro('');
+    setLoading(true);
     try {
       const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/google/`, {
         token: response.credential,
       });
 
-     const token = res.data.access;
-const userRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/profile/`, {
-  headers: { Authorization: `Bearer ${token}` },
-});
-const user = userRes.data;
+      const token = res.data.access;
+      const userRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/profile/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const user = userRes.data;
 
-// 🔹 Atualiza contexto
-login(token, user);
+      login(token, user);
 
-// 🔹 Redireciona
-if (user.role === "profissional") {
-  navigate("/usuarios");
-} else if (user.role === "paciente") {
-  navigate("/paciente");
-}
+      if (user.role === "profissional") navigate("/usuarios");
+      else if (user.role === "paciente") navigate("/paciente");
 
     } catch (err) {
       console.error('Erro no login Google:', err.response || err);
-      setErro('Erro ao autenticar com o Google.');
+      if (err.response?.data?.detail) setErro(err.response.data.detail);
+      else setErro('Erro ao autenticar com o Google.');
+    } finally {
+      setLoading(false);
     }
   };
 
   // Login padrão
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setErro('');
+const handleLogin = async (e) => {
+  e.preventDefault();
+  setErro('');
+  setLoading(true); // ativa spinner
+
+  // Simulação de atraso
+  setTimeout(async () => {
     try {
       const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/jwt/create/`, {
         email,
@@ -78,57 +77,68 @@ if (user.role === "profissional") {
       });
 
       const token = res.data.access;
+      const userRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/profile/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const user = userRes.data;
 
-const userRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/profile/`, {
-  headers: { Authorization: `Bearer ${token}` },
-});
+      login(token, user);
 
-const user = userRes.data;
-
-// 🔹 Agora atualiza tanto contexto quanto localStorage
-login(token, user);
-
-// 🔹 Redireciona
-if (user.role === "profissional") {
-  navigate("/usuarios");
-} else if (user.role === "paciente") {
-  navigate("/paciente");
-}
-
+      if (user.role === "profissional") {
+        navigate("/usuarios");
+      } else if (user.role === "paciente") {
+        navigate("/paciente");
+      }
     } catch (err) {
       console.error('Erro no login padrão:', err.response || err);
       setErro('Usuário ou senha inválidos');
+    } finally {
+      setLoading(false); // garante que spinner desapareça
     }
-  };
+  }, 5000); // atraso de 1,5s para teste
+};
 
   return (
     <div className="login-conteudo">
       <div className="card-login">
         <img src={Logo} alt="Logo" className="logo" style={{ width: '250px' }} />
         <h2>Login</h2>
-        <form onSubmit={handleLogin}>
-          <input
-            type="email"
-            placeholder="E-mail"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Senha"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            required
-          />
-          <button type="submit">Entrar</button>
-          {erro && <p style={{ color: 'red' }}>{erro}</p>}
-        </form>
 
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
-          <div id="googleSignInDiv"></div>
-        </div>
+        {loading ? (
+          <div className="login-loading">
+            <div className="spinner"></div>
+            <p className="login-loading-text">Entrando na conta<span className="dots">...</span></p>
+          </div>
+        ) : (
+          <>
+            <form onSubmit={handleLogin}>
+              <input
+                type="email"
+                placeholder="E-mail"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                required
+              />
+              <input
+                type="password"
+                placeholder="Senha"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                required
+              />
+              <button type="submit" className="btn-login">
+                Entrar
+              </button>
+              {erro && <p className="login-erro">{erro}</p>}
+            </form>
+
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
+              <div id="googleSignInDiv"></div>
+            </div>
+          </>
+        )}
       </div>
     </div>
+
   );
 }

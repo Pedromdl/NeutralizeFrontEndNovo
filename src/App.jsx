@@ -33,6 +33,7 @@ import PainelInicialPaciente from "./pages/Pacientes/PainelInicialPacientes";
 import TreinosSecaoPaciente from './pages/Pacientes/TreinoSecaoPaciente';
 import HistoricodeTreinos from './pages/Pacientes/HistoricodeTreinos';
 import Financeiro from './pages/Financeiro';
+import Teste from './pages/Teste';
 
 function LayoutComSidebar({ children }) {
   const location = useLocation();
@@ -63,13 +64,14 @@ function LayoutComSidebar({ children }) {
 
 function AppRoutes() {
   const location = useLocation();
-  const rotaSemLayout = ['/login', '/register'];
+  const rotaSemLayout = ['/login', '/register', '/teste'];
 
   if (rotaSemLayout.includes(location.pathname)) {
     return (
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/teste" element={<Teste />} />
       </Routes>
     );
   }
@@ -101,6 +103,7 @@ function AppRoutes() {
           <Route path="/paciente/secao/:secaoId" element={<TreinosSecaoPaciente />} />
           <Route path="/paciente/historico" element={<HistoricodeTreinos />} />
           <Route path="/financeiro" element={<Financeiro />} />
+
         </Routes>
       </LayoutComSidebar>
     </PrivateRoute>

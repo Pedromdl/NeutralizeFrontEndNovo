@@ -1,17 +1,103 @@
+/* =======================================
+   🔷 ESTRUTURA PRINCIPAL
+======================================= */
+.conteudo {
+  padding: 20px;
+}
+
+.titulo-dashboard {
+  font-size: 1.6rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #282829;
+}
+
+.valor-principal {
+  font-size: 20px;
+  font-weight: bold;
+  color: #282829;
+}
+
+.valor-secundario {
+  font-size: 20px;
+  color: #282829;
+}
+
+/* =======================================
+   🔹 GRID PRINCIPAL
+======================================= */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  width: 100%;
+  gap: 20px;
+}
+
+/* Status cards lado a lado no desktop */
+.card-status {
+  grid-column: span 6; /* 6 + 6 = 12 */
+}
+
+/* Atalho e calendário ocupam a linha inteira */
+.card-atalho,
+.card-calendario {
+  grid-column: span 12;
+}
+
+/* =======================================
+   🔸 RESPONSIVIDADE
+======================================= */
+@media (max-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  /* Treinos e Último treino lado a lado */
+  .card-status {
+    grid-column: span 1 !important;
+  }
+
+  /* Atalho ocupa linha inteira */
+  .card-atalho {
+    grid-column: span 2 !important;
+  }
+
+  /* Calendário ocupa linha inteira */
+  .card-calendario {
+    grid-column: span 2 !important;
+  }
+
+  .btn-atalho-treino {
+    font-size: 16px;
+    padding: 12px;
+  }
+}
+
+/* =======================================
+   🟢 BOTÃO ATALHO
+======================================= */
 .btn-atalho-treino {
   display: flex;
-  justify-content: flex-start;
-  padding: 20px 20px;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
   font-size: 18px;
   color: #fff;
-  background-color: #282829; /* padrão ativo */
+  background-color: #282829;
   border: none;
   border-radius: 12px;
   cursor: pointer;
   width: 100%;
   height: 60px;
   gap: 12px;
-  position: relative;
   transition: background-color 0.2s ease;
 }
 
@@ -20,13 +106,14 @@
   cursor: not-allowed;
 }
 
-.btn-atalho-treino span {
-  display: inline-block;
+/* =======================================
+   📅 CALENDÁRIO (DayPicker)
+======================================= */
+.calendario-wrapper {
+  display: flex;
+  justify-content: center;
 }
 
-/* ESTILO PARA CALENDÁRIO DAYPICKER
-
-/* DAYPICKER - calendário */
 .rdp-caption_label {
   font-weight: 600;
   font-size: 15px !important;
@@ -37,15 +124,7 @@
   font-weight: 600;
   color: #666;
   font-size: 10px !important;
-}
-
-.rdp-month_grid {
-  border-collapse: unset !important;
-}
-
-/* tamanho compacto do calendário */
-.rd-day-picker {
-  font-size: 0.8rem;
+  width: 1000px;
 }
 
 .rdp-chevron {
@@ -53,23 +132,40 @@
   width: 16px;
 }
 
-
-/* destaque para o dia de treino: apenas círculo verde */
 .treino-dia {
-  width: 44px;   /* tamanho fixo */
-  height: 44px;  /* tamanho fixo */
+  width: 44px;
+  height: 44px;
   border: 2px solid #34D399;
-  border-radius: 50%;
+  display: flex;
   justify-content: center;
   align-items: center;
-  box-sizing: border-box;
-  padding: 0;
+  width: 100%;
 }
 
-/* força o conteúdo do dia a estar centralizado na célula */
 .rd-day-picker .rdp-day {
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 0;
+}
+
+@media (max-width: 768px) {
+  .treino-dia {
+    border-radius: 50%;
+  }
+}
+
+/* =======================================
+   🪶 AJUSTES GERAIS
+======================================= */
+.card {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.card.atalho {
+  background: none;
+  border: none;
+  box-shadow: none;
   padding: 0;
 }

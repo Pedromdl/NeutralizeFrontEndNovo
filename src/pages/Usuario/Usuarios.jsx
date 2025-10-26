@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 
 import UserSearch from '../../components/UserSearch';
 import GraficoProgresso from './GraficoProgresso';
@@ -8,84 +9,59 @@ import GraficoMobilidade from '../../components/Dashboard/GraficoMobilidade';
 import GraficoTesteFuncao from '../../components/Dashboard/GraficoTestesFuncao';
 import GraficoTesteDor from '../../components/Dashboard/GraficoTestesDor';
 import GraficoEstabilidade from '../../components/Dashboard/GraficoEstabilidade';
-import GraficoEstabilidade2 from '../../components/Dashboard/GraficoEstabilidade2';
 import Card from '../../components/Card';
 import FiltroData from '../../components/Dashboard/FiltroData';
 import DadosUsuario from './DadosUsuario';
-import Orientacao from './Orientacao'
+import Orientacao from './Orientacao';
 import Avaliacoes from './Avaliacoes';
 import Sessoes from './Sessoes';
 
-const toggleButtonsStyle = {
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: '10px',
-  marginBottom: '16px',
+// 🌈 Animações padrão
+const containerAnimacao = {
+  initial: { opacity: 0, y: 40 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: 40 },
+  transition: { duration: 0.4, ease: 'easeOut' },
 };
-
-const buttonStyle = {
-  padding: '8px 12px',
-  border: 'none',
-  borderRadius: '6px',
-  cursor: 'pointer',
-  fontWeight: 500,
-  backgroundColor: '#f5f5f5',
-  transition: 'background-color 0.2s',
-};
-
-const ativoButtonStyle = {
-  ...buttonStyle,
-  backgroundColor: '#cce5ff',
-  color: '#003366',
-};
-
-// Para mobile podemos usar media queries com window.innerWidth
-const isMobile = window.innerWidth <= 768;
-const mobileButtonStyle = isMobile
-  ? { ...buttonStyle, flex: '1 1 45%', padding: '10px 0', fontSize: '14px' }
-  : buttonStyle;
 
 function Usuarios() {
-  const location = useLocation(); // 👈 E ISSO
+  const location = useLocation();
   const [usuarioSelecionado, setUsuarioSelecionado] = useState(null);
   const [dataSelecionada, setDataSelecionada] = useState(null);
   const [abaAtiva, setAbaAtiva] = useState('');
-  
+
+  // 🔁 Carrega usuário e aba salvos
+  useEffect(() => {
+    const salvo = localStorage.getItem('usuarioSelecionado');
+    if (salvo) setUsuarioSelecionado(JSON.parse(salvo));
+
+    if (location.state?.pacienteId) {
+      fetch(`${import.meta.env.VITE_API_URL}/api/pacientes/${location.state.pacienteId}/`)
+        .then(res => res.json())
+        .then(data => {
+          setUsuarioSelecionado(data);
+          localStorage.setItem('usuarioSelecionado', JSON.stringify(data));
+        });
+    }
+
+    if (location.state?.aba) {
+      setAbaAtiva(location.state.aba);
+    } else {
+      const abaSalva = localStorage.getItem('abaAtiva');
+      if (abaSalva) setAbaAtiva(abaSalva);
+    }
+  }, [location.state]);
 
   useEffect(() => {
-  const salvo = localStorage.getItem('usuarioSelecionado');
-  if (salvo) {
-    setUsuarioSelecionado(JSON.parse(salvo));
-  }
+    localStorage.setItem('abaAtiva', abaAtiva);
+  }, [abaAtiva]);
 
-  if (location.state?.pacienteId) {
-    fetch(`${import.meta.env.VITE_API_URL}/api/pacientes/${location.state.pacienteId}/`)
-      .then(res => res.json())
-      .then(data => {
-        setUsuarioSelecionado(data);
-        localStorage.setItem('usuarioSelecionado', JSON.stringify(data));
-      });
-  }
+  const atualizarUsuario = (novoUsuario) => {
+    setUsuarioSelecionado(novoUsuario);
+    localStorage.setItem('usuarioSelecionado', JSON.stringify(novoUsuario));
+  };
 
-  if (location.state?.aba) {
-    setAbaAtiva(location.state.aba);
-  } else {
-    const abaSalva = localStorage.getItem('abaAtiva');
-    if (abaSalva) {
-      setAbaAtiva(abaSalva);
-    }
-  }
-}, [location.state]);
-
-useEffect(() => {
-  localStorage.setItem('abaAtiva', abaAtiva);
-}, [abaAtiva]);
-
-const atualizarUsuario = (novoUsuario) => {
-  setUsuarioSelecionado(novoUsuario);
-  localStorage.setItem('usuarioSelecionado', JSON.stringify(novoUsuario));
-};
-
+  // 🧠 Renderiza conteúdo das abas
   const renderConteudoAba = () => {
     switch (abaAtiva) {
       case 'Dashboard':
@@ -100,63 +76,97 @@ const atualizarUsuario = (novoUsuario) => {
             </Card>
 
             <div className="dashboard-grid">
-              <Card title="Força Muscular" size="md">
-                <GraficoForca usuarioId={usuarioSelecionado.id} dataSelecionada={dataSelecionada} />
-              </Card>
-
-              <Card title="Mobilidade" size="md">
-                <GraficoMobilidade usuarioId={usuarioSelecionado.id} dataSelecionada={dataSelecionada} />
-              </Card>
-
-              <Card title="Estabilidade" size="lg">
-                <div style={{ display: 'flex'}}>
-                  <div style={{ flex: 1 }}>
-                    <GraficoEstabilidade usuarioId={usuarioSelecionado.id} dataSelecionada={dataSelecionada} />
-                  </div>
-                </div>
-              </Card>
-
-
-              <Card title="Dor" size="sm">
-                <GraficoTesteDor usuarioId={usuarioSelecionado.id} dataSelecionada={dataSelecionada} />
-              </Card>
-
-              <Card title="Função" size="lg">
-                <GraficoTesteFuncao usuarioId={usuarioSelecionado.id} dataSelecionada={dataSelecionada} />
-              </Card>
-
-              
-  
+              {[
+                {
+                  title: "Força Muscular",
+                  comp: <GraficoForca usuarioId={usuarioSelecionado.id} dataSelecionada={dataSelecionada} />,
+                  size: "md",
+                  gridColumn: "span 12", // exemplo — ajuste conforme seu layout
+                },
+                {
+                  title: "Mobilidade",
+                  comp: <GraficoMobilidade usuarioId={usuarioSelecionado.id} dataSelecionada={dataSelecionada} />,
+                  size: "md",
+                  gridColumn: "span 12",
+                },
+                {
+                  title: "Estabilidade",
+                  comp: <GraficoEstabilidade usuarioId={usuarioSelecionado.id} dataSelecionada={dataSelecionada} />,
+                  size: "lg",
+                  gridColumn: "span 7",
+                },
+                {
+                  title: "Dor",
+                  comp: <GraficoTesteDor usuarioId={usuarioSelecionado.id} dataSelecionada={dataSelecionada} />,
+                  size: "sm",
+                  gridColumn: "span 5",
+                },
+                {
+                  title: "Função",
+                  comp: <GraficoTesteFuncao usuarioId={usuarioSelecionado.id} dataSelecionada={dataSelecionada} />,
+                  size: "lg",
+                  gridColumn: "span 8",
+                },
+              ].map((item, i) => (
+                <motion.div
+                  key={item.title}
+                  style={{ display: 'contents' }} // 👈 mantém o comportamento do grid intacto
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 * i, duration: 0.4 }}
+                >
+                  <Card
+                    title={item.title}
+                    size={item.size}
+                    className={`grid-item ${item.size}`}
+                  >
+                    {item.comp}
+                  </Card>
+                </motion.div>
+              ))}
             </div>
           </>
         );
 
       case 'Dados':
         return (
-          <div className="card card-al">
+          <motion.div {...containerAnimacao}>
             {usuarioSelecionado && (
               <DadosUsuario
                 usuarioSelecionado={usuarioSelecionado}
                 atualizarUsuario={atualizarUsuario}
               />
             )}
-          </div>
-
-
+          </motion.div>
         );
 
       case 'Orientações':
         return (
-          <Orientacao usuarioId={usuarioSelecionado.id} />
+          <motion.div {...containerAnimacao}>
+            <Orientacao usuarioId={usuarioSelecionado.id} />
+          </motion.div>
         );
+
       case 'Avaliações':
-        return <Avaliacoes usuarioId={usuarioSelecionado.id} />;
+        return (
+          <motion.div {...containerAnimacao}>
+            <Avaliacoes usuarioId={usuarioSelecionado.id} />
+          </motion.div>
+        );
 
       case 'Sessões':
-        return <Sessoes usuarioId={usuarioSelecionado.id} />;
+        return (
+          <motion.div {...containerAnimacao}>
+            <Sessoes usuarioId={usuarioSelecionado.id} />
+          </motion.div>
+        );
 
       case 'Progressão':
-        return <GraficoProgresso usuarioId={usuarioSelecionado.id} />;
+        return (
+          <motion.div {...containerAnimacao}>
+            <GraficoProgresso usuarioId={usuarioSelecionado.id} />
+          </motion.div>
+        );
 
       default:
         return null;
@@ -164,13 +174,12 @@ const atualizarUsuario = (novoUsuario) => {
   };
 
   const handleSelecionaUsuario = (usuario) => {
-  setUsuarioSelecionado(usuario);
-  localStorage.setItem('usuarioSelecionado', JSON.stringify(usuario));
-};
+    setUsuarioSelecionado(usuario);
+    localStorage.setItem('usuarioSelecionado', JSON.stringify(usuario));
+  };
 
   return (
     <div className="conteudo">
-      {/* Bloco fixo em coluna */}
       <div className="info-cards">
         <Card title="Busca de Usuários" size="md">
           <p>Selecione para ver os gráficos de desempenho.</p>
@@ -178,33 +187,34 @@ const atualizarUsuario = (novoUsuario) => {
         </Card>
 
         {usuarioSelecionado && (
-          <>
-            {/* Toggle de abas */}
-            <Card title="Navegação" size="md">
-              <div className="toggle-buttons">
-                <button onClick={() => setAbaAtiva('Dashboard')} className={abaAtiva === 'Dashboard' ? 'ativo' : ''}>
-                  Dashboard
+          <Card title="Navegação" size="md">
+            <div className="toggle-buttons">
+              {['Dashboard', 'Dados', 'Orientações', 'Avaliações', 'Sessões'].map((aba) => (
+                <button
+                  key={aba}
+                  onClick={() => setAbaAtiva(aba)}
+                  className={abaAtiva === aba ? 'ativo' : ''}
+                >
+                  {aba}
                 </button>
-                <button onClick={() => setAbaAtiva('Dados')} className={abaAtiva === 'Dados' ? 'ativo' : ''}>
-                  Dados
-                </button>
-                <button onClick={() => setAbaAtiva('Orientações')} className={abaAtiva === 'Orientações' ? 'ativo' : ''}>
-                  Orientações
-                </button>
-                <button onClick={() => setAbaAtiva('Avaliações')} className={abaAtiva === 'Avaliações' ? 'ativo' : ''}>
-                  Avaliações
-                </button>
-                <button onClick={() => setAbaAtiva('Sessões')} className={abaAtiva === 'Sessões' ? 'ativo' : ''}>
-                Sessões
-              </button>
-              </div>
-            </Card>
-          </>
+              ))}
+            </div>
+          </Card>
         )}
       </div>
 
-      {/* Conteúdo da aba selecionada */}
-      {usuarioSelecionado && renderConteudoAba()}
+      {/* Conteúdo da aba com transição suave */}
+      <AnimatePresence mode="wait">
+        {usuarioSelecionado && (
+          <motion.div
+            key={abaAtiva}
+            {...containerAnimacao}
+            style={{ width: '100%' }}
+          >
+            {renderConteudoAba()}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
