@@ -88,18 +88,26 @@ export default function useFuncaoCalendario(calendarRef) {
       
     }
   );
+// 🔹 Excluir evento
+const excluirEventoMutation = useMutation(
+  async ({ id, escopo }) => {
+    return axios.delete(
+      `${import.meta.env.VITE_API_URL}/api/eventosagenda/${id}/`,
+      { data: { escopo_exclusao: escopo } } // 🔹 enviar no corpo da requisição
+    );
+  },
+  {
+    onSuccess: (_, { id }) => {
+      const calendarApi = calendarRef?.current?.getApi();
+      const evento = calendarApi?.getEventById(id.toString());
+      evento?.remove();
+    },
+    onError: (error) => {
+      console.error("❌ Erro ao excluir evento:", error.response?.data || error.message);
+    },
+  }
+);
 
-  // 🔹 Excluir evento
-  const excluirEventoMutation = useMutation(
-    async (id) => axios.delete(`${import.meta.env.VITE_API_URL}/api/eventosagenda/${id}/`),
-    {
-      onSuccess: (_, id) => {
-        const calendarApi = calendarRef?.current?.getApi();
-        const evento = calendarApi?.getEventById(id.toString());
-        evento?.remove();
-      },
-    }
-  );
 
   const handleClickEvento = (info) => {
     const ev = info.event.extendedProps;
@@ -155,17 +163,39 @@ export default function useFuncaoCalendario(calendarRef) {
   };
 
   const salvarEdicao = () => {
-    const dadosParaEnviar = {
-      ...form,
-      paciente: form.paciente ? Number(form.paciente) : null,
-    };
-    salvarEdicaoMutation.mutate(dadosParaEnviar);
-  };
+  let escopo = "unico";
+  if (form.repetir) {
+    const escolha = window.prompt(
+      "Editar apenas este evento (1), este e os futuros (2), ou todos (3)?"
+    );
+    if (escolha === "2") escopo = "futuros";
+    else if (escolha === "3") escopo = "todos";
+  }
 
-  const excluirEvento = (id) => {
-    excluirEventoMutation.mutate(id || eventoSelecionado.id);
-    fecharModal();
+  const dadosParaEnviar = {
+    ...form,
+    paciente: form.paciente ? Number(form.paciente) : null,
+    escopo_edicao: escopo,
   };
+  salvarEdicaoMutation.mutate(dadosParaEnviar);
+};
+
+  const excluirEvento = async (id) => {
+  const eventoId = id || eventoSelecionado?.id;
+  if (!eventoId) return;
+
+  const escolha = window.prompt(
+    "Excluir apenas este evento (1), este e os futuros (2), ou todos (3)?"
+  );
+
+  let escopo = "unico";
+  if (escolha === "2") escopo = "futuros";
+  else if (escolha === "3") escopo = "todos";
+
+  excluirEventoMutation.mutate({ id: eventoId, escopo });
+  fecharModal();
+};
+
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
