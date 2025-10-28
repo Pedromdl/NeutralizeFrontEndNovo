@@ -33,12 +33,10 @@
   gap: 20px;
 }
 
-/* Status cards lado a lado no desktop */
 .card-status {
-  grid-column: span 6; /* 6 + 6 = 12 */
+  grid-column: span 6;
 }
 
-/* Atalho e calendário ocupam a linha inteira */
 .card-atalho,
 .card-calendario {
   grid-column: span 12;
@@ -55,22 +53,18 @@
 
 @media (max-width: 768px) {
   .dashboard-grid {
-    display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
   }
 
-  /* Treinos e Último treino lado a lado */
   .card-status {
     grid-column: span 1 !important;
   }
 
-  /* Atalho ocupa linha inteira */
   .card-atalho {
     grid-column: span 2 !important;
   }
 
-  /* Calendário ocupa linha inteira */
   .card-calendario {
     grid-column: span 2 !important;
   }
@@ -107,53 +101,154 @@
 }
 
 /* =======================================
-   📅 CALENDÁRIO (DayPicker)
+📅 CALENDÁRIO — Responsivo e sem overflow
 ======================================= */
+
 .calendario-wrapper {
-  display: flex;
-  justify-content: center;
-}
-
-.rdp-caption_label {
-  font-weight: 600;
-  font-size: 15px !important;
-  color: #333;
-}
-
-.rdp-weekday {
-  font-weight: 600;
-  color: #666;
-  font-size: 10px !important;
-  width: 1000px;
-}
-
-.rdp-chevron {
-  fill: #282829 !important;
-  width: 16px;
-}
-
-.treino-dia {
-  width: 44px;
-  height: 44px;
-  border: 2px solid #34D399;
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+  overflow-x: hidden; /* 🔒 Impede ultrapassar o card */
 }
 
-.rd-day-picker .rdp-day {
+/* Garante que o calendário se comporte como bloco */
+.rdp-root {
+  display: block !important;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+/* Remove espaços extras da tabela base */
+.rdp-month_grid {
+  width: 100%;
+  border-collapse: collapse !important;
+  border-spacing: 0 !important;
+  table-layout: fixed;
+}
+
+/* Cada célula ocupa o mesmo espaço (desktop) */
+.rdp-week {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  gap: 4px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Ajuste para o header dos dias da semana (desktop) */
+.rdp-weekdays {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  gap: 4px;
+  padding: 0 2px;
+  box-sizing: border-box;
+}
+
+/* Cabeçalhos dos dias */
+.rdp-weekday {
+  flex: 1;
+  text-align: center;
+  font-weight: 600;
+  color: #555;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+/* Dias do mês */
+.rdp-day {
+  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0;
+  aspect-ratio: 1 / 1;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 20px;
+  transition: all 0.25s ease;
+  font-size: 14px;
+  box-sizing: border-box;
 }
 
+/* Dia atual */
+.rdp-day[data-today="true"] {
+  border: 2px solid #282829;
+}
+
+/* Dia com treino (fundo verde) */
+.rdp-day.treino-dia {
+  background-color: #b7de42;
+  color: #fff;
+  font-weight: 700;
+  margin: 2px;
+}
+
+.rdp-day.treino-dia:hover {
+  background-color: #2BB77E;
+}
+
+/* Fora do mês */
+.rdp-day[aria-disabled="true"],
+.rdp-day[data-outside="true"] {
+  opacity: 0.3;
+  cursor: default;
+}
+
+/* ======================
+   RESPONSIVIDADE MOBILE
+   ====================== */
 @media (max-width: 768px) {
-  .treino-dia {
-    border-radius: 50%;
+  .calendario-wrapper {
+    padding: 0.5rem;
+  }
+
+ .rdp-week,
+  .rdp-weekdays {
+    display: grid !important;
+    grid-template-columns: repeat(7, minmax(0, 1fr)); /* garante 7 colunas que cabem */
+    gap: 2px;
+    width: 100%;
+  }
+
+
+  .rdp-day {
+    font-size: 12px;
+    border-radius: 20px;
+  }
+
+  .rdp-weekday {
+    flex: none;        /* remove flex antigo */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 9px;
+    text-align: center;
+    margin-left: 8px;
+  }
+
+  .rdp-month_grid {
+    border-spacing: 0 !important;
+  }
+
+  /* garante que 7 dias sempre caibam dentro do card */
+  .rdp-week {
+    min-width: 100%;
   }
 }
+
+/* Impede qualquer rolagem lateral */
+.card-md {
+  overflow-x: hidden;
+}
+
 
 /* =======================================
    🪶 AJUSTES GERAIS
