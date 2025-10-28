@@ -133,6 +133,12 @@
   table-layout: fixed;
 }
 
+.rdp-chevron {
+  cursor: pointer;
+  fill: #282829;
+  transition: fill 0.2s ease;
+}
+
 /* Cada célula ocupa o mesmo espaço (desktop) */
 .rdp-week {
   display: flex;
