@@ -95,7 +95,7 @@ const handleLogin = async (e) => {
     } finally {
       setLoading(false); // garante que spinner desapareça
     }
-  }, 5000); // atraso de 1,5s para teste
+  }, 1500); // atraso de 1,5s para teste
 };
 
   return (
