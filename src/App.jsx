@@ -25,6 +25,7 @@ import SecaoDetalhe from './pages/Usuario/SecaoDetalhe';
 import AvaliacaoDetalhe from './pages/Usuario/AvaliacaoDetalhe';
 import SessoesDetalhes from './pages/Usuario/SessoesDetalhes';
 import SessaoNova from './pages/Usuario/SessaoNova';
+import BancoExercicios from './pages/Usuario/BancoExercicios';
 import DemoBody from './pages/DemoBody';
 import TreinoInterativo from "./components/TreinoInterativo";
 import OrientacoesPaciente from './pages/Pacientes/OrientacoesPacientes';
@@ -103,6 +104,8 @@ function AppRoutes() {
           <Route path="/paciente/secao/:secaoId" element={<TreinosSecaoPaciente />} />
           <Route path="/paciente/historico" element={<HistoricodeTreinos />} />
           <Route path="/financeiro" element={<Financeiro />} />
+          <Route path="/bancoexercicios" element={<BancoExercicios />} />
+
 
         </Routes>
       </LayoutComSidebar>
