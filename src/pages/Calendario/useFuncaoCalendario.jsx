@@ -32,7 +32,7 @@ export default function useFuncaoCalendario(calendarRef) {
     async (dadosParaEnviar) => {
       if (dadosParaEnviar.id) {
         // Edição
-        return axios.put(
+        return axios.patch(
           `${import.meta.env.VITE_API_URL}/api/eventosagenda/${dadosParaEnviar.id}/`,
           dadosParaEnviar
         );

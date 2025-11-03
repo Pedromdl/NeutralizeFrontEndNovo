@@ -62,16 +62,16 @@ export default function Calendario({ onEventClick, onDateClick, calendarRef }) {
       const data = await response.json();
 
       const eventosFormatados = data.map(ev => ({
-        id: ev.id.toString(),
-        title: `${ev.paciente_nome || ev.paciente || 'Horário ocupado'}`,
-        start: `${ev.data}T${ev.hora_inicio}`,
-        end: ev.hora_fim ? `${ev.data}T${ev.hora_fim}` : undefined,
-        extendedProps: ev,
+        id: ev.id?.toString() || `${ev.data}-${ev.hora_inicio}`, // garante string
+        title: `${ev.paciente_nome || 'Horário ocupado'}`,       // usa apenas o nome do paciente
+        start: `${ev.data}T${ev.hora_inicio}`,                   // data + hora início
+        end: ev.hora_fim ? `${ev.data}T${ev.hora_fim}` : undefined, // opcional
+        extendedProps: ev,                                       // mantém todos os dados para tooltip ou clique
         backgroundColor:
           ev.status?.toLowerCase() === 'realizado' ? '#b7de42' :
-          ev.status?.toLowerCase() === 'confirmado' ? '#25CED1' :
-          ev.status?.toLowerCase() === 'cancelado' ? '#FF5C5C' :
-          'grey',
+            ev.status?.toLowerCase() === 'confirmado' ? '#25CED1' :
+              ev.status?.toLowerCase() === 'cancelado' ? '#FF5C5C' :
+                'grey',
         borderColor: 'transparent',
       }));
 
