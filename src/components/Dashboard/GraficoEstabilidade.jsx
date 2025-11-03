@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Line
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Line
 } from 'recharts';
 import { AuthContext } from '../../context/AuthContext';
 
@@ -47,6 +47,14 @@ function GraficoEstabilidade({ usuarioId, dataSelecionada }) {
   if (isError) return <p>Erro ao carregar estabilidade.</p>;
   if (!dados.length) return <p>Nenhum dado encontrado.</p>;
 
+  // 🔹 Agrupar os dados por movimento_estabilidade_nome
+  const dadosAgrupados = dados.reduce((acc, item) => {
+    const key = item.movimento_estabilidade;
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(item);
+    return acc;
+  }, {});
+
   const CustomTooltip = ({ active, payload, label }) => {
     if (!active || !payload || payload.length === 0) return null;
 
@@ -72,20 +80,70 @@ function GraficoEstabilidade({ usuarioId, dataSelecionada }) {
     );
   };
 
+  // 🔹 Legenda global manual
+  const LegendaGlobal = () => (
+    <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', marginBottom: '1rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+        <div style={{ width: 15, height: 15, background: '#282829' }}></div>
+        <span>Esquerdo</span>
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+        <div style={{ width: 15, height: 15, background: '#b7de42' }}></div>
+        <span>Direito</span>
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+        <div style={{ width: 15, height: 3, background: '#ff7300' }}></div>
+        <span>Assimetria</span>
+      </div>
+    </div>
+  );
+
   return (
-    <ResponsiveContainer width="100%" height={350}>
-      <BarChart data={dados} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="movimento_estabilidade" />
-        <YAxis yAxisId="left" label={{ value: "Valor", angle: -90, position: "insideLeft" }} />
-        <YAxis yAxisId="right" orientation="right" />
-        <Tooltip content={<CustomTooltip />} />
-        <Legend />
-        <Bar yAxisId="left" dataKey="Esquerdo" fill="#282829" />
-        <Bar yAxisId="left" dataKey="Direito" fill="#b7de42" />
-        <Line yAxisId="right" type="monotone" dataKey="Assimetria" stroke="#ff7300" strokeWidth={2} dot={{ r: 4 }} activeDot={{ r: 6 }} />
-      </BarChart>
-    </ResponsiveContainer>
+    <>
+      <LegendaGlobal />
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+          gap: '1.5rem',
+        }}
+      >
+        {Object.entries(dadosAgrupados).map(([movimento, valores]) => (
+          <div
+            key={movimento}
+            style={{
+              padding: '1rem',
+              borderRadius: '12px',
+              background: '#fff',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+            }}
+          >
+            <h3 style={{ textAlign: 'center', marginBottom: '1rem' }}>{movimento}</h3>
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart data={valores} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="Data" />
+                <YAxis yAxisId="left" label={{ value: 'Valor', angle: -90, position: 'insideLeft' }} />
+                <YAxis yAxisId="right" orientation="right" />
+                <Tooltip content={<CustomTooltip />} />
+                {/* Legend removido dos gráficos */}
+                <Bar yAxisId="left" dataKey="Esquerdo" fill="#282829" />
+                <Bar yAxisId="left" dataKey="Direito" fill="#b7de42" />
+                <Line
+                  yAxisId="right"
+                  type="monotone"
+                  dataKey="Assimetria"
+                  stroke="#ff7300"
+                  strokeWidth={2}
+                  dot={{ r: 4 }}
+                  activeDot={{ r: 6 }}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        ))}
+      </div>
+    </>
   );
 }
 
