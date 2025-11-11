@@ -3,14 +3,27 @@ import axios from 'axios';
 import Card from '../../components/Card';
 import '../../components/css/DadosUsuario.css';
 
-export default function DadosUsuario({ usuarioSelecionado, atualizarUsuario }) {
+export default function DadosUsuario({ usuarioSelecionado, atualizarUsuario, token }) {
   const [editando, setEditando] = useState(false);
-  const [dados, setDados] = useState({ ...usuarioSelecionado });
+  const [dados, setDados] = useState({});
 
-  // Atualiza os dados sempre que o usuário selecionado mudar
+  // Busca os dados do usuário público se token existir, senão usa usuarioSelecionado
   useEffect(() => {
-    setDados({ ...usuarioSelecionado });
-  }, [usuarioSelecionado]);
+    async function fetchUsuarioPublico() {
+      if (!token) {
+        setDados({ ...usuarioSelecionado });
+        return;
+      }
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/usuario-publico/${token}/`);
+        setDados(res.data);
+      } catch (error) {
+        console.error('Erro ao carregar usuário público:', error);
+        setDados({});
+      }
+    }
+    fetchUsuarioPublico();
+  }, [usuarioSelecionado, token]);
 
   const calcularIdade = (dataNascimento) => {
     if (!dataNascimento) return 'Não informada';
@@ -40,15 +53,16 @@ export default function DadosUsuario({ usuarioSelecionado, atualizarUsuario }) {
   };
 
   const cancelar = () => {
-    setDados({ ...usuarioSelecionado }); // Reverte para dados anteriores
+    setDados(token ? dados : { ...usuarioSelecionado });
     setEditando(false);
   };
 
   return (
     <Card title="Dados do Usuário" size="al">
       <div className="dados-usuario">
-        {editando ? (
+        {editando && !token ? (
           <>
+            {/* Campos de edição só aparecem se não for token público */}
             <div className="campo">
               <label>Nome:</label>
               <input name="nome" value={dados.nome} onChange={handleChange} />
@@ -84,15 +98,17 @@ export default function DadosUsuario({ usuarioSelecionado, atualizarUsuario }) {
           <>
             <p><strong>Nome:</strong> {dados.nome}</p>
             <p><strong>Email:</strong> {dados.email}</p>
+            <p><strong>Idade:</strong> {calcularIdade(dados.data_de_nascimento)}</p>
             <p><strong>Telefone:</strong> {dados.telefone || 'Não informado'}</p>
             <p><strong>Endereço:</strong> {dados.endereço || 'Não informado'}</p>
             <p><strong>Data de Nascimento:</strong> {dados.data_de_nascimento
               ? new Date(dados.data_de_nascimento).toLocaleDateString()
               : 'Não informada'}</p>
-            <p><strong>Idade:</strong> {calcularIdade(dados.data_de_nascimento)}</p>
-            <div className="botoes-edicao">
-              <button className="black" onClick={() => setEditando(true)}>Editar</button>
-            </div>
+            {!token && (
+              <div className="botoes-edicao">
+                <button className="black" onClick={() => setEditando(true)}>Editar</button>
+              </div>
+            )}
           </>
         )}
       </div>

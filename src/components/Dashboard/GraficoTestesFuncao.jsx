@@ -68,7 +68,7 @@ function GraficoTesteFuncao({ usuarioId, dataSelecionada, token }) {
         <p><strong>{label}</strong></p>
         {payload.map((item) => (
           <p key={item.name} style={{ color: item.color }}>
-            {item.name}: {item.value} {item.name === 'Assimetria' ? '%' : 'º'}
+            {item.name}: {item.value} {item.name === 'Assimetria' ? '%' : ''}
           </p>
         ))}
         <p style={{ fontSize: '0.85rem', marginTop: 6, color: '#666' }}>
