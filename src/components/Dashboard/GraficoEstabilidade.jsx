@@ -118,13 +118,7 @@ function GraficoEstabilidade({ usuarioId, dataSelecionada, token }) {
   return (
     <>
       <LegendaGlobal />
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: '1.5rem',
-        }}
-      >
+      <div className="grid-estabilidade">
         {Object.entries(dadosAgrupados).map(([movimento, valores]) => (
           <div
             key={movimento}
