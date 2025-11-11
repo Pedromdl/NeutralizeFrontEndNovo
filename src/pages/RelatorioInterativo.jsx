@@ -93,7 +93,8 @@ export default function RelatorioPublico({ usuarioSelecionado }) {
       {/* Título */}
       <motion.div {...containerAnimacao}>
         <h1 className="text-3xl font-bold text-center mb-2">
-          Relatório Interativo — {paciente.nome}
+Relatório Interativo
+
         </h1>
         <p className="text-center text-gray-600">
           Dados atualizados automaticamente da plataforma Neutralize
