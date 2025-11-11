@@ -1,0 +1,221 @@
+.integracoes-container {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.integracoes-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #222;
+}
+
+.integracao-actions {
+    display: flex;
+    align-items: center;    
+}
+
+.integracao-card {
+  background: #fff;
+  border: 1px solid #e3e3e3;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+  transition: box-shadow 0.2s ease;
+}
+
+.integracao-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.integracao-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.integracao-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.integracao-header-left h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.integracao-content {
+  margin-top: 0.5rem;
+}
+
+.integracao-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.75rem;
+  color: #444;
+  font-size: 0.95rem;
+}
+
+.integracao-info-grid p strong {
+  color: #111;
+}
+
+.integracao-info-empty {
+  color: #666;
+  font-style: italic;
+}
+
+.btn-primary,
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.btn-primary {
+  background-color: #fc5200;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #e54800;
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 1px solid #ccc;
+  color: #333;
+}
+
+.btn-outline:hover {
+  background-color: #f3f3f3;
+}
+
+.btn-danger {
+  gap: 0.5rem;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  background-color: transparent;
+  border: 1px solid #e53e3e;
+  color: #e53e3e;
+}
+
+.btn-danger:hover {
+  background-color: rgba(229, 62, 62, 0.1);
+}
+
+
+.integracoes-loading {
+  text-align: center;
+  margin-top: 2rem;
+  font-size: 1.1rem;
+  color: #444;
+}
+
+
+.strava-grafico-container h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.grafico-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.grafico-toggles button {
+  margin-left: 8px;
+  background: #eee;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.grafico-toggles button.ativo {
+  background: #fc5200;
+  color: white;
+}
+
+.strava-profile-pic {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 2px solid #fc5200;
+  object-fit: cover;
+  margin-top: 8px;
+}
+
+/* Tooltip */
+.tooltip-custom {
+  background-color: #fff;
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  font-size: 0.9rem;
+}
+.tooltip-title {
+  margin: 0;
+  font-weight: bold;
+  color: #333;
+}
+.tooltip-info {
+  margin: 3px 0;
+  color: #555;
+}
+.tooltip-divider {
+  margin: 6px 0;
+  border: none;
+  border-top: 1px solid #eee;
+}
+.tooltip-value {
+  margin: 2px 0;
+  font-weight: 500;
+}
+
+/* Botões do gráfico */
+.grafico-toggles {
+  display: flex;
+  gap: 6px;
+}
+.grafico-toggle-btn {
+  border: 1px solid #ccc;
+  background: #f8f8f8;
+  color: #444;
+  padding: 4px 10px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.grafico-toggle-btn:hover {
+  background: #eee;
+}
+.grafico-toggle-btn.ativo {
+  border-color: #fc5200;
+  background: #fff2eb;
+  color: #fc5200;
+}
+

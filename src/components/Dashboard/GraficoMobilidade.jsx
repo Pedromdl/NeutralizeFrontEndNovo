@@ -6,51 +6,69 @@ import {
 } from 'recharts';
 import { AuthContext } from '../../context/AuthContext';
 
-function GraficoMobilidade({ usuarioId, dataSelecionada }) {
+function GraficoMobilidade({ usuarioId, dataSelecionada, token }) {
   const { user } = useContext(AuthContext);
 
   const { data: dados = [], isLoading, isError } = useQuery(
-    ['mobilidade', usuarioId, dataSelecionada],
+    ['mobilidade', usuarioId, dataSelecionada, token],
     async () => {
-      if (!usuarioId) return [];
+      if (!usuarioId && !token) return [];
 
-      const params = { paciente: usuarioId };
-      if (dataSelecionada) params.data_avaliacao = dataSelecionada;
+      // 🔹 MODO 1 — autenticado
+      if (usuarioId) {
+        const params = { paciente: usuarioId };
+        if (dataSelecionada) params.data_avaliacao = dataSelecionada;
 
-      const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/mobilidade/`, { params });
+        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/mobilidade/`, { params });
+        return mapearDados(data, false);
+      }
 
-      return data.map(item => {
-        const esquerdo = Number(item.lado_esquerdo);
-        const direito = Number(item.lado_direito);
-        const assimetria = Math.abs(esquerdo - direito) / Math.max(esquerdo, direito) * 100;
+      // 🔹 MODO 2 — público (sem autenticação, via token)
+      if (token) {
+        const params = {};
+        if (dataSelecionada) params.data_avaliacao = dataSelecionada;
 
-        return {
-          Movimento: item.nome_teste,
-          Esquerdo: esquerdo,
-          Direito: direito,
-          Data: item.data_avaliacao,
-          Assimetria: Number(assimetria.toFixed(1)),
-        };
-      });
+        const { data } = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/mobilidade-publica/${token}/`,
+          { params }
+        );
+        return mapearDados(data, true);
+      }
     },
     {
-      enabled: !!usuarioId,
-      staleTime: 1000 * 60 * 5, // 5 minutos de cache
+      enabled: !!usuarioId || !!token,
+      staleTime: 1000 * 60 * 5,
       refetchOnWindowFocus: false,
     }
   );
+
+  // 🔹 Normalização dos dados (autenticado vs público)
+  function mapearDados(data, isPublic) {
+    return data.map(item => {
+      const esquerdo = Number(item.lado_esquerdo);
+      const direito = Number(item.lado_direito);
+      const assimetria = Math.abs(esquerdo - direito) / Math.max(esquerdo, direito) * 100;
+
+      return {
+        Movimento: item.nome_teste, // tanto público quanto interno usam esse campo agora
+        Esquerdo: esquerdo,
+        Direito: direito,
+        Data: item.data_avaliacao,
+        Assimetria: Number(assimetria.toFixed(1)),
+      };
+    });
+  }
 
   if (isLoading) return <p>Carregando dados de mobilidade...</p>;
   if (isError) return <p>Erro ao carregar dados de mobilidade.</p>;
   if (!dados.length) return <p>Nenhum dado encontrado.</p>;
 
   const CustomTooltip = ({ active, payload, label }) => {
-    if (!active || !payload || payload.length === 0) return null;
-
+    if (!active || !payload?.length) return null;
     const dataAvaliacao = payload[0].payload.Data;
 
     return (
-      <div style={{ backgroundColor: 'white', padding: 10, borderRadius: 20 }}>
+      <div style={{ backgroundColor: 'white', padding: 10, borderRadius: 10 }}>
         <p><strong>{label}</strong></p>
         {payload.map((item) => (
           <p key={item.name} style={{ color: item.color }}>

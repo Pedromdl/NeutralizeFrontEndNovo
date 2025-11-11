@@ -6,52 +6,70 @@ import {
 } from 'recharts';
 import { AuthContext } from '../../context/AuthContext';
 
-function GraficoForca({ usuarioId, dataSelecionada }) {
+function GraficoForca({ usuarioId, dataSelecionada, token }) {
   const { user } = useContext(AuthContext);
 
-  // 🔹 React Query
   const { data: dados = [], isLoading, isError } = useQuery(
-    ['forca', usuarioId, dataSelecionada],
+    ['forca', usuarioId, dataSelecionada, token],
     async () => {
-      if (!usuarioId) return [];
+      if (!usuarioId && !token) return [];
 
-      const params = { paciente: usuarioId };
-      if (dataSelecionada) params.data_avaliacao = dataSelecionada;
+      // 🔹 MODO 1 — autenticado
+      if (usuarioId) {
+        const params = { paciente: usuarioId };
+        if (dataSelecionada) params.data_avaliacao = dataSelecionada;
 
-      const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/forca/`, { params });
+        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/forca/`, { params });
+        return mapearDados(data, false);
+      }
 
-      return data.map(item => {
-        const esquerdo = Number(item.lado_esquerdo);
-        const direito = Number(item.lado_direito);
-        const assimetria = Math.abs(esquerdo - direito) / Math.max(esquerdo, direito) * 100;
+      // 🔹 MODO 2 — público (sem autenticação, via token)
+      if (token) {
+        const params = {};
+        if (dataSelecionada) params.data_avaliacao = dataSelecionada;
 
-        return {
-          movimento_forca: item.movimento_forca_nome,
-          Esquerdo: esquerdo,
-          Direito: direito,
-          Data: item.data_avaliacao,
-          Assimetria: Number(assimetria.toFixed(1)),
-        };
-      });
+        const { data } = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/forca-publica/${token}/`,
+          { params }
+        );
+
+        return mapearDados(data, true);
+      }
     },
     {
-      enabled: !!usuarioId,             // só busca se tiver usuário
-      staleTime: 1000 * 60 * 5,        // 5 minutos de cache
-      refetchOnWindowFocus: false,     // evita refetch ao voltar para a aba
+      enabled: !!usuarioId || !!token,
+      staleTime: 1000 * 60 * 5,
+      refetchOnWindowFocus: false,
     }
   );
+
+  // 🔹 Função que normaliza os dados
+  function mapearDados(data, isPublic) {
+    return data.map(item => {
+      const esquerdo = Number(item.lado_esquerdo);
+      const direito = Number(item.lado_direito);
+      const assimetria = Math.abs(esquerdo - direito) / Math.max(esquerdo, direito) * 100;
+
+      return {
+        movimento_forca: isPublic ? item.movimento_forca__nome : item.movimento_forca_nome,
+        Esquerdo: esquerdo,
+        Direito: direito,
+        Data: item.data_avaliacao,
+        Assimetria: Number(assimetria.toFixed(1)),
+      };
+    });
+  }
 
   if (isLoading) return <p>Carregando força...</p>;
   if (isError) return <p>Erro ao carregar dados de força.</p>;
   if (!dados.length) return <p>Nenhum dado encontrado.</p>;
 
   const CustomTooltip = ({ active, payload, label }) => {
-    if (!active || !payload || payload.length === 0) return null;
-
+    if (!active || !payload?.length) return null;
     const dataAvaliacao = payload[0].payload.Data;
 
     return (
-      <div style={{ backgroundColor: 'white', padding: 10, borderRadius: 20 }}>
+      <div style={{ backgroundColor: 'white', padding: 10, borderRadius: 10 }}>
         <p><strong>{label}</strong></p>
         {payload.map((item) => (
           <p key={item.name} style={{ color: item.color }}>

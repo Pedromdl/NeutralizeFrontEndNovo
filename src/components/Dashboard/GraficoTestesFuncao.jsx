@@ -2,30 +2,45 @@ import { useContext } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Line
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Line
 } from 'recharts';
 import { AuthContext } from '../../context/AuthContext';
 
-function GraficoTesteFuncao({ usuarioId, dataSelecionada }) {
+function GraficoTesteFuncao({ usuarioId, dataSelecionada, token }) {
   const { user } = useContext(AuthContext);
 
   const { data: dados = [], isLoading, isError } = useQuery(
-    ['testeFuncao', usuarioId, dataSelecionada],
+    ['testeFuncao', usuarioId, dataSelecionada, token],
     async () => {
-      if (!usuarioId) return [];
+      if (!usuarioId && !token) return [];
 
-      const params = { paciente: usuarioId };
+      let params = {};
       if (dataSelecionada) params.data_avaliacao = dataSelecionada;
 
-      const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/testefuncao/`, { params });
+      let responseData = [];
 
-      return data.map(item => {
-        const esquerdo = Number(item.lado_esquerdo);
-        const direito = Number(item.lado_direito);
-        const assimetria = Math.abs(esquerdo - direito) / Math.max(esquerdo, direito) * 100;
+      // 🔹 Modo autenticado
+      if (usuarioId) {
+        params.paciente = usuarioId;
+        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/testefuncao/`, { params });
+        responseData = data;
+      }
+
+      // 🔹 Modo público
+      if (token) {
+        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/funcao-publica/${token}/`, { params });
+        responseData = data;
+      }
+
+      return responseData.map(item => {
+        const esquerdo = Number(item.lado_esquerdo) || 0;
+        const direito = Number(item.lado_direito) || 0;
+        const assimetria = (esquerdo && direito)
+          ? Math.abs(esquerdo - direito) / Math.max(esquerdo, direito) * 100
+          : 0;
 
         return {
-          Teste: item.teste_nome,
+          Teste: item.teste_nome || item.teste_id,
           Esquerdo: esquerdo,
           Direito: direito,
           Data: item.data_avaliacao,
@@ -34,8 +49,8 @@ function GraficoTesteFuncao({ usuarioId, dataSelecionada }) {
       });
     },
     {
-      enabled: !!usuarioId,
-      staleTime: 1000 * 60 * 5, // 5 minutos de cache
+      enabled: !!usuarioId || !!token,
+      staleTime: 1000 * 60 * 5,
       refetchOnWindowFocus: false,
     }
   );
@@ -75,7 +90,6 @@ function GraficoTesteFuncao({ usuarioId, dataSelecionada }) {
           label={{ value: "Assimetria (%)", angle: 90, position: "insideRight" }}
         />
         <Tooltip content={<CustomTooltip />} />
-        <Legend />
         <Bar yAxisId="left" dataKey="Esquerdo" fill="#282829" />
         <Bar yAxisId="left" dataKey="Direito" fill="#b7de42" />
         <Line

@@ -15,6 +15,9 @@ import DadosUsuario from './DadosUsuario';
 import Orientacao from './Orientacao';
 import Avaliacoes from './Avaliacoes';
 import Sessoes from './Sessoes';
+import GerarRelatorio from '../../components/GerarRelatorio';
+import VisualizarRelatorioInterativo from '../../components/VisualizarRelatorioInterativo';
+
 
 // 🌈 Animações padrão
 const containerAnimacao = {
@@ -67,13 +70,28 @@ function Usuarios() {
       case 'Dashboard':
         return (
           <>
-            <Card title="Filtro de Data" size="al">
+          
+          {/* Botão de gerar relatório PDF */}
+            {usuarioSelecionado && (
+            <Card size="al">
               <FiltroData
                 usuarioId={usuarioSelecionado.id}
                 valorSelecionado={dataSelecionada}
                 onChange={setDataSelecionada}
               />
+              <div className="pdf-button" style={{ marginTop: '12px', fontSize: '12px' }}>
+              <GerarRelatorio
+                usuarioId={usuarioSelecionado.id}
+                dataSelecionada={dataSelecionada}
+              />
+              <VisualizarRelatorioInterativo
+                usuarioId={usuarioSelecionado.id}
+                dataSelecionada={dataSelecionada}
+              />
+              </div>
             </Card>
+
+            )}
 
             <div className="dashboard-grid">
               {[

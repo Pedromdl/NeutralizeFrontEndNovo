@@ -2,22 +2,28 @@ import { useContext } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from 'recharts';
 import { AuthContext } from '../../context/AuthContext';
 
-function GraficoTesteDor({ usuarioId, dataSelecionada }) {
+function GraficoTesteDor({ usuarioId, dataSelecionada, token }) {
   const { user } = useContext(AuthContext);
 
   const { data: dados = [], isLoading, isError } = useQuery(
-    ['testesDor', usuarioId, dataSelecionada],
+    ['testesDor', usuarioId, dataSelecionada, token],
     async () => {
-      if (!usuarioId) return [];
+      if (!usuarioId && !token) return [];
 
-      const params = { paciente: usuarioId };
+      const params = {};
+      if (usuarioId) params.paciente = usuarioId;
       if (dataSelecionada) params.data_avaliacao = dataSelecionada;
 
-      const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/testedor/`, { params });
+      // 🔹 Define a URL de acordo com o contexto
+      const url = token
+        ? `${import.meta.env.VITE_API_URL}/api/dor-publica/${token}/`
+        : `${import.meta.env.VITE_API_URL}/api/testedor/`;
+
+      const { data } = await axios.get(url, { params });
 
       return data.map(item => ({
         id: item.id,
@@ -28,7 +34,7 @@ function GraficoTesteDor({ usuarioId, dataSelecionada }) {
       }));
     },
     {
-      enabled: !!usuarioId,
+      enabled: !!usuarioId || !!token,
       staleTime: 1000 * 60 * 5, // 5 minutos de cache
       refetchOnWindowFocus: false,
     }

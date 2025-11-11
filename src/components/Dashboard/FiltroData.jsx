@@ -3,22 +3,34 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { AuthContext } from '../../context/AuthContext';
 
-function FiltroData({ usuarioId, valorSelecionado, onChange }) {
+function FiltroData({ usuarioId, token, valorSelecionado, onChange }) {
   const { user } = useContext(AuthContext);
 
   const { data: datas = [], isLoading, isError } = useQuery(
-    ['datas-disponiveis', usuarioId],
+    ['datas-disponiveis', usuarioId, token],
     async () => {
-      if (!usuarioId) return [];
-      const { data } = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/datas-disponiveis/`,
-        { params: { paciente: usuarioId } }
-      );
-      return data;
+      // 🧩 Caso 1 — modo autenticado (usuário interno)
+      if (usuarioId) {
+        const { data } = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/datas-disponiveis/`,
+          { params: { paciente: usuarioId } }
+        );
+        return data;
+      }
+
+      // 🧩 Caso 2 — modo público (relatório com token)
+      if (token) {
+        const { data } = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/datas-publicas/${token}/`
+        );
+        return data;
+      }
+
+      return [];
     },
     {
-      enabled: !!usuarioId,
-      staleTime: 1000 * 60 * 5, // 5 minutos
+      enabled: !!usuarioId || !!token,
+      staleTime: 1000 * 60 * 5,
       refetchOnWindowFocus: false,
     }
   );
@@ -31,9 +43,8 @@ function FiltroData({ usuarioId, valorSelecionado, onChange }) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
       <label
         htmlFor="filtro-data"
-        style={{ fontWeight: 600, color: '#374151', marginBottom: 4 }}
-      >
-      </label>
+        style={{ fontSize: '1.17rem', fontWeight: 'bold', color: '#000', marginBottom: 12 }}
+      > Filtrar por Data:</label>
       <select
         id="filtro-data"
         value={valorSelecionado || ''}

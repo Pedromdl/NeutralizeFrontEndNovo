@@ -6,48 +6,67 @@ import {
 } from 'recharts';
 import { AuthContext } from '../../context/AuthContext';
 
-function GraficoEstabilidade({ usuarioId, dataSelecionada }) {
+function GraficoEstabilidade({ usuarioId, dataSelecionada, token }) {
   const { user } = useContext(AuthContext);
 
   const { data: dados = [], isLoading, isError } = useQuery(
-    ['estabilidade', usuarioId, dataSelecionada],
+    ['estabilidade', usuarioId, dataSelecionada, token],
     async () => {
-      if (!usuarioId) return [];
+      if (!usuarioId && !token) return [];
 
-      const params = { paciente: usuarioId };
-      if (dataSelecionada) params.data_avaliacao = dataSelecionada;
+      // 🔹 MODO 1 — autenticado
+      if (usuarioId) {
+        const params = { paciente: usuarioId };
+        if (dataSelecionada) params.data_avaliacao = dataSelecionada;
 
-      const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/estabilidade/`, { params });
+        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/estabilidade/`, { params });
+        return mapearDados(data);
+      }
 
-      return data.map(item => {
-        const esquerdo = Number(item.lado_esquerdo) || 0;
-        const direito = Number(item.lado_direito) || 0;
-        const assimetria = (esquerdo && direito)
-          ? Math.abs(esquerdo - direito) / Math.max(esquerdo, direito) * 100
-          : 0;
+      // 🔹 MODO 2 — público (via token)
+      if (token) {
+        const params = {};
+        if (dataSelecionada) params.data_avaliacao = dataSelecionada;
 
-        return {
-          movimento_estabilidade: item.movimento_estabilidade_nome || item.movimento_estabilidade,
-          Esquerdo: esquerdo,
-          Direito: direito,
-          Data: item.data_avaliacao,
-          Assimetria: Number(assimetria.toFixed(1)),
-          Observacao: item.observacao || ''
-        };
-      });
+        const { data } = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/estabilidade-publica/${token}/`,
+          { params }
+        );
+        return mapearDados(data);
+      }
     },
     {
-      enabled: !!usuarioId,
+      enabled: !!usuarioId || !!token,
       staleTime: 1000 * 60 * 5,
       refetchOnWindowFocus: false,
     }
   );
 
+  // 🔹 Normalização dos dados
+  function mapearDados(data) {
+    return data.map(item => {
+      const esquerdo = Number(item.lado_esquerdo) || 0;
+      const direito = Number(item.lado_direito) || 0;
+      const assimetria = (esquerdo && direito)
+        ? Math.abs(esquerdo - direito) / Math.max(esquerdo, direito) * 100
+        : 0;
+
+      return {
+        movimento_estabilidade: item.movimento_estabilidade_nome || item.nome_teste || item.movimento_estabilidade,
+        Esquerdo: esquerdo,
+        Direito: direito,
+        Data: item.data_avaliacao,
+        Assimetria: Number(assimetria.toFixed(1)),
+        Observacao: item.observacao || ''
+      };
+    });
+  }
+
   if (isLoading) return <p>Carregando estabilidade...</p>;
   if (isError) return <p>Erro ao carregar estabilidade.</p>;
   if (!dados.length) return <p>Nenhum dado encontrado.</p>;
 
-  // 🔹 Agrupar os dados por movimento_estabilidade_nome
+  // 🔹 Agrupar os dados por movimento
   const dadosAgrupados = dados.reduce((acc, item) => {
     const key = item.movimento_estabilidade;
     if (!acc[key]) acc[key] = [];
@@ -57,7 +76,6 @@ function GraficoEstabilidade({ usuarioId, dataSelecionada }) {
 
   const CustomTooltip = ({ active, payload, label }) => {
     if (!active || !payload || payload.length === 0) return null;
-
     const dataAvaliacao = payload[0].payload.Data;
 
     return (
@@ -80,7 +98,6 @@ function GraficoEstabilidade({ usuarioId, dataSelecionada }) {
     );
   };
 
-  // 🔹 Legenda global manual
   const LegendaGlobal = () => (
     <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', marginBottom: '1rem' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
@@ -126,18 +143,9 @@ function GraficoEstabilidade({ usuarioId, dataSelecionada }) {
                 <YAxis yAxisId="left" label={{ value: 'Valor', angle: -90, position: 'insideLeft' }} />
                 <YAxis yAxisId="right" orientation="right" />
                 <Tooltip content={<CustomTooltip />} />
-                {/* Legend removido dos gráficos */}
                 <Bar yAxisId="left" dataKey="Esquerdo" fill="#282829" />
                 <Bar yAxisId="left" dataKey="Direito" fill="#b7de42" />
-                <Line
-                  yAxisId="right"
-                  type="monotone"
-                  dataKey="Assimetria"
-                  stroke="#ff7300"
-                  strokeWidth={2}
-                  dot={{ r: 4 }}
-                  activeDot={{ r: 6 }}
-                />
+                <Line yAxisId="right" type="monotone" dataKey="Assimetria" stroke="#ff7300" strokeWidth={2} dot={{ r: 4 }} activeDot={{ r: 6 }} />
               </BarChart>
             </ResponsiveContainer>
           </div>

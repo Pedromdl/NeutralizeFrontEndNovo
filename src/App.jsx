@@ -11,6 +11,8 @@ import './App.css';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import TermosUso from './pages/TermosUso';
+import PoliticaPrivacidade from './pages/PoliticaPrivacidade';
 import Profile from './pages/Profile';
 import Configuracoes from './pages/Configuracoes';
 import Usuarios from './pages/Usuario/Usuarios';
@@ -35,6 +37,8 @@ import TreinosSecaoPaciente from './pages/Pacientes/TreinoSecaoPaciente';
 import HistoricodeTreinos from './pages/Pacientes/HistoricodeTreinos';
 import Financeiro from './pages/Financeiro';
 import Teste from './pages/Teste';
+import RelatorioInterativo from './pages/RelatorioInterativo';
+import Integracoes from './pages/Integracoes/Integracoes';
 
 function LayoutComSidebar({ children }) {
   const location = useLocation();
@@ -65,14 +69,21 @@ function LayoutComSidebar({ children }) {
 
 function AppRoutes() {
   const location = useLocation();
-  const rotaSemLayout = ['/login', '/register', '/teste'];
+// Em vez de lista simples:
+const rotasSemLayout = ['/login', '/register', '/politica-privacidade', '/termos-de-uso'];
 
-  if (rotaSemLayout.includes(location.pathname)) {
+// Adicione uma verificação dinâmica para rotas como /relatorio/:usuarioId
+const isTesteRoute = location.pathname.startsWith('/relatorio/');
+
+  if (rotasSemLayout.includes(location.pathname) || isTesteRoute) {
     return (
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/teste" element={<Teste />} />
+        <Route path="/relatorio/:token" element={<RelatorioInterativo />} />
+        <Route path="/politica-privacidade" element={<PoliticaPrivacidade />} />
+        <Route path="/termos-de-uso" element={<TermosUso />} />
       </Routes>
     );
   }
@@ -105,6 +116,7 @@ function AppRoutes() {
           <Route path="/paciente/historico" element={<HistoricodeTreinos />} />
           <Route path="/financeiro" element={<Financeiro />} />
           <Route path="/bancoexercicios" element={<BancoExercicios />} />
+          <Route path="/integracoes" element={<Integracoes />} />
 
 
         </Routes>
