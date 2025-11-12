@@ -70,7 +70,7 @@ function LayoutComSidebar({ children }) {
 function AppRoutes() {
   const location = useLocation();
 // Em vez de lista simples:
-const rotasSemLayout = ['/login', '/register', '/politica-privacidade', '/termos-de-uso'];
+const rotasSemLayout = ['/login', '/register', '/politica-privacidade', '/termos-de-uso', `/teste`];
 
 // Adicione uma verificação dinâmica para rotas como /relatorio/:usuarioId
 const isTesteRoute = location.pathname.startsWith('/relatorio/');
