@@ -40,12 +40,9 @@ export default function LiberacaoMiofascial() {
         <div className="brand">
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
             <img
+            className='logo-liberacao'
               src={logoNeutralize}
               alt="Logo Neutralize"
-              style={{
-                width: "250px",
-                objectFit: "contain",
-              }}
             />
           </div>
         </div>
@@ -142,7 +139,7 @@ export default function LiberacaoMiofascial() {
           </form>
         </aside>
       </main>
-      
+
         <section id="o-que-e" className="card-light two-cols">
           <div>
             <h2>O que é a Liberação Miofascial</h2>

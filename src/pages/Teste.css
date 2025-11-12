@@ -190,7 +190,7 @@ ul.muted {
   width: 20px;
 }
 
-.img-logo {
+.logo-liberacao {
   width: 250px;
   object-fit: contain;
 }
@@ -273,7 +273,7 @@ section {
     grid-template-columns: 1fr;
   }
 
-  .img-logo {
+  .logo-liberacao {
     width: 125px;
     object-fit: contain;
   }
