@@ -47,7 +47,7 @@ export default function LiberacaoMiofascial() {
 useEffect(() => {
   // Adiciona o script GA
   const script = document.createElement("script");
-  script.src = "https://www.googletagmanager.com/gtag/js?id=G-JBM0H9G74M";
+  script.src = "https://www.googletagmanager.com/gtag/js?id=G-JRN3H1B71Y";
   script.async = true;
   document.body.appendChild(script);
 
@@ -55,7 +55,7 @@ useEffect(() => {
   window.dataLayer = window.dataLayer || [];
   window.gtag = function() { window.dataLayer.push(arguments); };
   window.gtag('js', new Date());
-  window.gtag('config', 'G-JBM0H9G74M', { page_path: window.location.pathname });
+  window.gtag('config', 'G-JRN3H1B71Y', { page_path: window.location.pathname });
 
   return () => {
     document.body.removeChild(script);
