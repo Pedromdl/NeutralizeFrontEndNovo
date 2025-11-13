@@ -1,0 +1,493 @@
+/* VARIÁVEIS LOCAIS */
+:root {
+    --bg: #0b0b0c;
+    --card: #161718;
+    --muted: #9ca3af;
+    --text: #f4f4f5;
+    --accent: #b7de42;
+    --accent-weak: rgba(45, 212, 191, 0.1);
+    --radius: 16px;
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    --maxwidth: 1200px;
+}
+
+/* CONTAINER PRINCIPAL */
+.container {
+    margin: 0 auto;
+    color: var(--text);
+    background: var(--bg);
+    font-family: system-ui, sans-serif;
+    line-height: 1.5;
+    padding: 20px;
+}
+
+/* HEADER */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logoLiberacao {
+    width: 200px;
+    height: auto;
+    object-fit: contain;
+}
+
+.nav {
+    display: flex;
+    gap: 20px;
+}
+
+.nav a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+    transition: opacity 0.3s;
+}
+
+.nav a:hover {
+    opacity: 0.8;
+}
+
+/* HERO */
+.hero {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 28px;
+    box-sizing: border-box;
+    box-shadow: var(--shadow);
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 24px;
+    align-items: center;
+    width: 100%;
+    text-align: left;
+
+}
+
+.badges {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+}
+
+.badge {
+    background: var(--accent-weak);
+    color: var(--accent);
+    padding: 8px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.hero h1 {
+    margin: 0 0 8px 0;
+    font-size: 48px;
+    letter-spacing: -0.2px;
+    line-height: 1.12;
+}
+
+.lead {
+    margin: 0 0 20px 0;
+    color: var(--muted);
+    font-size: 15px;
+}
+
+.ctaRow {
+    display: flex;
+    justify-content: left;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 75px 0 75px 0;
+
+}
+
+.muted {
+  list-style: none;   /* remove a bolinha */
+  padding-left: 0;    /* remove o recuo padrão do ul */
+  margin-left: 0;     /* remove margem esquerda */
+}
+
+.muted li {
+  padding-left: 0;    /* garante alinhamento do texto */
+  margin-bottom: 8px; /* opcional: espaço entre itens */
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border: 0;
+    cursor: pointer;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.25s ease;
+}
+
+.btnPrimaryLiberacao {
+    background: var(--accent);
+    color: #0a0a0a;
+    box-shadow: 0 4px 12px rgba(45, 212, 191, 0.25);
+}
+
+.btnPrimaryLiberacao:hover {
+    background: #3ef0da;
+}
+
+.btnGhost {
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid rgba(45, 212, 191, 0.3);
+}
+
+.btnGhost:hover {
+    background: rgba(45, 212, 191, 0.08);
+}
+
+/* FORMULÁRIO */
+.card {
+    background: linear-gradient(180deg, #1a1b1d, #121314);
+    padding: 18px;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+}
+
+.cardDepo {
+    background: linear-gradient(180deg, #1a1b1d, #121314);
+    padding: 18px;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    width: 300px;
+}
+
+.formField {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.formField label {
+    font-size: 14px;
+    color: var(--text);
+}
+
+.formField input,
+.formField select {
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    background: #0f0f0f;
+    color: var(--text);
+}
+
+/* SEÇÕES */
+.sections {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-top: 22px;
+    align-items: center;
+}
+
+.cardLight {
+    background: #121314;
+    padding: 24px;
+    border-radius: 12px;
+    box-sizing: border-box;
+    box-shadow: var(--shadow);
+    width: 100%;
+}
+
+.cardLight details {
+    margin-top: 10px;
+}
+
+.cardLight summary {
+    border: 1px solid #262728;
+    border-radius: 10px;
+    padding: 12px;
+}
+.twoCols {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: 20px;
+    align-items: start;
+}
+
+/* TABELA DE DIFERENCIAIS */
+.diffTable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+    margin-top: 12px;
+}
+
+.diffTable td {
+    vertical-align: top;
+    padding: 10px;
+    background: #0f0f0f;
+    border: 1px solid #262728;
+    color: var(--text);
+}
+
+.diffLeft {
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.diffRight {
+    text-align: left;
+    color: var(--muted);
+}
+
+/* BENEFÍCIOS */
+.gridBenefits {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+}
+
+.benefit {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 12px;
+    border-radius: 10px;
+    background: #121314;
+    border: 1px solid #262728;
+}
+
+.ico {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    background: var(--accent-weak);
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 18px;
+}
+
+.imgBenefit {
+    width: 28px;
+    height: 28px;
+}
+
+.textBenefit {
+    flex: 1;
+}
+
+.muted {
+    color: var(--muted);
+}
+
+.small {
+    font-size: 13px;
+    color: var(--muted);
+}
+
+/* DEPOIMENTOS */
+.depoimentos {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.carrossel {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    display: flex;
+    padding-bottom: 10px;
+}
+
+.cardsWrapper {
+    display: flex;
+    gap: 16px;
+}
+
+.card p {
+    color: var(--muted);
+    margin-bottom: 8px;
+}
+
+.autor {
+    font-size: 14px;
+    color: var(--accent);
+}
+
+.btnLeiaMais {
+    background: none;
+    border: none;
+    color: var(--accent);
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 4px;
+    padding: 0;
+    text-decoration: underline;
+}
+
+.btnLeiaMais:hover {
+    opacity: 0.8;
+}
+
+/* FAQ */
+.q {
+    text-align: left;
+    margin-top: 6px;
+}
+
+/* MAPA */
+.mapContainer {
+    margin-top: 16px;
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+}
+
+/* FOOTER */
+footer {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #222;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.footerCta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.pill {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(45, 212, 191, 0.1);
+    font-weight: 600;
+    color: var(--accent);
+}
+
+/* ----------------------------- */
+/* RESPONSIVIDADE PARA MOBILE 📱 */
+/* ----------------------------- */
+
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .logoLiberacao {
+        width: 160px;
+    }
+
+    .nav {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 14px;
+    }
+
+    .hero {
+        text-align: center;
+        grid-template-columns: 1fr;
+        padding: 20px;
+    }
+
+    .hero h1 {
+        font-size: 22px;
+    }
+
+    .lead {
+        font-size: 14px;
+    }
+
+    .ctaRow {
+        flex-direction: column;
+        align-items: stretch;
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+
+    .twoCols {
+        grid-template-columns: 1fr;
+    }
+
+    .gridBenefits {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    }
+
+    .cardLight {
+        padding: 16px;
+    }
+
+    .benefit {
+        flex-direction: row;
+    }
+
+    .diffTable tr {
+        margin-bottom: 10px;
+    }
+
+    .depoimentos {
+        padding: 20px 10px;
+    }
+
+    .carrossel {
+        gap: 12px;
+    }
+
+    .card {
+        padding: 14px;
+    }
+
+    .cardDepo {
+    width: 260px;
+}
+
+    footer {
+        padding: 20px 10px;
+    }
+
+    .footerCta {
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero h1 {
+        font-size: 20px;
+    }
+
+    .btn {
+        justify-content: center;
+    }
+
+    .badge {
+        font-size: 12px;
+    }
+
+    .lead {
+        font-size: 13px;
+    }
+
+    .logoLiberacao {
+        width: 140px;
+    }
+}

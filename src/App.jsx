@@ -40,6 +40,7 @@ import Financeiro from './pages/Financeiro';
 import Teste from './pages/Teste';
 import RelatorioInterativo from './pages/RelatorioInterativo';
 import Integracoes from './pages/Integracoes/Integracoes';
+import LiberacaoMiofascial from './pages/LiberacaoMiofascial';
 
 function LayoutComSidebar({ children }) {
   const location = useLocation();
@@ -71,7 +72,8 @@ function LayoutComSidebar({ children }) {
 function AppRoutes() {
   const location = useLocation();
 // Em vez de lista simples:
-const rotasSemLayout = ['/login', '/register', '/politica-privacidade', '/termos-de-uso', `/teste`];
+const rotasSemLayout = ['/login', '/register', '/politica-privacidade', '/termos-de-uso', `/teste`, '/liberacao-miofascial'  // nova rota pública
+];
 
 // Adicione uma verificação dinâmica para rotas como /relatorio/:usuarioId
 const isTesteRoute = location.pathname.startsWith('/relatorio/');
@@ -85,6 +87,7 @@ const isTesteRoute = location.pathname.startsWith('/relatorio/');
         <Route path="/relatorio/:token" element={<RelatorioInterativo />} />
         <Route path="/politica-privacidade" element={<PoliticaPrivacidade />} />
         <Route path="/termos-de-uso" element={<TermosUso />} />
+        <Route path="/liberacao-miofascial" element={<LiberacaoMiofascial/>} />
       </Routes>
     );
   }
