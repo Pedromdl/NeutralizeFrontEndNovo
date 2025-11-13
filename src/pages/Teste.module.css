@@ -63,11 +63,15 @@
     background: var(--card);
     border-radius: var(--radius);
     padding: 28px;
+    box-sizing: border-box;
     box-shadow: var(--shadow);
     display: grid;
     grid-template-columns: 1fr 380px;
     gap: 24px;
-    align-items: start;
+    align-items: center;
+    width: 100%;
+    text-align: left;
+
 }
 
 .badges {
@@ -88,7 +92,7 @@
 
 .hero h1 {
     margin: 0 0 8px 0;
-    font-size: 28px;
+    font-size: 48px;
     letter-spacing: -0.2px;
     line-height: 1.12;
 }
@@ -101,8 +105,11 @@
 
 .ctaRow {
     display: flex;
+    justify-content: left;
     gap: 12px;
     flex-wrap: wrap;
+    margin: 75px 0 75px 0;
+
 }
 
 .muted {
@@ -155,6 +162,13 @@
     padding: 18px;
     border-radius: 12px;
     box-shadow: var(--shadow);
+}
+
+.cardDepo {
+    background: linear-gradient(180deg, #1a1b1d, #121314);
+    padding: 18px;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
     width: 300px;
 }
 
@@ -185,14 +199,16 @@
     flex-direction: column;
     gap: 18px;
     margin-top: 22px;
-    justify-content: center;
+    align-items: center;
 }
 
 .cardLight {
     background: #121314;
     padding: 24px;
     border-radius: 12px;
+    box-sizing: border-box;
     box-shadow: var(--shadow);
+    width: 100%;
 }
 
 .cardLight details {
@@ -389,6 +405,7 @@ footer {
     }
 
     .hero {
+        text-align: center;
         grid-template-columns: 1fr;
         padding: 20px;
     }
@@ -404,6 +421,8 @@ footer {
     .ctaRow {
         flex-direction: column;
         align-items: stretch;
+        margin-top: 0;
+        margin-bottom: 0;
     }
 
     .twoCols {
@@ -411,7 +430,7 @@ footer {
     }
 
     .gridBenefits {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     }
 
     .cardLight {
@@ -436,8 +455,11 @@ footer {
 
     .card {
         padding: 14px;
-        width: 260px;
     }
+
+    .cardDepo {
+    width: 260px;
+}
 
     footer {
         padding: 20px 10px;
