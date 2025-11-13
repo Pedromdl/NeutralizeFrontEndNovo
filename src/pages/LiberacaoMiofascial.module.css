@@ -296,7 +296,7 @@
     border-radius: 10px;
     display: grid;
     place-items: center;
-    background: var(--accent);
+    background: var(--card);
     color: var(--accent);
     font-weight: 700;
     font-size: 18px;
