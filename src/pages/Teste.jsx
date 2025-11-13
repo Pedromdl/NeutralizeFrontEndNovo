@@ -28,6 +28,7 @@ function Depoimento({ texto, autor }) {
 }
 
 export default function LiberacaoMiofascial() {
+
   const handleSubmit = (e) => {
     e.preventDefault();
     enviarEventoGA('submit_form_contato', { pagina: 'liberacao' });
@@ -43,24 +44,23 @@ export default function LiberacaoMiofascial() {
     }
   };
 
-  useEffect(() => {
-    // Carrega o script do GA4
-    const script = document.createElement("script");
-    script.src = "https://www.googletagmanager.com/gtag/js?id=G-JBM0H9G74M"; // substitua pelo seu Measurement ID
-    script.async = true;
-    document.body.appendChild(script);
+useEffect(() => {
+  // Adiciona o script GA
+  const script = document.createElement("script");
+  script.src = "https://www.googletagmanager.com/gtag/js?id=G-JBM0H9G74M";
+  script.async = true;
+  document.body.appendChild(script);
 
-    // Inicializa o GA4
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { window.dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', 'G-JBM0H9G74M', { page_path: window.location.pathname }); // rastreia só essa página
+  // Inicializa globalmente
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = function() { window.dataLayer.push(arguments); };
+  window.gtag('js', new Date());
+  window.gtag('config', 'G-JBM0H9G74M', { page_path: window.location.pathname });
 
-    // opcional: cleanup quando o componente desmonta
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, []);
+  return () => {
+    document.body.removeChild(script);
+  };
+}, []);
 
   return (
 
@@ -99,13 +99,19 @@ export default function LiberacaoMiofascial() {
               melhora da amplitude de movimento e recuperação funcional.
             </p>
             <div className={styles.ctaRow}>
-              <a
-                className={`${styles.btn} ${styles.btnPrimaryLiberacao}`}
-                href="https://wa.me/554831974163"
-                onClick={() => enviarEventoGA('click_agendar', { metodo: 'whatsapp_topo' })}
-              >
-                Agendar Liberação
-              </a>
+         <a
+  className={`${styles.btn} ${styles.btnPrimaryLiberacao}`}
+  href="https://wa.me/554831974163"
+  onClick={(e) => {
+    e.preventDefault();
+    enviarEventoGA('click_whatsapp_liberacao', { pagina: 'liberacao' });
+    setTimeout(() => {
+      window.location.href = 'https://wa.me/554831974163';
+    }, 200); // espera GA enviar
+  }}
+>
+  Agendar Liberação
+</a>
               <a className={`${styles.btn} ${styles.btnGhost}`} href="#evidencia">
                 Mais sobre evidência
               </a>
