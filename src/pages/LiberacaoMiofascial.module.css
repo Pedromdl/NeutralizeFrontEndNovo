@@ -113,14 +113,19 @@
 }
 
 .muted {
-  list-style: none;   /* remove a bolinha */
-  padding-left: 0;    /* remove o recuo padrão do ul */
-  margin-left: 0;     /* remove margem esquerda */
+    list-style: none;
+    /* remove a bolinha */
+    padding-left: 0;
+    /* remove o recuo padrão do ul */
+    margin-left: 0;
+    /* remove margem esquerda */
 }
 
 .muted li {
-  padding-left: 0;    /* garante alinhamento do texto */
-  margin-bottom: 8px; /* opcional: espaço entre itens */
+    padding-left: 0;
+    /* garante alinhamento do texto */
+    margin-bottom: 8px;
+    /* opcional: espaço entre itens */
 }
 
 .btn {
@@ -211,6 +216,20 @@
     width: 100%;
 }
 
+.evidenciaWrapper {
+    display: grid;
+    grid-template-columns: 1fr 150px;
+    /* texto ocupa o restante, vídeo 300px */
+    gap: 20px;
+    align-items: start;
+}
+
+.evidenciaWrapper video {
+    width: 150px;
+    height: auto;
+    border-radius: 8px;
+}
+
 .cardLight details {
     margin-top: 10px;
 }
@@ -220,6 +239,7 @@
     border-radius: 10px;
     padding: 12px;
 }
+
 .twoCols {
     display: grid;
     grid-template-columns: 1fr 360px;
@@ -437,6 +457,15 @@ footer {
         padding: 16px;
     }
 
+    .evidenciaWrapper {
+        grid-template-columns: 1fr;
+        /* mobile: vídeo abaixo do texto */
+    }
+
+    .evidenciaWrapper video {
+        justify-self: center;
+    }
+
     .benefit {
         flex-direction: row;
     }
@@ -458,8 +487,8 @@ footer {
     }
 
     .cardDepo {
-    width: 260px;
-}
+        width: 260px;
+    }
 
     footer {
         padding: 20px 10px;

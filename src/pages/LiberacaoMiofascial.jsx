@@ -229,16 +229,25 @@ export default function LiberacaoMiofascial() {
               </div>
             </div>
           </div>
+          
         </section>
+<section id="evidencia" className={styles.cardLight}>
+  <div className={styles.evidenciaWrapper}>
+    <div className={styles.texto}>
+      <h2>Evidência e responsabilidade clínica</h2>
+      <p className={styles.muted}>
+        A técnica apresenta resultados em dor, flexibilidade e função, mas sua
+        eficácia depende da avaliação e integração com o plano terapêutico. Nossa
+        conduta prioriza segurança e ciência.
+      </p>
+    </div>
 
-        <section id="evidencia" className={styles.cardLight}>
-          <h2>Evidência e responsabilidade clínica</h2>
-          <p className={styles.muted}>
-            A técnica apresenta resultados em dor, flexibilidade e função, mas sua
-            eficácia depende da avaliação e integração com o plano terapêutico. Nossa
-            conduta prioriza segurança e ciência.
-          </p>
-        </section>
+    <video controls autoPlay muted loop>
+      <source src="/videos/liberacao.mp4" type="video/mp4" />
+      Seu navegador não suporta o elemento de vídeo.
+    </video>
+  </div>
+</section>
 
         <section className={styles.cardLight}>
           <section className={styles.depoimentos}>
