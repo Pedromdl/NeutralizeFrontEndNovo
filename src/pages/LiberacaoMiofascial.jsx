@@ -91,54 +91,63 @@ export default function LiberacaoMiofascial() {
               <strong>Local:</strong> Neutralize • Santa Mônica
               <br />
               <span className={styles.small}>
-                Avenida Ângelo Crema, 372 — (48) 3197-4163
+                Avenida Ângelo Crema, 372
               </span>
             </div>
           </div>
 
           {/* FORM */}
-          <aside className={styles.card} id="contato">
-            <h3 style={{ margin: "0 0 10px 0", color: "white" }}>Agende uma avaliação</h3>
-            <p className={styles.small} style={{ margin: "0 0 12px 0" }}>
-              Preencha os dados e entraremos em contato.
-            </p>
+{/* FORM */}
+<aside className={styles.card} id="contato">
+  <h3 style={{ margin: "0 0 10px 0", color: "white" }}>Agende uma avaliação</h3>
+  <p className={styles.small} style={{ margin: "0 0 12px 0" }}>
+    Preencha os dados e entraremos em contato.
+  </p>
 
-            <form onSubmit={handleSubmit}>
-              <div className={styles.formField}>
-                <label htmlFor="nome">Nome completo</label>
-                <input id="nome" type="text" placeholder="Ex: João Silva" required />
-              </div>
-              <div className={styles.formField}>
-                <label htmlFor="contato">Telefone ou WhatsApp</label>
-                <input id="contato" type="tel" placeholder="(48) 3197-4163" required />
-              </div>
-              <div className={styles.formField}>
-                <label htmlFor="motivo">Motivo principal</label>
-                <input id="motivo" type="text" placeholder="Ex: rigidez no ombro" />
-              </div>
-              <div className={styles.formField}>
-                <label htmlFor="preferencia">Preferência de horário</label>
-                <select id="preferencia">
-                  <option>Qualquer horário</option>
-                  <option>Manhã</option>
-                  <option>Tarde</option>
-                  <option>Noite</option>
-                </select>
-              </div>
-              <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
-                <button type="submit" className={`${styles.btn} ${styles.btnPrimaryLiberacao}`}>
-                  Solicitar contato
-                </button>
-                <a
-                  className={`${styles.btn} ${styles.btnGhost}`}
-                  href="https://wa.me/554831974163"
-                  target="_blank"
-                >
-                  Abrir WhatsApp
-                </a>
-              </div>
-            </form>
-          </aside>
+  <form
+    onSubmit={(e) => {
+      e.preventDefault();
+
+      const nome = e.target.nome.value;
+      const contato = e.target.contato.value;
+      const motivo = e.target.motivo.value || "Não informado";
+      const preferencia = e.target.preferencia.value;
+
+      const mensagem = `Olá, meu nome é ${nome}.\nTelefone/WhatsApp: ${contato}\nMotivo: ${motivo}\nPreferência de horário: ${preferencia}`;
+
+      const url = `https://wa.me/554831974163?text=${encodeURIComponent(mensagem)}`;
+      window.open(url, "_blank");
+    }}
+  >
+    <div className={styles.formField}>
+      <label htmlFor="nome">Nome completo</label>
+      <input id="nome" type="text" placeholder="Ex: João Silva" required />
+    </div>
+    <div className={styles.formField}>
+      <label htmlFor="contato">Telefone ou WhatsApp</label>
+      <input id="contato" type="tel" placeholder="(48) 3197-4163" required />
+    </div>
+    <div className={styles.formField}>
+      <label htmlFor="motivo">Motivo principal</label>
+      <input id="motivo" type="text" placeholder="Ex: rigidez no ombro" />
+    </div>
+    <div className={styles.formField}>
+      <label htmlFor="preferencia">Preferência de horário</label>
+      <select id="preferencia">
+        <option>Qualquer horário</option>
+        <option>Manhã</option>
+        <option>Tarde</option>
+        <option>Noite</option>
+      </select>
+    </div>
+    <div style={{ gap: 8, marginTop: 8, justifySelf: "center" }}>
+      <button type="submit" className={`${styles.btn} ${styles.btnPrimaryLiberacao}`}>
+        Solicitar contato
+      </button>
+    </div>
+  </form>
+</aside>
+
         </main>
 
         <section id="o-que-e" className={`${styles.cardLight} ${styles.twoCols}`}>
