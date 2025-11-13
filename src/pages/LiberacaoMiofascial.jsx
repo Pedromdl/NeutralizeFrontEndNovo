@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import logoNeutralize from '../images/logohletrabanca.png';
 import styles from "./LiberacaoMiofascial.module.css";
+import { enviarEventoGA } from "../useGA";
 
 function Depoimento({ texto, autor }) {
   const [expandido, setExpandido] = useState(false);
@@ -31,39 +32,10 @@ export default function LiberacaoMiofascial() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    enviarEventoGA('submit_form_contato', { pagina: 'liberacao' });
     alert("Formulário de exemplo — implemente envio no servidor.");
   };
 
-
-  const enviarEventoGA = (nomeEvento, parametros = {}) => {
-    if (window.gtag) {
-      window.gtag('event', nomeEvento, parametros);
-    } else {
-      console.log('GA não carregado', nomeEvento, parametros);
-    }
-  };
-
-useEffect(() => {
-  // Adiciona o script GA
-  const script = document.createElement("script");
-  script.src = "https://www.googletagmanager.com/gtag/js?id=G-JRN3H1B71Y";
-  script.async = true;
-  document.body.appendChild(script);
-
-  // Inicializa globalmente
-  window.dataLayer = window.dataLayer || [];
-  window.gtag = function() { window.dataLayer.push(arguments); };
-  window.gtag('js', new Date());
-  window.gtag('config', 'G-JRN3H1B71Y', { page_path: window.location.pathname });
-
-  return () => {
-    document.body.removeChild(script);
-  };
-}, []);
-
   return (
-
     <div className={styles.container}>
       <header className={styles.header}>
         <div className={styles.brand}>
@@ -84,7 +56,6 @@ useEffect(() => {
       </header>
 
       <div className={styles.sections}>
-
         <main className={styles.hero} aria-labelledby="hero-title">
           <div>
             <div className={styles.badges}>
@@ -99,19 +70,13 @@ useEffect(() => {
               melhora da amplitude de movimento e recuperação funcional.
             </p>
             <div className={styles.ctaRow}>
-         <a
-  className={`${styles.btn} ${styles.btnPrimaryLiberacao}`}
-  href="https://wa.me/554831974163"
-  onClick={(e) => {
-    e.preventDefault();
-    enviarEventoGA('click_whatsapp_liberacao', { pagina: 'liberacao' });
-    setTimeout(() => {
-      window.location.href = 'https://wa.me/554831974163';
-    }, 200); // espera GA enviar
-  }}
->
-  Agendar Liberação
-</a>
+              <a
+                className={`${styles.btn} ${styles.btnPrimaryLiberacao}`}
+                href="https://wa.me/554831974163"
+                onClick={() => enviarEventoGA("click_whatsapp_liberacao", { pagina: "liberacao" })}
+              >
+                Agendar Liberação
+              </a>
               <a className={`${styles.btn} ${styles.btnGhost}`} href="#evidencia">
                 Mais sobre evidência
               </a>
@@ -168,7 +133,6 @@ useEffect(() => {
                   className={`${styles.btn} ${styles.btnGhost}`}
                   href="https://wa.me/554831974163"
                   target="_blank"
-                  onClick={() => enviarEventoGA('click_whatsapp_form', { pagina: 'liberacao' })}
                 >
                   Abrir WhatsApp
                 </a>
@@ -217,8 +181,6 @@ useEffect(() => {
             </div>
           </aside>
         </section>
-
-
 
         <section id="beneficios" className={styles.cardLight}>
           <h2>Benefícios esperados</h2>
@@ -269,7 +231,6 @@ useEffect(() => {
           </div>
         </section>
 
-
         <section id="evidencia" className={styles.cardLight}>
           <h2>Evidência e responsabilidade clínica</h2>
           <p className={styles.muted}>
@@ -282,38 +243,15 @@ useEffect(() => {
         <section className={styles.cardLight}>
           <section className={styles.depoimentos}>
             <h2>O que dizem nossos pacientes</h2>
-
             <div className={styles.carrossel}>
               <div className={styles.cardsWrapper}>
-                <Depoimento
-                  texto="Excelente pessoa e profissional. Comecei fazendo liberação miofascial e hoje faço fortalecimento específico para triathlon com ele. Super recomendo"
-                  autor="Felipe M."
-                />
-                <Depoimento
-                  texto="Excelente profissional! Competente e confiável. Recomendo fortemente, em especial para atletas amadores de corrida/triatlo."
-                  autor="Felipe B."
-                />
-                <Depoimento
-                  texto="Pedrão sempre foi muito atencioso comigo desde o primeiro contato. Fui para tratar uma canelite e, a partir de exercícios, liberação miofascial e outras técnicas, ele conseguiu fazer com que eu voltasse a correr sem dores. Sempre que possível indico para amigos e familiares 🙌"
-                  autor="Marcus V."
-                />
-                <Depoimento
-                  texto="Sou paciente do Pedro há um ano. Cheguei até ele devido a um probleminha no joelho, o qual ele curou em dois meses!! Porém continuei fazendo fisioterapia preventiva com ele pois acredito que seja necessário para todos nós. Ele é um excelente profissional, cuida da gente e faz tudo da melhor maneira para seus pacientes!! Esse profissional fez com que eu tivesse constância no meu tratamento e agora nos meus treinos com ele!! Eu super recomendo esse profissional maravilhoso!!"
-                  autor="Jaciara R."
-                />
-                <Depoimento
-                  texto="Sou paciente do Pedro realizando reabilitação do joelho após rompimento do LCA e não tenho dúvidas que estou com o profissional e a pessoa certa. Em todos os atendimentos o Pedro sempre foi atencioso e sempre fez questão de explicar detalhadamente cada etapa do tratamento e a importância de cada exercício (algo que me auxilia muito com a motivação). O ambiente da clínica é acolhedor e bem equipado, o que contribui para uma experiência ainda mais positiva."
-                  autor="Diego B."
-                />
-                <Depoimento
-                  texto="Excelente profissional, muito atencioso, sempre buscando evolução na teoria e prática para melhor atender seus pacientes. Pedro tem sido o meu fisioterapeuta por mais de 2 anos e ao longo desse tempo trabalhamos fortalecimento, mobilidade e liberação, com foco sempre no feedback dos meus treinos e provas. Com isso, me auxiliou bastante na prática do ciclismo e corrida."
-                  autor="Samuel R."
-                />
-                <Depoimento
-                  texto="O Pedro é um profissional de excelência! Eu estava com muita dor na cervical e depois da massagem me senti muito mais leve, relaxada e sem dores.
-E além de ótimo profissional o Pedro é um querido!! Super recomendado!!"
-                  autor="Ana Paula R."
-                />
+                <Depoimento texto="Excelente pessoa e profissional..." autor="Felipe M." />
+                <Depoimento texto="Excelente profissional! Competente e confiável..." autor="Felipe B." />
+                <Depoimento texto="Pedrão sempre foi muito atencioso comigo..." autor="Marcus V." />
+                <Depoimento texto="Sou paciente do Pedro há um ano..." autor="Jaciara R." />
+                <Depoimento texto="Sou paciente do Pedro realizando reabilitação..." autor="Diego B." />
+                <Depoimento texto="Excelente profissional, muito atencioso..." autor="Samuel R." />
+                <Depoimento texto="O Pedro é um profissional de excelência!..." autor="Ana Paula R." />
               </div>
             </div>
           </section>
@@ -360,7 +298,6 @@ E além de ótimo profissional o Pedro é um querido!! Super recomendado!!"
             ></iframe>
           </div>
         </section>
-
       </div>
 
       <footer>
@@ -371,12 +308,10 @@ E além de ótimo profissional o Pedro é um querido!! Super recomendado!!"
         </div>
         <div className={styles.footerCta}>
           <div className={styles.muted} style={{ fontSize: 14 }}>
-            Telefone:{" "}
-            <strong style={{ color: "var(--accent)" }}>(48) 3197-4163</strong>
+            Telefone: <strong style={{ color: "var(--accent)" }}>(48) 3197-4163</strong>
           </div>
         </div>
       </footer>
-
     </div>
   );
 }
