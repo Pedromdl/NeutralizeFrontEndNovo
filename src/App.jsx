@@ -8,6 +8,7 @@ import PacienteBottomMenu from './components/Menus/PacienteBottomMenu';
 import PrivateRoute from './components/PrivateRoute';
 import './App.css';
 
+
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
