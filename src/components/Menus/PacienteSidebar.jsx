@@ -41,7 +41,7 @@ function PacienteSidebar() {
         <ul className="menu">
           <li>
             <NavLink
-              to="/paciente"
+              to="/paciente"end
               className={({ isActive }) => (isActive ? 'ativo' : '')}
             >
               <House size={20} />
