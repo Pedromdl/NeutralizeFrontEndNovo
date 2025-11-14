@@ -111,8 +111,7 @@
   align-items: center;
   padding: 6px;
   text-decoration: none;
-  color: #333;
-  background-color: #f5f5f5;
+  color: #edecea;
   border-radius: 6px;
   transition: background-color 0.3s, transform 0.1s;
   font-weight: 600;
@@ -122,6 +121,7 @@
 .menu li a:hover {
   background-color: #e0e0e0;
   transform: translateX(4px);
+  color: #000;
 }
 
 .menu li a:active {
@@ -129,6 +129,6 @@
 }
 
 .menu li a.ativo {
-  background-color: #cce5ff;
-  color: #003366;
+  background-color: #edecea;
+  color: #000;
 }

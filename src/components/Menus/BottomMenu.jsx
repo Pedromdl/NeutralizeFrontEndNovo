@@ -24,11 +24,6 @@ function BottomMenu() {
           <img src={Logo} alt="Logo" />
         </div>
 
-        <NavLink to="/" className={({ isActive }) => (isActive ? 'ativo' : '')}>
-          <House size={20} color="#fff" />
-          <span>Início</span>
-        </NavLink>
-
         <NavLink to="/usuarios" className={({ isActive }) => (isActive ? 'ativo' : '')}>
           <Users size={20} color="#fff" />
           <span>Usuários</span>

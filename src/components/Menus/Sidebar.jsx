@@ -47,12 +47,7 @@ function Sidebar() {
         )}
 
         <ul className="menu">
-          <li>
-            <NavLink to="/" className={({ isActive }) => (isActive ? 'ativo' : '')}>
-              <House size={20} />
-              {aberto && <span>Início</span>}
-            </NavLink>
-          </li>
+
           <li>
             <NavLink to="/usuarios" className={({ isActive }) => (isActive ? 'ativo' : '')}>
               <Users size={20} />
