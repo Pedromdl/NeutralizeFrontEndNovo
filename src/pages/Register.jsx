@@ -180,7 +180,7 @@ export default function Register() {
     <div className="register-conteudo">
       <div className="card-register">
         <img src={Logo} alt="Logo" className="logo" style={{ width: '250px' }} />
-        <h2>Registre-se</h2>
+        <h2>Registrar Paciente</h2>
         <form onSubmit={handleRegister} noValidate>
           <input
             type="text"

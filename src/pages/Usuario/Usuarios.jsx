@@ -39,7 +39,7 @@ function Usuarios() {
     if (salvo) setUsuarioSelecionado(JSON.parse(salvo));
 
     if (location.state?.pacienteId) {
-      fetch(`${import.meta.env.VITE_API_URL}/api/pacientes/${location.state.pacienteId}/`)
+      fetch(`${import.meta.env.VITE_API_URL}/api/usuarios/${location.state.pacienteId}/`)
         .then(res => res.json())
         .then(data => {
           setUsuarioSelecionado(data);

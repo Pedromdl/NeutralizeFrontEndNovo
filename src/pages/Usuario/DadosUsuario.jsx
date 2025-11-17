@@ -3,11 +3,11 @@ import axios from 'axios';
 import Card from '../../components/Card';
 import '../../components/css/DadosUsuario.css';
 
-export default function DadosUsuario({ usuarioSelecionado, atualizarUsuario, token }) {
+export default function DadosUsuario({ usuarioSelecionado, atualizarUsuario, token, mostrarEndereco = true }) {
   const [editando, setEditando] = useState(false);
   const [dados, setDados] = useState({});
 
-  // Busca os dados do usuário público se token existir, senão usa usuarioSelecionado
+  // Carregar dados (público ou privado)
   useEffect(() => {
     async function fetchUsuarioPublico() {
       if (!token) {
@@ -19,7 +19,6 @@ export default function DadosUsuario({ usuarioSelecionado, atualizarUsuario, tok
         setDados(res.data);
       } catch (error) {
         console.error('Erro ao carregar usuário público:', error);
-        setDados({});
       }
     }
     fetchUsuarioPublico();
@@ -31,9 +30,7 @@ export default function DadosUsuario({ usuarioSelecionado, atualizarUsuario, tok
     const nascimento = new Date(dataNascimento);
     let idade = hoje.getFullYear() - nascimento.getFullYear();
     const m = hoje.getMonth() - nascimento.getMonth();
-    if (m < 0 || (m === 0 && hoje.getDate() < nascimento.getDate())) {
-      idade--;
-    }
+    if (m < 0 || (m === 0 && hoje.getDate() < nascimento.getDate())) idade--;
     return idade;
   };
 
@@ -53,64 +50,109 @@ export default function DadosUsuario({ usuarioSelecionado, atualizarUsuario, tok
   };
 
   const cancelar = () => {
-    setDados(token ? dados : { ...usuarioSelecionado });
+    setDados({ ...usuarioSelecionado });
     setEditando(false);
   };
 
   return (
     <Card title="Dados do Usuário" size="al">
-      <div className="dados-usuario">
-        {editando && !token ? (
-          <>
-            {/* Campos de edição só aparecem se não for token público */}
-            <div className="campo">
-              <label>Nome:</label>
-              <input name="nome" value={dados.nome} onChange={handleChange} />
-            </div>
-            <div className="campo">
-              <label>Email:</label>
-              <input name="email" value={dados.email} onChange={handleChange} />
-            </div>
-            <div className="campo">
-              <label>Telefone:</label>
-              <input name="telefone" value={dados.telefone || ''} onChange={handleChange} />
-            </div>
-            <div className="campo">
-              <label>Endereço:</label>
-              <input name="endereço" value={dados.endereço || ''} onChange={handleChange} />
-            </div>
-            <div className="campo">
-              <label>Data de Nascimento:</label>
-              <input
-                name="data_de_nascimento"
-                type="date"
-                value={dados.data_de_nascimento || ''}
-                onChange={handleChange}
-              />
-            </div>
+      <div className="usuario-secoes">
 
-            <div className="botoes-edicao">
-              <button onClick={salvar}>Salvar</button>
-              <button onClick={cancelar}>Cancelar</button>
-            </div>
-          </>
-        ) : (
-          <>
-            <p><strong>Nome:</strong> {dados.nome}</p>
-            <p><strong>Email:</strong> {dados.email}</p>
-            <p><strong>Idade:</strong> {calcularIdade(dados.data_de_nascimento)}</p>
-            <p><strong>Telefone:</strong> {dados.telefone || 'Não informado'}</p>
-            <p><strong>Endereço:</strong> {dados.endereço || 'Não informado'}</p>
-            <p><strong>Data de Nascimento:</strong> {dados.data_de_nascimento
-              ? new Date(dados.data_de_nascimento).toLocaleDateString()
-              : 'Não informada'}</p>
-            {!token && (
-              <div className="botoes-edicao">
-                <button className="black" onClick={() => setEditando(true)}>Editar</button>
-              </div>
+        {/* ==============================
+            SEÇÃO: DADOS PESSOAIS
+        =============================== */}
+        <div className="secao-card">
+          <h3>Informações Pessoais</h3>
+
+          {/* Nome */}
+          <div className="linha-dado">
+            <label>Nome</label>
+            {editando && !token ? (
+              <input name="nome" value={dados.nome || ''} onChange={handleChange} />
+            ) : (
+              <span>{dados.nome || "Não informado"}</span>
             )}
-          </>
+          </div>
+
+          {/* Email */}
+          <div className="linha-dado">
+            <label>Email</label>
+            {editando && !token ? (
+              <input name="email" value={dados.email || ''} onChange={handleChange} />
+            ) : (
+              <span>{dados.email || "Não informado"}</span>
+            )}
+          </div>
+
+{/* Telefone */}
+<div className="linha-dado">
+  <label>Telefone</label>
+  {editando && !token ? (
+    <input name="telefone" value={dados.telefone || ''} onChange={handleChange} />
+  ) : (
+    <span>{dados.telefone || "Não informado"}</span>
+  )}
+</div>
+
+{/* Data de nascimento */}
+<div className="linha-dado">
+  <label>Data de Nascimento</label>
+  {editando && !token ? (
+    <input
+      type="date"
+      name="data_de_nascimento"
+      value={dados.data_de_nascimento || ''}
+      onChange={handleChange}
+    />
+  ) : (
+    <span>{dados.data_de_nascimento ? new Date(dados.data_de_nascimento).toLocaleDateString() : "Não informada"}</span>
+  )}
+</div>
+
+{/* Idade */}
+<div className="linha-dado">
+  <label>Idade</label>
+  {editando && !token ? (
+    <input disabled value={calcularIdade(dados.data_de_nascimento)} />
+  ) : (
+    <span>{calcularIdade(dados.data_de_nascimento)}</span>
+  )}
+</div>
+</div>
+        {/* ==============================
+            SEÇÃO: ENDEREÇO (condicional)
+        =============================== */}
+        {mostrarEndereco && (
+          <div className="secao-card">
+            <h3>Endereço</h3>
+
+            {['cep','rua','numero','bairro','cidade','estado','complemento'].map((campo) => (
+              <div className="linha-dado" key={campo}>
+                <label>{campo.charAt(0).toUpperCase() + campo.slice(1)}</label>
+                {editando && !token ? (
+                  <input name={campo} value={dados[campo] || ''} onChange={handleChange} />
+                ) : (
+                  <span>{dados[campo] || "Não informado"}</span>
+                )}
+              </div>
+            ))}
+          </div>
         )}
+
+        {/* Botões de edição */}
+        {!token && editando && (
+          <div className="botoes-edicao">
+            <button onClick={salvar}>Salvar</button>
+            <button onClick={cancelar}>Cancelar</button>
+          </div>
+        )}
+
+        {!token && !editando && (
+          <div className="botoes-edicao">
+            <button className="black" onClick={() => setEditando(true)}>Editar</button>
+          </div>
+        )}
+
       </div>
     </Card>
   );

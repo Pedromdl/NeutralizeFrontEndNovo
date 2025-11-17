@@ -1,74 +1,97 @@
-.dados-usuario {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  padding: 1rem;
-  font-size: 1rem;
-  color: #333;
-}
-
-.dados-usuario p,
-.dados-usuario .campo {
-  margin: 0;
-  background: #f9f9f9;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  border-left: 4px solid #b7de42;
+.usuario-secoes {
   display: flex;
   flex-direction: column;
+  gap: 2rem;
 }
 
-.dados-usuario label {
+/* CARD de cada seção */
+.secao-card {
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border: 1px solid #eee;
+}
+
+.secao-card h3 {
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  color: #444;
+  font-weight: 600;
+}
+
+/* LINHA DE INFORMAÇÃO */
+.linha-dado {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.linha-dado label {
+  font-weight: 600;
+  color: #555;
+}
+
+.linha-dado span {
+  color: #333;
+  font-weight: 500;
+}
+
+.linha-dado:last-child {
+  border-bottom: none;
+}
+
+.botoes-edicao {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.botoes-edicao button {
+  padding: 0.6rem 1.4rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.black {
+  background: #b7de42;
+  color: #fff;
+  font-weight: bold;
+}
+
+/* ==============================
+   Campos de Dados
+============================== */
+
+.usuario-secoes .linha-dado label {
   font-weight: 600;
   color: #555;
   margin-bottom: 0.25rem;
 }
 
-.dados-usuario input {
-  padding: 0.4rem 0.6rem;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+.usuario-secoes .linha-dado input {
+  padding: 0.5rem;
   font-size: 1rem;
-}
-
-.botoes-edicao {
-  grid-column: 1 / -1;
-  display: flex;
-  gap: 0.75rem;
-  justify-content: flex-end;
-}
-
-.botoes-edicao button {
-  padding: 0.5rem 1rem;
   border-radius: 6px;
-  font-weight: 500;
-  cursor: pointer;
-  border: none;
-  transition: all 0.2s ease;
-}
-
-.botoes-edicao button:first-child {
-  background-color: #b7de42;
-  color: white;
-}
-
-.botoes-edicao button:last-child {
-  background-color: #e0e0e0;
+  border: 1px solid #ccc;
+  background-color: #fff; /* mesmo fundo para todos os inputs */
   color: #333;
+    text-align: right; /* padrão para textos */
+
+}
+
+/* Estilo para inputs desabilitados (somente leitura) */
+.usuario-secoes .linha-dado input:disabled {
+  background-color: #f9f9f9; /* combinar com fundo dos cartões */
+  color: #333; /* mesma cor do texto normal */
+  border: none; /* mesma borda dos outros inputs */
 }
 
 @media (max-width: 768px) {
-  .dados-usuario {
-    grid-template-columns: 1fr; /* Apenas 1 coluna no mobile */
-  }
-
-  .botoes-edicao {
+  .linha-dado {
     flex-direction: column;
-    align-items: stretch;
-  }
-
-  .botoes-edicao button {
-    width: 100%;
+    gap: 0.3rem;
   }
 }

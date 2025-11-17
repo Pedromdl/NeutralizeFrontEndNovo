@@ -1,137 +1,65 @@
-import React from "react";
+import { useEffect, useState, useContext } from "react";
+import axios from "axios";
+import ReactMarkdown from "react-markdown";
+import { AuthContext } from "../context/AuthContext"; // contexto de autenticação
+import "./TermosUso.css"; // mesmo CSS usado para os cards e markdown
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function PoliticaPrivacidade() {
+  const [documento, setDocumento] = useState(null);
+  const [aceito, setAceito] = useState(false);
+  const { token } = useContext(AuthContext);
+
+  useEffect(() => {
+    if (!token) return;
+
+    axios.get(`${API_URL}/api/accounts/documentos/?tipo=politica_privacidade`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    .then((res) => {
+      const docs = Array.isArray(res.data) ? res.data : res.data.results || [];
+      if (docs.length > 0) setDocumento(docs[0]); // pega o mais recente
+    })
+    .catch((err) => console.error("Erro ao buscar política:", err));
+  }, [token]);
+
+  const handleAceite = () => {
+    if (!documento || !token) return;
+
+    axios.post(`${API_URL}/api/accounts/documentos/aceitar/`, 
+      { documento: documento.id },
+      { headers: { Authorization: `Bearer ${token}` } }
+    )
+    .then(() => {
+      setAceito(true);
+      alert("Política de privacidade aceita!");
+    })
+    .catch((err) => {
+      console.error("Erro ao aceitar política:", err);
+      alert("Não foi possível registrar o aceite.");
+    });
+  };
+
+  if (!documento) return <p>Carregando política de privacidade...</p>;
+
   return (
-    <div className="conteudo">
-      <div
-        className="card card-xl"
-        style={{
-          textAlign: "left",
-          maxWidth: "900px",
-          margin: "0 auto",
-          lineHeight: "1.7",
-          padding: "3rem",
-        }}
-      >
-        <h1
-          style={{
-            fontSize: "2rem",
-            fontWeight: "bold",
-            color: "#1e293b",
-            marginBottom: "0.5rem",
-          }}
-        >
-          Política de Privacidade — Neutralize Hub
-        </h1>
-
-        <p style={{ color: "#64748b", fontSize: "0.9rem", marginBottom: "2rem" }}>
-          Última atualização: 03 de novembro de 2025
-        </p>
-
-        <p>
-          Bem-vindo à <strong>Neutralize Hub</strong> (“Plataforma”, “nós”, “nosso”).
-          Esta Política de Privacidade explica como coletamos, usamos e protegemos os
-          dados dos nossos usuários e pacientes.
-        </p>
-
-        <h2 className="title-h3 mt-6" style={{ marginTop: "2rem" }}>
-          1. Informações que Coletamos
-        </h2>
-        <ul style={{ paddingLeft: "1.2rem", listStyle: "disc", color: "#334155" }}>
-          <li>Nome, e-mail, CPF, telefone e endereço;</li>
-          <li>Dados de desempenho físico, agendamentos e avaliações;</li>
-          <li>Dados obtidos via <strong>Google Ads API</strong>;</li>
-          <li>Informações técnicas (IP, navegador, data e hora de acesso).</li>
-        </ul>
-
-        <h2 className="title-h3 mt-6" style={{ marginTop: "2rem" }}>
-          2. Uso das Informações
-        </h2>
-        <p>Usamos os dados para:</p>
-        <ul style={{ paddingLeft: "1.2rem", listStyle: "disc", color: "#334155" }}>
-          <li>Gerenciar o acesso à plataforma;</li>
-          <li>Gerar relatórios e métricas de desempenho;</li>
-          <li>Exibir informações provenientes da Google Ads API;</li>
-          <li>Enviar comunicações relevantes.</li>
-        </ul>
-
-        <h2 className="title-h3 mt-6" style={{ marginTop: "2rem" }}>
-          3. Compartilhamento de Dados
-        </h2>
-        <p>
-          Não vendemos seus dados. Podemos compartilhá-los apenas com:
-        </p>
-        <ul style={{ paddingLeft: "1.2rem", listStyle: "disc", color: "#334155" }}>
-          <li>Google LLC (integração via Google Ads API);</li>
-          <li>Serviços de hospedagem seguros;</li>
-          <li>Autoridades legais, quando exigido.</li>
-        </ul>
-
-        <h2 className="title-h3 mt-6" style={{ marginTop: "2rem" }}>
-          4. Integração com Google Ads API
-        </h2>
-        <p>
-          A Neutralize Hub utiliza a Google Ads API para conectar contas de publicidade
-          e acessar métricas de campanhas.
-        </p>
-        <p>
-          Você pode revogar o acesso a qualquer momento em{" "}
-          <a
-            href="https://myaccount.google.com/permissions"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: "#2563eb", textDecoration: "underline" }}
-          >
-            myaccount.google.com/permissions
-          </a>
-          .
-        </p>
-
-        <h2 className="title-h3 mt-6" style={{ marginTop: "2rem" }}>
-          5. Armazenamento e Segurança
-        </h2>
-        <p>
-          Adotamos práticas seguras de armazenamento, criptografia e controle de acesso
-          para proteger as informações pessoais de todos os usuários.
-        </p>
-
-        <h2 className="title-h3 mt-6" style={{ marginTop: "2rem" }}>
-          6. Direitos do Usuário (LGPD)
-        </h2>
-        <ul style={{ paddingLeft: "1.2rem", listStyle: "disc", color: "#334155" }}>
-          <li>Acessar, corrigir ou excluir informações pessoais;</li>
-          <li>Revogar consentimentos;</li>
-          <li>Solicitar confirmação de tratamento de dados.</li>
-        </ul>
-        <p>
-          Contato:{" "}
-          <a
-            href="mailto:pedromartinsdl@gmail.com"
-            style={{ color: "#2563eb", textDecoration: "underline" }}
-          >
-            pedromartinsdl@gmail.com
-          </a>
-        </p>
-
-        <h2 className="title-h3 mt-6" style={{ marginTop: "2rem" }}>
-          7. Alterações desta Política
-        </h2>
-        <p>
-          Atualizações serão publicadas em{" "}
-          <strong>hub.neutralizeft.com.br/politica-de-privacidade</strong>.
-        </p>
-
-        <div
-          style={{
-            marginTop: "3rem",
-            textAlign: "center",
-            color: "#94a3b8",
-            fontSize: "0.9rem",
-          }}
-        >
-          © {new Date().getFullYear()} Neutralize Hub — Todos os direitos reservados.
-        </div>
+    <div className="card-termos">
+      <h2>{documento.titulo} v{documento.versao}</h2>
+      <div className="markdown-container">
+        <ReactMarkdown>{documento.conteudo}</ReactMarkdown>
       </div>
+      <label className="aceite-label">
+        <input
+          type="checkbox"
+          checked={aceito}
+          onChange={(e) => setAceito(e.target.checked)}
+        />
+        Li e aceito a Política de Privacidade
+      </label>
+      <button className="aceitar-btn" onClick={handleAceite} disabled={!aceito}>
+        Aceitar
+      </button>
     </div>
   );
 }

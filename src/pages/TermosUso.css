@@ -1,0 +1,65 @@
+.card-termos {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.card h2 {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.markdown-container {
+  text-align: left;
+  line-height: 1.6;
+}
+
+.markdown-container p,
+.markdown-container ul,
+.markdown-container ol {
+  margin-left: 0;
+}
+
+.markdown-container li {
+  margin-bottom: 0.5rem;
+}
+
+.aceite-label {
+  display: block;
+  margin-top: 1.5rem;
+  font-weight: 500;
+}
+
+.aceitar-btn {
+  margin-top: 1rem;
+  padding: 0.5rem 1.2rem;
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.aceitar-btn:disabled {
+  background-color: #aaa;
+  cursor: not-allowed;
+}
+
+.checkbox-container {
+  margin-top: 2rem;
+  padding: 1rem;
+  border-top: 1px solid #ddd;
+  justify-self: center;
+}
+
+.aceite-label {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}

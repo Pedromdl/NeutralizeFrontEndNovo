@@ -1,62 +1,223 @@
-.conteudo {
+/* ============================
+   CONTAINER PRINCIPAL
+============================ */
+.conteudo-cadastro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   width: 100%;
+  max-width: 100%;
+  margin-top: -25px;
+  padding: 60px;
+  justify-content: flex-start;
+  background-color: #f1f5f9;
+  box-sizing: border-box;
+}
+
+/* ============================
+   CARD
+============================ */
+.card {
+  width: 100%;
+  padding: 2rem;
 }
 
 .card h2 {
   margin-bottom: 1.5rem;
   font-size: 1.75rem;
-  color: #333;
+  font-weight: 700;
+  color: #2d2d2d;
 }
 
+/* ============================
+   GRUPOS / LABELS / INPUTS
+============================ */
 .form-group {
   margin-bottom: 1.25rem;
 }
 
 .form-group label {
-  display: flex;
-  margin-bottom: 0.5rem;
+  display: block;
+  margin-bottom: 0.45rem;
   font-weight: 600;
-  color: #444;
+  font-size: 0.95rem;
+  color: #333;
 }
 
+/* Inputs gerais */
 .form-input {
   width: 100%;
-  height: 40px;
-  border: 1px solid #ccc;
+  height: 42px;
+  padding: 0 12px;
+  border: 1px solid #d7d7d7;
   border-radius: 8px;
   font-size: 1rem;
-  transition: border-color 0.3s;
-}
-
-.form-input, .form-textarea {
+  background: #fafafa;
+  transition: all 0.25s ease;
   box-sizing: border-box;
 }
 
-.form-input:focus {
-  outline: none;
-  border-color: #b7de42;
-  box-shadow: 0 0 0 2px rgba(0,123,255,0.1);
+.form-input::placeholder {
+  color: #999;
 }
 
+/* Foco */
+.form-input:focus {
+  outline: none;
+  background: #fff;
+  border-color: #b7de42;
+  box-shadow: 0 0 0 2px rgba(183, 222, 66, 0.25);
+}
+
+.form-group.complemento {
+    margin-top: 0.25rem;
+}
+/* ============================
+   BOTÃO
+============================ */
 .btn {
-  display: inline-block;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
+  width: 100%;
+  padding: 0.8rem 1.5rem;
+  font-size: 1.05rem;
   font-weight: 600;
-  color: white;
+  color: #fff;
   background-color: #b7de42;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: 0.3s ease;
 }
 
 .btn:hover {
-  background-color: greenyellow;
+  background-color: #a6cb3b;
 }
 
+/* ============================
+   MENSAGEM DE RETORNO
+============================ */
 .mensagem {
   margin-top: 1rem;
   font-weight: 500;
+  font-size: 1rem;
   color: green;
+}
+
+/* ============================
+   GRID PARA CAMPOS DE ENDEREÇO
+============================ */
+.endereco-grid {
+  display: grid;
+  grid-template-columns: 1fr 120px;
+  gap: 1rem;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: 2fr 3fr 1fr;
+  gap: 1rem;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1rem;
+}
+
+/* ============================
+   ESTILOS ESPECIAIS
+============================ */
+.form-cep {
+  max-width: 160px;
+}
+
+.form-numero {
+  max-width: 120px;
+}
+
+.form-uf {
+  max-width: 90px;
+}
+
+/* ============================
+   RESPONSIVIDADE (MOBILE)
+============================ */
+@media (max-width: 768px) {
+
+  /* Centralização do conteúdo */
+  .conteudo {
+    padding: 0 1rem;
+  }
+
+  /* Card ocupa toda a largura com respiro lateral */
+  .card {
+    padding: 1.5rem 1rem;
+  }
+
+  /* Títulos menores para caber melhor */
+  .card h2 {
+    font-size: 1.4rem;
+    margin-bottom: 1.2rem;
+  }
+
+  /* Inputs mais confortáveis */
+  .form-input {
+    height: 40px;
+    font-size: 0.95rem;
+  }
+
+  /* ======== Ajustes dos GRIDS ======== */
+  .endereco-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .grid-3 {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .grid-2 {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  /* Remove limites de largura no mobile para evitar cortes */
+  .form-cep,
+  .form-numero,
+  .form-uf {
+    max-width: 100% !important;
+    width: 100%;
+  }
+
+  /* Botão mais confortável no mobile */
+  .btn {
+    padding: 0.9rem 1.5rem;
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+
+  /* Aumenta o espaçamento geral */
+  .card {
+    padding: 1.25rem 0.8rem;
+  }
+
+  .card h2 {
+    font-size: 1.3rem;
+  }
+
+  /* Inputs mais compactos */
+  .form-input {
+    height: 38px;
+  }
+
+  /* Aumenta distância dos groups pra não ficar tudo colado */
+  .form-group {
+    margin-bottom: 1rem;
+  }
+
+  .btn {
+    padding: 0.75rem 1.25rem;
+  }
 }

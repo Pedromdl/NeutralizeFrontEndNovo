@@ -6,16 +6,18 @@ import PacienteSidebar from './components/Menus/PacienteSidebar';
 import BottomMenu from './components/Menus/BottomMenu';
 import PacienteBottomMenu from './components/Menus/PacienteBottomMenu';
 import PrivateRoute from './components/PrivateRoute';
+import ConsentBanner from './components/ConsentBanner.jsx';
 import './App.css';
 
 
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import TermosUso from './pages/TermosUso';
-import PoliticaPrivacidade from './pages/PoliticaPrivacidade';
+import RegistrarClinica from './pages/RegistrarClinica.jsx';
 import Profile from './pages/Profile';
 import Configuracoes from './pages/Configuracoes';
+
+
 import Usuarios from './pages/Usuario/Usuarios';
 import Avaliacao from './pages/Avaliacao';
 import PreAvaliacoes from './pages/Configuracoes/PreAvaliacoes';
@@ -42,11 +44,16 @@ import RelatorioInterativo from './pages/RelatorioInterativo';
 import Integracoes from './pages/Integracoes/Integracoes';
 import LiberacaoMiofascial from './pages/LiberacaoMiofascial';
 
+
+import TermosUso from "./pages/TermosUso";
+import PoliticaPrivacidade from './pages/PoliticaPrivacidade';
+
+
 function LayoutComSidebar({ children }) {
   const location = useLocation();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
-  const rotasSemSidebar = ['/perfil']; 
+  const rotasSemSidebar = ['/perfil'];
   const isNoSidebar = rotasSemSidebar.includes(location.pathname);
 
   useEffect(() => {
@@ -71,23 +78,25 @@ function LayoutComSidebar({ children }) {
 
 function AppRoutes() {
   const location = useLocation();
-// Em vez de lista simples:
-const rotasSemLayout = ['/login', '/register', '/politica-privacidade', '/termos-de-uso', `/teste`, '/liberacao-miofascial'  // nova rota pública
-];
+  // Em vez de lista simples:
+  const rotasSemLayout = ['/login', '/register', '/registro-clinica', '/politica-privacidade', '/termos-de-uso', `/teste`, '/liberacao-miofascial'  // nova rota pública
+  ];
 
-// Adicione uma verificação dinâmica para rotas como /relatorio/:usuarioId
-const isTesteRoute = location.pathname.startsWith('/relatorio/');
+  // Adicione uma verificação dinâmica para rotas como /relatorio/:usuarioId
+  const isTesteRoute = location.pathname.startsWith('/relatorio/');
 
   if (rotasSemLayout.includes(location.pathname) || isTesteRoute) {
     return (
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/registro-clinica" element={<RegistrarClinica />} />
+
         <Route path="/teste" element={<Teste />} />
         <Route path="/relatorio/:token" element={<RelatorioInterativo />} />
         <Route path="/politica-privacidade" element={<PoliticaPrivacidade />} />
         <Route path="/termos-de-uso" element={<TermosUso />} />
-        <Route path="/liberacao-miofascial" element={<LiberacaoMiofascial/>} />
+        <Route path="/liberacao-miofascial" element={<LiberacaoMiofascial />} />
       </Routes>
     );
   }
@@ -131,7 +140,12 @@ const isTesteRoute = location.pathname.startsWith('/relatorio/');
 
 function App() {
   return (
+    <>
+
+      <ConsentBanner />
       <AppRoutes />
+
+    </>
   );
 }
 

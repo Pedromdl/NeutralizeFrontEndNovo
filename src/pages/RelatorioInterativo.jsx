@@ -110,7 +110,7 @@ Relatório Interativo
 
       {/* Dados do Paciente */}
 <motion.div {...containerAnimacao} style={{ width: '100%' }}>
-  <DadosUsuario token={token} />
+  <DadosUsuario token={token} mostrarEndereco={false} />
 </motion.div>
 
       {/* Grid de Gráficos */}
