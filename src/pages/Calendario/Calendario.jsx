@@ -52,9 +52,16 @@ export default function Calendario({ onEventClick, onDateClick, calendarRef }) {
       const formatarData = (d) => d.toISOString().split('T')[0];
       const startStr = formatarData(startDate);
       const endStr = formatarData(endDate);
+      const token = localStorage.getItem("token");
 
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/eventosagenda/?start=${startStr}&end=${endStr}`
+        `${import.meta.env.VITE_API_URL}/api/eventosagenda/?start=${startStr}&end=${endStr}`,
+        {
+          headers: {
+            "Authorization": token ? `Bearer ${token}` : "",
+            "Content-Type": "application/json",
+          }
+        }
       );
 
       if (!response.ok) throw new Error('Erro ao carregar eventos');
