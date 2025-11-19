@@ -372,7 +372,7 @@ export default function TreinoInterativoPacientes() {
 if (finalizando) {
   return (
     <div style={overlayStyles}>
-      <div className="spinner"></div>
+      <div className="spinner-treino"></div>
     </div>
   );
 }
