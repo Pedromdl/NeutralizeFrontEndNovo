@@ -156,7 +156,7 @@ export default function Login() {
           <div className="login-loading">
             <div className="spinner"></div>
             <p className="login-loading-text">
-              Entrando na conta<span className="dots">...</span>
+              Entrando na conta<span className="dots"></span>
             </p>
           </div>
         ) : (

@@ -4,57 +4,35 @@ import { useNavigate } from "react-router-dom";
 export default function FinalizacaoTreino() {
   const navigate = useNavigate();
 
-  const [phase, setPhase] = useState("spinner"); // spinner | check | done
+  const [phase, setPhase] = useState("check"); 
+  // ⬆️ Já inicia direto no "check", já que o spinner foi removido
 
   useEffect(() => {
-    // Spinner -> Check
-    const timer1 = setTimeout(() => setPhase("check"), 1800);
+    // Redirecionar após animação
+    const timer = setTimeout(() => navigate("/paciente"), 2200);
 
-    // Check -> Redirecionar
-    const timer2 = setTimeout(() => navigate("/paciente"), 3500);
-
-    return () => {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
-    };
+    return () => clearTimeout(timer);
   }, [navigate]);
 
   return (
     <>
       <div style={overlayStyles}>
-        {phase === "spinner" && <div className="spinner"></div>}
-
-        {phase === "check" && (
-          <div className="checkContainer">
-            <svg viewBox="0 0 52 52" className="checkSvg">
-              <path
-                d="M14 27l7 7 17-17"
-                fill="none"
-                stroke="#4CAF50"
-                strokeWidth="5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-            <p className="checkText">Treino Finalizado</p>
-          </div>
-        )}
+        <div className="checkContainer">
+          <svg viewBox="0 0 52 52" className="checkSvg">
+            <path
+              d="M14 27l7 7 17-17"
+              fill="none"
+              stroke="#4CAF50"
+              strokeWidth="5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+          <p className="checkText">Treino Finalizado</p>
+        </div>
       </div>
 
       <style>{`
-        .spinner {
-          width: 60px;
-          height: 60px;
-          border: 6px solid #ddd;
-          border-top: 6px solid #4CAF50;
-          border-radius: 50%;
-          animation: spin 1.2s linear infinite;
-        }
-
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-
         .checkContainer {
           text-align: center;
           animation: fadeIn 0.5s forwards;
@@ -88,7 +66,7 @@ export default function FinalizacaoTreino() {
   );
 }
 
-// FinalizacaoTreino.jsx
+// Mantém o overlay igual
 export const overlayStyles = {
   position: "fixed",
   inset: 0,
