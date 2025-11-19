@@ -32,6 +32,17 @@ function Depoimento({ texto, autor }) {
 export default function LiberacaoMiofascial() {
 
   useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://cdn.lightwidget.com/widgets/lightwidget.js";
+    script.async = true;
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
+  useEffect(() => {
     const obs = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -316,6 +327,20 @@ export default function LiberacaoMiofascial() {
               </div>
             </div>
           </section>
+        </section>
+
+        <section className={`${styles.cardLight} fadeInUp`}>
+          <h2>Nosso Instagram</h2>
+              <p className={styles.muted}>
+            Siga-nos nas redes sociais!
+            </p>
+          <iframe
+            src="//lightwidget.com/widgets/9c08a4d6893a5828b80710419a9c68c4.html"
+            className="lightwidget-widget"
+            scrolling="no"
+            style={{ width: "100%", border: "0", overflow: "hidden" }}
+            allowTransparency={true}
+          ></iframe>
         </section>
 
         <section className={`${styles.cardLight} fadeInUp`}>
