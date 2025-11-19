@@ -4,44 +4,29 @@ import { useNavigate } from "react-router-dom";
 export default function FinalizacaoTreino() {
   const navigate = useNavigate();
 
-  const [showSpinner, setShowSpinner] = useState(true);
-  const [showCheck, setShowCheck] = useState(false);
+  const [phase, setPhase] = useState("spinner"); // spinner | check | done
 
   useEffect(() => {
-    // 1️⃣ Spinner aparece por 1.8s
-    const spinnerTimer = setTimeout(() => {
-      setShowSpinner(false);
-      setShowCheck(true);
-    }, 1800);
+    // Spinner -> Check
+    const timer1 = setTimeout(() => setPhase("check"), 1800);
 
-    // 2️⃣ Depois do check aparecer, aguarda mais 1.5s e redireciona
-    const redirectTimer = setTimeout(() => {
-      navigate("/paciente");
-    }, 3500);
+    // Check -> Redirecionar
+    const timer2 = setTimeout(() => navigate("/paciente"), 3500);
 
     return () => {
-      clearTimeout(spinnerTimer);
-      clearTimeout(redirectTimer);
+      clearTimeout(timer1);
+      clearTimeout(timer2);
     };
   }, [navigate]);
 
   return (
     <>
       <div style={overlayStyles}>
-        {/* Spinner */}
-        {showSpinner && <div className="spinner"></div>}
+        {phase === "spinner" && <div className="spinner"></div>}
 
-        {/* Check + texto */}
-        {showCheck && (
-          <div style={{ textAlign: "center", animation: "fadeIn 0.5s forwards" }}>
-            <svg
-              viewBox="0 0 52 52"
-              style={{
-                width: "100px",
-                marginBottom: "10px",
-                animation: "zoomIn 0.4s forwards",
-              }}
-            >
+        {phase === "check" && (
+          <div className="checkContainer">
+            <svg viewBox="0 0 52 52" className="checkSvg">
               <path
                 d="M14 27l7 7 17-17"
                 fill="none"
@@ -51,33 +36,12 @@ export default function FinalizacaoTreino() {
                 strokeLinejoin="round"
               />
             </svg>
-
-            <p
-              style={{
-                color: "white",
-                fontSize: "26px",
-                marginTop: "5px",
-                animation: "fadeIn 0.4s 0.2s forwards",
-                opacity: 0,
-              }}
-            >
-              Treino Finalizado
-            </p>
+            <p className="checkText">Treino Finalizado</p>
           </div>
         )}
       </div>
 
       <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes zoomIn {
-          from { transform: scale(0.3); opacity: 0; }
-          to { transform: scale(1); opacity: 1; }
-        }
-
         .spinner {
           width: 60px;
           height: 60px;
@@ -90,12 +54,42 @@ export default function FinalizacaoTreino() {
         @keyframes spin {
           to { transform: rotate(360deg); }
         }
+
+        .checkContainer {
+          text-align: center;
+          animation: fadeIn 0.5s forwards;
+        }
+
+        .checkSvg {
+          width: 100px;
+          margin-bottom: 10px;
+          animation: zoomIn 0.4s forwards;
+        }
+
+        .checkText {
+          color: white;
+          font-size: 26px;
+          margin-top: 5px;
+          animation: fadeIn 0.4s 0.2s forwards;
+          opacity: 0;
+        }
+
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes zoomIn {
+          from { transform: scale(0.3); opacity: 0; }
+          to { transform: scale(1); opacity: 1; }
+        }
       `}</style>
     </>
   );
 }
 
-const overlayStyles = {
+// FinalizacaoTreino.jsx
+export const overlayStyles = {
   position: "fixed",
   inset: 0,
   backgroundColor: "rgba(0,0,0,0.85)",

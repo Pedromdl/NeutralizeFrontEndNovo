@@ -4,7 +4,7 @@ import axios from 'axios';
 import Card from '../../components/Card';
 import { AuthContext } from '../../context/AuthContext';
 import './TreinoInterativo.css';
-import FinalizacaoTreino from '../../components/FinalizacaoTreino';
+import FinalizacaoTreino, {overlayStyles} from '../../components/FinalizacaoTreino';
 
 // 🔹 Spinner minimalista
 function Spinner() {
@@ -59,6 +59,7 @@ export default function TreinoInterativoPacientes() {
   const [orientacoes, setOrientacoes] = useState([]);
   const [indiceAtual, setIndiceAtual] = useState(0);
   const [finalizado, setFinalizado] = useState(false);
+  const [finalizando, setFinalizando] = useState(false);
   const [modalRPEOpen, setModalRPEOpen] = useState(false);
   const [autoFill, setAutoFill] = useState({ repeticoes: '', carga: '' });
   const [tempo, setTempo] = useState(0);
@@ -289,45 +290,52 @@ export default function TreinoInterativoPacientes() {
       setTimerAtivo(true);
     }
   }, [treinoIniciado, localStorageKey]);
-
+  
   const finalizarTreino = () => {
-    if (!treinoExecutadoId) return alert('Execução do treino não iniciada.');
+  if (!treinoExecutadoId) return alert('Execução do treino não iniciada.');
 
-    const payload = {
-      tempo_total: tempo,
-      series: resultados.map((exercicio) => ({
-        exercicio_id: exercicio.id,
-        rpe: exercicio.rpe,
-        series: exercicio.series.map((s, index) => ({
-          numero: index + 1,
-          repeticoes: s.repeticoes,
-          carga: s.carga,
-        })),
+  // Mostra overlay com spinner
+  setFinalizando(true);
+
+  const payload = {
+    tempo_total: tempo,
+    series: resultados.map((exercicio) => ({
+      exercicio_id: exercicio.id,
+      rpe: exercicio.rpe,
+      series: exercicio.series.map((s, index) => ({
+        numero: index + 1,
+        repeticoes: s.repeticoes,
+        carga: s.carga,
       })),
-    };
-
-    axios
-      .post(
-        `${import.meta.env.VITE_API_URL}/api/orientacoes/treinosexecutados/${treinoExecutadoId}/finalizar/`,
-        payload
-      )
-      .then(() => {
-        localStorage.removeItem(localStorageKey);
-        localStorage.removeItem(`${localStorageKey}-inicioTreino`);
-        setTreinoIniciado(false);
-        setTimerAtivo(false);
-        setIndiceAtual(0);
-        setResultados([]);
-        setRealizados([]);
-        setTemposExercicio([]);
-        setTreinoExecutadoId(null);
-        setFinalizado(true);
-      })
-      .catch((err) => {
-        console.error('Erro ao salvar treino:', err);
-        alert('Erro ao salvar treino.');
-      });
+    })),
   };
+
+  axios.post(
+    `${import.meta.env.VITE_API_URL}/api/orientacoes/treinosexecutados/${treinoExecutadoId}/finalizar/`,
+    payload
+  )
+  .then(() => {
+    // Limpeza local e reset de estados do treino
+    localStorage.removeItem(localStorageKey);
+    localStorage.removeItem(`${localStorageKey}-inicioTreino`);
+    setTreinoIniciado(false);
+    setTimerAtivo(false);
+    setIndiceAtual(0);
+    setResultados([]);
+    setRealizados([]);
+    setTemposExercicio([]);
+    setTreinoExecutadoId(null);
+
+    // Troca spinner pelo check animado
+    setFinalizando(false);
+    setFinalizado(true); // dispara FinalizacaoTreino
+  })
+  .catch((err) => {
+    console.error('Erro ao salvar treino:', err);
+    alert('Erro ao salvar treino.');
+    setFinalizando(false); // garante que spinner some mesmo com erro
+  });
+};
 
   // ---------------- Render ----------------
   if (loading || loadingTreino) {
@@ -359,6 +367,15 @@ export default function TreinoInterativoPacientes() {
       </div>
     );
   }
+
+// 🔹 Overlay spinner enquanto finaliza
+if (finalizando) {
+  return (
+    <div style={overlayStyles}>
+      <div className="spinner"></div>
+    </div>
+  );
+}
 
 if (finalizado) {
   return <FinalizacaoTreino />;
