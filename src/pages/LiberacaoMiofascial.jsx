@@ -331,9 +331,9 @@ export default function LiberacaoMiofascial() {
 
         <section className={`${styles.cardLight} fadeInUp`}>
           <h2>Nosso Instagram</h2>
-              <p className={styles.muted}>
-            Siga-nos nas redes sociais!
-            </p>
+          <p className={styles.muted}>
+            Veja mais da nossa rotina e atualizações no Instagram.
+          </p>
           <iframe
             src="//lightwidget.com/widgets/9c08a4d6893a5828b80710419a9c68c4.html"
             className="lightwidget-widget"
