@@ -50,7 +50,7 @@ function CadastrarDados() {
         />      
         </div>
 
-      <div className="data-avaliacao-card">
+      <div className="card-avaliacao">
         <label htmlFor="dataAvaliacao" className="form-label">Data da Avaliação</label>
         <input
           id="dataAvaliacao"

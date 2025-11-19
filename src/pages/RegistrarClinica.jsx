@@ -8,6 +8,9 @@ export default function RegistrarClinica() {
   const [form, setForm] = useState({
     nome_clinica: "",
     email: "",
+    password: "",
+    first_name: "",
+    last_name: "",
   });
 
   const [erros, setErros] = useState([]);
@@ -24,8 +27,14 @@ export default function RegistrarClinica() {
     setErros([]);
     setSucesso("");
 
-    if (!form.nome_clinica || !form.email) {
+    // Valida campos obrigatórios
+    if (!form.nome_clinica || !form.email || !form.password || !form.first_name || !form.last_name) {
       setErros(["Preencha todos os campos obrigatórios."]);
+      return;
+    }
+
+    if (form.password.length < 6) {
+      setErros(["A senha deve ter pelo menos 6 caracteres."]);
       return;
     }
 
@@ -35,15 +44,18 @@ export default function RegistrarClinica() {
         {
           nome: form.nome_clinica,
           email: form.email,
+          password: form.password,
+          first_name: form.first_name,
+          last_name: form.last_name,
         }
       );
 
       setSucesso("Clínica registrada com sucesso!");
-      // Salva tokens para login automático
+
       localStorage.setItem("access", res.data.access);
       localStorage.setItem("refresh", res.data.refresh);
 
-      setTimeout(() => navigate("/login"), 1500);
+      setTimeout(() => navigate("/login?clinica_criada=true"), 1500);
     } catch (error) {
       let msgs = [];
       if (error.response?.data) {
@@ -63,6 +75,7 @@ export default function RegistrarClinica() {
         <h2>Registrar Clínica</h2>
 
         <form onSubmit={handleSubmit}>
+
           <input
             type="text"
             name="nome_clinica"
@@ -73,10 +86,37 @@ export default function RegistrarClinica() {
           />
 
           <input
+            type="text"
+            name="first_name"
+            placeholder="Nome"
+            value={form.first_name}
+            onChange={handleChange}
+            required
+          />
+
+          <input
+            type="text"
+            name="last_name"
+            placeholder="Sobrenome"
+            value={form.last_name}
+            onChange={handleChange}
+            required
+          />
+
+          <input
             type="email"
             name="email"
             placeholder="Email do Administrador"
             value={form.email}
+            onChange={handleChange}
+            required
+          />
+
+          <input
+            type="password"
+            name="password"
+            placeholder="Crie uma senha"
+            value={form.password}
             onChange={handleChange}
             required
           />

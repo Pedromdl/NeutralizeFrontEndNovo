@@ -104,7 +104,7 @@ function FormText({ pacienteId, dataAvaliacao }) {
             />
           </div>
         ))}
-        <div style={{ width: '100%', display: 'flex', justifyContent: 'right', marginTop: '50px' }}>
+        <div style={{ width: '100%', display: 'flex', justifyContent: 'right', marginTop: '5rem' }}>
           <button
             type="button"
             onClick={resetarFormulario}

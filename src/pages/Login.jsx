@@ -1,4 +1,6 @@
 import { useState, useEffect, useContext } from "react";
+import { useLocation } from "react-router-dom";
+
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
@@ -6,6 +8,7 @@ import "../components/css/Login.css";
 import Logo from "./../images/logo.png";
 
 export default function Login() {
+  
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [erro, setErro] = useState("");
@@ -106,7 +109,7 @@ export default function Login() {
     setTimeout(async () => {
       try {
         const res = await axios.post(
-          `${import.meta.env.VITE_API_URL}/api/auth/jwt/create/`,
+          `${import.meta.env.VITE_API_URL}/api/auth/login/`,
           { email, password }
         );
 
