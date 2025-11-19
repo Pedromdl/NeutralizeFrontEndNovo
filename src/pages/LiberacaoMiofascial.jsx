@@ -62,6 +62,8 @@ export default function LiberacaoMiofascial() {
               <span className={styles.badge}>Avaliação individual</span>
               <span className={styles.badge}>Aplicado por fisioterapeuta</span>
             </div>
+          <img className={styles.imgHero} src="/images/liberacao.png"  alt="liberacao" />
+
             <h1 id="hero-title">
               Liberação Miofascial com abordagem clínica e individualizada
             </h1>
@@ -264,13 +266,13 @@ export default function LiberacaoMiofascial() {
             <h2>O que dizem nossos pacientes</h2>
             <div className={styles.carrossel}>
               <div className={styles.cardsWrapper}>
-                <Depoimento texto="Excelente pessoa e profissional..." autor="Felipe M." />
-                <Depoimento texto="Excelente profissional! Competente e confiável..." autor="Felipe B." />
-                <Depoimento texto="Pedrão sempre foi muito atencioso comigo..." autor="Marcus V." />
-                <Depoimento texto="Sou paciente do Pedro há um ano..." autor="Jaciara R." />
-                <Depoimento texto="Sou paciente do Pedro realizando reabilitação..." autor="Diego B." />
-                <Depoimento texto="Excelente profissional, muito atencioso..." autor="Samuel R." />
-                <Depoimento texto="O Pedro é um profissional de excelência!..." autor="Ana Paula R." />
+                <Depoimento texto="“Excelente pessoa e profissional. Comecei fazendo liberação miofascial e hoje faço fortalecimento específico para triathlon com ele. Super recomendo.”" autor="Felipe M." />
+                <Depoimento texto= "Excelente profissional! Competente e confiável. Recomendo fortemente, em especial para atletas amadores de corrida/triatlo.”" autor="Felipe B." />
+                <Depoimento texto="Pedrão sempre foi muito atencioso comigo desde o primeiro contato. Fui para tratar uma canelite e, com exercícios e liberação, ele fez com que eu voltasse a correr sem dores. Sempre indico para amigos e familiares 🙌.”" autor="Marcus V." />
+                <Depoimento texto="“Sou paciente do Pedro há um ano. Cheguei com um probleminha no joelho e ele curou em dois meses! Continuei fazendo fisioterapia preventiva pois confio totalmente no trabalho dele. Melhor profissional, recomendo demais!”" autor="Jaciara R." />
+                <Depoimento texto="Faço reabilitação do joelho após rompimento do LCA e não tenho dúvidas que estou com o profissional certo. O Pedro explica tudo, tem muita calma e dedicação. A clínica também é super acolhedora.”" autor="Diego B." />
+                <Depoimento texto="Excelente profissional, sempre atencioso e buscando evolução. Trabalho com ele há mais de 2 anos, focando em fortalecimento, mobilidade e liberação. Melhorou muito minha prática de ciclismo e corrida.”" autor="Samuel R." />
+                <Depoimento texto="“Eu estava com muita dor na cervical e depois da massagem me senti leve, relaxada e sem dor. Além de ótimo profissional, o Pedro é um querido! Super recomendado!”" autor="Ana Paula R." />
               </div>
             </div>
           </section>

@@ -35,17 +35,19 @@ export default function ConsentBanner() {
 
 const styles = {
   banner: {
+    width: "100%",
     position: "fixed",
     bottom: 0,
     left: 0,
-    padding: "1rem",
+    padding: "0.5rem",
     background: "#1a1a1a",
+    boxSizing: "border-box",
     color: "white",
     display: "flex",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "center",
     zIndex: 9999,
-    boxShadow: "0 -2px 10px rgba(0,0,0,0.2)",
+    fontSize: "14px",
   },
   button: {
     background: "#00c853",

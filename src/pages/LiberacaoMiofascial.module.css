@@ -307,6 +307,11 @@
     height: 28px;
 }
 
+.imgHero {
+
+    width: 30%;
+}
+
 .textBenefit {
     flex: 1;
 }
