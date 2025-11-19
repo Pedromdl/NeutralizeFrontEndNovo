@@ -309,9 +309,7 @@
 
 .imgHero {
 
-    width: 90%;
-    border-radius: 20px;
-    opacity: 0.9;
+    width: 0;
 }
 
 .textBenefit {
@@ -490,6 +488,13 @@ footer {
     .carrossel {
         gap: 12px;
     }
+
+    .imgHero {
+
+    width: 90%;
+    border-radius: 20px;
+    opacity: 0.9;
+}
 
     .card {
         padding: 14px;
