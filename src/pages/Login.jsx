@@ -8,7 +8,10 @@ import "../components/css/Login.css";
 import Logo from "./../images/logo.png";
 
 export default function Login() {
-  
+  const location = useLocation();
+  const [mostrarDestaqueGoogle, setMostrarDestaqueGoogle] = useState(false);
+
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [erro, setErro] = useState("");
@@ -124,6 +127,23 @@ export default function Login() {
   };
 
   // -------------------------------------------------
+  // FUNÇÃO DESTAQUE PÓS CRIAR CLÍNICA
+  // -------------------------------------------------
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const clinicaCriada = params.get("clinica_criada");
+
+    // Exibe somente se veio do registro E nunca mostrou antes
+    if (clinicaCriada === "true" && !localStorage.getItem("googleHighlightShown")) {
+      setMostrarDestaqueGoogle(true);
+
+      // Marca como exibido
+      localStorage.setItem("googleHighlightShown", "true");
+    }
+  }, [location]);
+
+  // -------------------------------------------------
   // RENDER
   // -------------------------------------------------
   return (
@@ -168,7 +188,10 @@ export default function Login() {
 
             {/* LOGIN GOOGLE */}
             <div style={{ display: "flex", justifyContent: "center", marginTop: "1rem" }}>
-              <div id="googleSignInDiv"></div>
+              <div
+                id="googleSignInDiv"
+                className={mostrarDestaqueGoogle ? "google-highlight" : ""}
+              ></div>
             </div>
           </>
         )}

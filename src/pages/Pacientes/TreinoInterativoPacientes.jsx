@@ -4,6 +4,7 @@ import axios from 'axios';
 import Card from '../../components/Card';
 import { AuthContext } from '../../context/AuthContext';
 import './TreinoInterativo.css';
+import FinalizacaoTreino from '../../components/FinalizacaoTreino';
 
 // 🔹 Spinner minimalista
 function Spinner() {
@@ -359,16 +360,9 @@ export default function TreinoInterativoPacientes() {
     );
   }
 
-  if (finalizado) {
-    return (
-      <div className="conteudo">
-        <Card size="al">
-          <h2>✅ Treino finalizado com sucesso!</h2>
-          <p>Parabéns por completar seu treino!</p>
-        </Card>
-      </div>
-    );
-  }
+if (finalizado) {
+  return <FinalizacaoTreino />;
+}
 
   const exercicioAtual = orientacoes[indiceAtual];
   const resAtual = resultados[indiceAtual];

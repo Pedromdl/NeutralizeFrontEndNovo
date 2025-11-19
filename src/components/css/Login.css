@@ -204,6 +204,20 @@
   margin-top: 0.5rem;
 }
 
+/* 🔥 Destaque temporário para o Google Login */
+@keyframes pulseBorder {
+  0% { box-shadow: 0 0 0px #f4c542; }
+  50% { box-shadow: 0 0 12px #f4c542; }
+  100% { box-shadow: 0 0 0px #f4c542; }
+}
+
+.google-highlight {
+  padding: 6px;             /* dá espaçamento em volta do botão do Google */
+  border-radius: 10px;
+  animation: pulseBorder 1.5s ease-in-out 3; /* animação 3 vezes */
+}
+
+
 
 /* Responsividade */
 @media (max-width: 600px) {
