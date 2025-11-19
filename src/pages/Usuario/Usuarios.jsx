@@ -16,7 +16,7 @@ import Orientacao from './Orientacao';
 import Avaliacoes from './Avaliacoes';
 import Sessoes from './Sessoes';
 import GerarRelatorio from '../../components/GerarRelatorio';
-import VisualizarRelatorioInterativo from '../../components/VisualizarRelatorioInterativo';
+import VisualizarRelatorioInterativo from '../../components/RelatorioInterativo/VisualizarRelatorioInterativo';
 
 
 // 🌈 Animações padrão

@@ -51,8 +51,11 @@ function CadastrarDados() {
         </div>
 
       <div className="card-avaliacao">
-        <label htmlFor="dataAvaliacao" className="form-label">Data da Avaliação</label>
-        <input
+      <p
+        htmlFor="filtro-data"
+        style={{ fontSize: '1.17rem', fontWeight: 'bold', color: '#000', marginBottom: '0.83rem' }}
+      > Data da Avaliação:</p>        
+      <input
           id="dataAvaliacao"
           type="date"
           value={dataAvaliacao}
