@@ -19,6 +19,7 @@ import Configuracoes from './pages/Configuracoes';
 
 
 import Usuarios from './pages/Usuario/Usuarios';
+import BancoUsuarios from './pages/Usuario/BancoUsuarios'
 import Avaliacao from './pages/Avaliacao';
 import PreAvaliacoes from './pages/Configuracoes/PreAvaliacoes';
 import Agendamentos from './pages/Calendario/Agendamentos';
@@ -129,6 +130,7 @@ function AppRoutes() {
           <Route path="/paciente/historico" element={<HistoricodeTreinos />} />
           <Route path="/financeiro" element={<Financeiro />} />
           <Route path="/bancoexercicios" element={<BancoExercicios />} />
+          <Route path="/banco-usuarios" element={<BancoUsuarios />} />
           <Route path="/integracoes" element={<Integracoes />} />
 
 

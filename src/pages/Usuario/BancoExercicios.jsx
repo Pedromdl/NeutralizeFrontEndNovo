@@ -53,6 +53,9 @@ export default function BancoExercicios() {
           `${import.meta.env.VITE_API_URL}/api/orientacoes/bancoexercicios/`,
           { params: { page, page_size: pageSize, search: debouncedSearch } }
         );
+
+          console.log("🔎 RES DATA:", res.data); // <-- AQUI
+
         if (res.data && Array.isArray(res.data.results)) {
           setServerPagination(true);
           setExercicios(res.data.results);

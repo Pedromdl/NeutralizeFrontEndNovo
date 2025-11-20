@@ -44,7 +44,14 @@ export default function Configuracoes() {
             onClick={() => navigate('/perfil')}
             className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded"
           >
-            👤 Perfil
+          Dados da Conta
+          </button>
+
+                    <button
+            onClick={() => navigate('/banco-usuarios')}
+            className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 rounded"
+          >
+            👤 Usuários
           </button>
         </div>
       </div>
