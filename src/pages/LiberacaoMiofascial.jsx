@@ -3,6 +3,8 @@ import logoNeutralize from '../images/logohletrabanca.png';
 import styles from "./LiberacaoMiofascial.module.css";
 import { enviarEventoGA } from "../useGA";
 import "../assets/page_animations/LiberacaoMiofascialAnimation.css"
+import InstagramFeed from "../../components/InstaFeed";
+
 
 function Depoimento({ texto, autor }) {
   const [expandido, setExpandido] = useState(false);
@@ -334,13 +336,8 @@ export default function LiberacaoMiofascial() {
           <p className={styles.muted}>
             Veja mais da nossa rotina e atualizações no Instagram.
           </p>
-          <iframe
-            src="//lightwidget.com/widgets/9c08a4d6893a5828b80710419a9c68c4.html"
-            className="lightwidget-widget"
-            scrolling="no"
-            style={{ width: "100%", border: "0", overflow: "hidden" }}
-            allowTransparency={true}
-          ></iframe>
+
+          <InstagramFeed />
         </section>
 
         <section className={`${styles.cardLight} fadeInUp`}>

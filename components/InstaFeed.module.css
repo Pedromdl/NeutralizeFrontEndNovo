@@ -1,0 +1,32 @@
+.grid {
+  display: flex;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+}
+
+.card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 20px;
+}
+
+.carousel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 320px; /* tamanho visível do carrossel */
+  overflow: hidden; /* importante para o slide */
+}
+
+.nav {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+.trackWrapper {
+  display: flex;
+  gap: 12px;
+}
