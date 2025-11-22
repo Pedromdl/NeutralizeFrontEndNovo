@@ -1,136 +1,323 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import ReactQuill from 'react-quill';
-import Select from 'react-select';
-import 'react-quill/dist/quill.snow.css';
-import Card from '../../components/Card';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Plus, Trash2, Edit3, Save, X, Filter } from 'lucide-react';
+import Card from '../../../src/components/Card';
+import './PreTestes.css';
 
-export default function PreAvaliacoes() {
-    const navigate = useNavigate();
+export default function TestesPrePadronizados() {
+  const [categorias, setCategorias] = useState([]);
+  const [testes, setTestes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [erro, setErro] = useState('');
+  const [filtroCategoria, setFiltroCategoria] = useState('');
 
-    const [avaliacoes, setAvaliacoes] = useState([]);
-    const [avaliacaoSelecionada, setAvaliacaoSelecionada] = useState(null);
-    const [titulo, setTitulo] = useState('');
-    const [conteudo, setConteudo] = useState('');
+  // Estados para formulários
+  const [novoTeste, setNovoTeste] = useState({ nome: '', categoria: '' });
+  const [editandoTeste, setEditandoTeste] = useState(null);
 
-    useEffect(() => {
-        buscarAvaliacoes();
-    }, []);
+  const API_URL = import.meta.env.VITE_API_URL;
 
-    const buscarAvaliacoes = async () => {
-        try {
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/preavaliacao/`);
-            const data = await res.json();
-            setAvaliacoes(data);
-        } catch (err) {
-            console.error('Erro ao buscar pré-avaliações:', err);
+  // Categorias que NÃO são editáveis
+  const CATEGORIAS_FIXAS = ['Testes de Movimento'];
+
+  // Buscar dados
+  const buscarDados = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      
+      if (!token) {
+        console.error('Token não encontrado no localStorage');
+        setErro('Usuário não autenticado. Faça login novamente.');
+        return;
+      }
+
+      // 🔹 BUSCAR CATEGORIAS
+      const categoriasResponse = await axios.get(`${API_URL}/api/categoria-teste/`, {
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
-    };
+      });
 
-    const selecionarAvaliacao = (avaliacao) => {
-        setAvaliacaoSelecionada(avaliacao);
-        setTitulo(avaliacao.titulo || '');
-        setConteudo(avaliacao.texto || '');
-    };
+      // 🔹 BUSCAR TESTES (com filtro se existir)
+      let testesUrl = `${API_URL}/api/testes/`;
+      if (filtroCategoria) {
+        testesUrl += `?categoria=${encodeURIComponent(filtroCategoria)}`;
+      }
 
-    const salvar = async () => {
-        const method = avaliacaoSelecionada ? 'PATCH' : 'POST';
-        const url = avaliacaoSelecionada
-            ? `${import.meta.env.VITE_API_URL}/api/preavaliacao/${avaliacaoSelecionada.id}/`
-            : `${import.meta.env.VITE_API_URL}/api/preavaliacao/`;
-
-        try {
-            const res = await fetch(url, {
-                method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ titulo, texto: conteudo }),
-            });
-
-            if (!res.ok) throw new Error('Erro ao salvar');
-            await buscarAvaliacoes();
-            alert('Salvo com sucesso!');
-        } catch (err) {
-            alert('Erro ao salvar: ' + err.message);
+      const testesResponse = await axios.get(testesUrl, {
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
-    };
+      });
 
-    const excluir = async () => {
-        if (!avaliacaoSelecionada) return;
-        if (!window.confirm('Tem certeza que deseja excluir esta pré-avaliação?')) return;
+      setCategorias(categoriasResponse.data);
+      setTestes(testesResponse.data);
+      
+    } catch (err) {
+      console.error('Erro detalhado:', err);
+      
+      if (err.response?.status === 401) {
+        setErro('Sessão expirada. Faça login novamente.');
+        localStorage.removeItem('token');
+        window.location.href = '/login';
+      } else {
+        setErro('Erro ao carregar dados');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        try {
-            await fetch(`${import.meta.env.VITE_API_URL}/api/preavaliacao/${avaliacaoSelecionada.id}/`, {
-                method: 'DELETE',
-            });
-            setAvaliacaoSelecionada(null);
-            setTitulo('');
-            setConteudo('');
-            await buscarAvaliacoes();
-        } catch (err) {
-            alert('Erro ao excluir: ' + err.message);
-        }
-    };
+  useEffect(() => {
+    buscarDados();
+  }, [filtroCategoria]); // 🔹 Agora busca dados quando o filtro muda
 
-    const opcoesSelect = avaliacoes.map((a) => ({ value: a.id, label: a.titulo }));
+  // Filtrar categorias editáveis
+  const categoriasEditaveis = categorias.filter(
+    cat => !CATEGORIAS_FIXAS.includes(cat.nome)
+  );
 
-    return (
-        <div style={{ padding: 20, backgroundColor: '#f1f5f9', minHeight: '100vh' }}>
-            <Card title="Pré-Avaliações" size="al">
-                <button onClick={() => navigate(-1)} style={{ marginBottom: '1rem' }}>
-                    ← Voltar
-                </button>
+  // CRUD Testes (apenas para categorias editáveis)
+  const criarTeste = async () => {
+    if (!novoTeste.nome.trim() || !novoTeste.categoria) {
+      alert('Preencha todos os campos');
+      return;
+    }
 
-                <Select
-                    options={opcoesSelect}
-                    placeholder="Buscar pré-avaliações..."
-                    onChange={(opt) => {
-                        const selecionada = avaliacoes.find((a) => a.id === opt.value);
-                        selecionarAvaliacao(selecionada);
-                    }}
-                    isClearable
-                    styles={{
-                        container: (base) => ({ ...base, marginBottom: '1rem' }),
-                        control: (base) => ({
-                            ...base,
-                            borderRadius: '0.5rem', // arredondamento da borda
-                            padding: '2px', // opcional: suaviza o layout
-                        }),
-                    }}
-                />
+    // Verificar se a categoria selecionada é editável
+    const categoriaSelecionada = categorias.find(c => c.id == novoTeste.categoria);
+    if (CATEGORIAS_FIXAS.includes(categoriaSelecionada?.nome)) {
+      alert('Não é possível adicionar testes nesta categoria');
+      return;
+    }
 
-                <input
-                    type="text"
-                    placeholder="Título da avaliação"
-                    value={titulo}
-                    onChange={(e) => setTitulo(e.target.value)}
-                    style={{
-                        marginBottom: '1rem',
-                        padding: '0.5rem',
-                        fontSize: '1rem',
-                        textAlign: 'center',
-                        borderRadius: '0.5rem', // aqui também
-                        border: '1px solid #ccc',
-                    }}
-                />
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post(`${API_URL}/api/testes/`, 
+        { 
+          nome: novoTeste.nome,
+          categoria: novoTeste.categoria
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      setNovoTeste({ nome: '', categoria: '' });
+      await buscarDados(); // 🔹 Recarrega os dados após criar
+    } catch (err) {
+      setErro('Erro ao criar teste');
+      console.error(err);
+    }
+  };
 
-                <ReactQuill
-                    theme="snow"
-                    value={conteudo}
-                    onChange={setConteudo}
-                    style={{ marginBottom: '1rem' }}
-                />
+  const atualizarTeste = async (id, dados) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.patch(`${API_URL}/api/testes/${id}/`, 
+        dados,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      setEditandoTeste(null);
+      await buscarDados(); // 🔹 Recarrega os dados após atualizar
+    } catch (err) {
+      setErro('Erro ao atualizar teste');
+    }
+  };
 
-                <div style={{ display: 'flex', gap: '1rem' }}>
-                    <button onClick={salvar} style={{ backgroundColor: '#b7de42', color: 'white' }}>
-                        {avaliacaoSelecionada ? 'Salvar alterações' : 'Criar nova'}
-                    </button>
-                    {avaliacaoSelecionada && (
-                        <button onClick={excluir} style={{ backgroundColor: '#dc2626', color: 'white' }}>
-                            Excluir
-                        </button>
-                    )}
-                </div>
-            </Card>
+  const excluirTeste = async (teste) => {
+    // Verificar se a categoria é editável
+    if (CATEGORIAS_FIXAS.includes(teste.categoria_nome)) {
+      alert('Não é possível excluir testes desta categoria');
+      return;
+    }
+
+    if (!window.confirm(`Deseja excluir o teste "${teste.nome}"?`)) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      await axios.delete(`${API_URL}/api/testes/${teste.id}/`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      await buscarDados(); // 🔹 Recarrega os dados após excluir
+    } catch (err) {
+      setErro('Erro ao excluir teste');
+    }
+  };
+
+  // Verificar se pode editar um teste
+  const podeEditarTeste = (teste) => {
+    return !CATEGORIAS_FIXAS.includes(teste.categoria_nome);
+  };
+
+  if (loading) return <div className="loading">Carregando...</div>;
+
+  return (
+    <div className="testes-pre-padronizados">
+      <Card title="Testes Pré-Padronizados" size="al">
+        {erro && <div className="erro">{erro}</div>}
+
+        {/* Filtros */}
+        <div className="filtros">
+          <div className="filtro-header">
+            <Filter size={16} />
+            <span>Filtrar por categoria:</span>
+          </div>
+          <select
+            value={filtroCategoria}
+            onChange={(e) => setFiltroCategoria(e.target.value)}
+          >
+            <option value="">Todas as categorias</option>
+            {categorias.map(cat => (
+              <option key={cat.id} value={cat.nome}>
+                {cat.nome}
+              </option>
+            ))}
+          </select>
+          {filtroCategoria && (
+            <button 
+              className="btn-limpar-filtro"
+              onClick={() => setFiltroCategoria('')}
+            >
+              Limpar filtro
+            </button>
+          )}
         </div>
-    );
+
+        {/* Seção de Criação de Testes (apenas para categorias editáveis) */}
+        <div className="secao-criacao">
+          <h3>Adicionar Novo Teste</h3>
+          
+          <div className="form-teste">
+            <input
+              type="text"
+              placeholder="Nome do teste (ex: Escala Visual Analógica...)"
+              value={novoTeste.nome}
+              onChange={(e) => setNovoTeste({...novoTeste, nome: e.target.value})}
+              onKeyPress={(e) => e.key === 'Enter' && criarTeste()}
+            />
+            <select
+              value={novoTeste.categoria}
+              onChange={(e) => setNovoTeste({...novoTeste, categoria: e.target.value})}
+            >
+              <option value="">Selecione uma categoria</option>
+              {categoriasEditaveis.map(cat => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.nome}
+                </option>
+              ))}
+            </select>
+            <button 
+              onClick={criarTeste}
+              disabled={!novoTeste.nome.trim() || !novoTeste.categoria}
+            >
+              <Plus size={16} />
+              Adicionar Teste
+            </button>
+          </div>
+        </div>
+
+        {/* Lista de Testes */}
+        <div className="secao-lista">
+          <h3>
+            Testes {filtroCategoria ? `- ${filtroCategoria}` : 'Disponíveis'}
+            <span className="total">({testes.length} testes)</span>
+          </h3>
+
+          <div className="lista-testes">
+            {testes.length === 0 ? (
+              <div className="vazio">
+                {filtroCategoria 
+                  ? `Nenhum teste encontrado na categoria "${filtroCategoria}"`
+                  : 'Nenhum teste cadastrado'
+                }
+              </div>
+            ) : (
+              testes.map(teste => {
+                const editavel = podeEditarTeste(teste);
+                
+                return (
+                  <div key={teste.id} className={`item-teste ${!editavel ? 'categoria-fixa' : ''}`}>
+                    {editandoTeste === teste.id ? (
+                      <div className="editando">
+                        <input
+                          type="text"
+                          defaultValue={teste.nome}
+                          onBlur={(e) => atualizarTeste(teste.id, {nome: e.target.value})}
+                          onKeyPress={(e) => e.key === 'Enter' && atualizarTeste(teste.id, {nome: e.target.value})}
+                          autoFocus
+                        />
+                        <select
+                          defaultValue={teste.categoria}
+                          onChange={(e) => atualizarTeste(teste.id, {categoria: e.target.value})}
+                        >
+                          {categoriasEditaveis.map(cat => (
+                            <option key={cat.id} value={cat.id}>
+                              {cat.nome}
+                            </option>
+                          ))}
+                        </select>
+                        <button onClick={() => setEditandoTeste(null)}>
+                          <Save size={14} />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="exibindo">
+                        <div className="info-teste">
+                          <strong>{teste.nome}</strong>
+                          <div className="meta-info">
+                            <span className="categoria">{teste.categoria_nome}</span>
+                            {!editavel && (
+                              <span className="badge-fixo">Categoria Fixa</span>
+                            )}
+                          </div>
+                        </div>
+                        <div className="acoes">
+                          {editavel ? (
+                            <>
+                              <button 
+                                onClick={() => setEditandoTeste(teste.id)}
+                                title="Editar teste"
+                              >
+                                <Edit3 size={14} />
+                              </button>
+                              <button 
+                                onClick={() => excluirTeste(teste)}
+                                title="Excluir teste"
+                                className="btn-excluir"
+                              >
+                                <Trash2 size={14} />
+                              </button>
+                            </>
+                          ) : (
+                            <span className="nao-editavel">
+                              Apenas leitura
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </div>
+
+        {/* Legenda */}
+        <div className="legenda">
+          <div className="item-legenda">
+            <div className="cor categoria-fixa"></div>
+            <span>Categorias fixas (não editáveis)</span>
+          </div>
+          <div className="item-legenda">
+            <div className="cor categoria-editavel"></div>
+            <span>Categorias editáveis</span>
+          </div>
+        </div>
+      </Card>
+    </div>
+  );
 }

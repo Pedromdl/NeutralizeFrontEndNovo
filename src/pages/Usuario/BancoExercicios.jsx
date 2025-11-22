@@ -50,7 +50,7 @@ export default function BancoExercicios() {
       setErro(null);
       try {
         const res = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/orientacoes/bancoexercicios/`,
+          `${import.meta.env.VITE_API_URL}/api/bancoexercicios/`,
           { params: { page, page_size: pageSize, search: debouncedSearch } }
         );
 

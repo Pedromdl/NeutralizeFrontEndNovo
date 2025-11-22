@@ -77,7 +77,7 @@ function FormFuncao({ pacienteId, dataAvaliacao }) {
   };
 
   return (
-    <div className="card-avaliacao">
+    <div className="">
       <h3>Registrar Testes de Função</h3>
       <form onSubmit={handleSubmit} className="form-mobilidade-grid">
         {formularios.map((form, index) => (

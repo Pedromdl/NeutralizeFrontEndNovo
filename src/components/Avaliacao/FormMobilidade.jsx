@@ -84,7 +84,7 @@ function FormMobilidade({ pacienteId, dataAvaliacao }) {
   };
 
   return (
-    <div className="card-avaliacao">
+    <div className="">
       <h3>Registrar Mobilidade</h3>
       <form onSubmit={handleSubmit} className="form-mobilidade-grid">
         {formularios.map((form, index) => (

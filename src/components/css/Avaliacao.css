@@ -53,6 +53,27 @@
   outline: none;
 }
 
+.checkbox-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 20px; /* espaçamento linha/coluna */
+  margin-top: 10px;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: center;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.checkbox-item input {
+  margin-right: 6px;
+  transform: scale(1.15);
+  cursor: pointer;
+}
+
+
 @media (max-width: 720px) {
   .quill {
     height: 250px !important;

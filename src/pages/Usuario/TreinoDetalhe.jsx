@@ -111,7 +111,7 @@ export default function TreinoDetalhe() {
     const fetchTreinos = async () => {
       try {
         const resTreinos = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/orientacoes/treinos/?secao=${id}`
+          `${import.meta.env.VITE_API_URL}/api/treinos/?secao=${id}`
         );
         const tituloSecao = resTreinos.data[0]?.secao_titulo || 'Seção';
 
@@ -134,7 +134,7 @@ export default function TreinoDetalhe() {
   useEffect(() => {
     const fetchExercicios = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/orientacoes/bancoexercicios/`);
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/bancoexercicios/`);
         setExerciciosDisponiveis(res.data);
       } catch (err) {
         console.error('Erro ao buscar exercícios:', err);
@@ -147,7 +147,7 @@ export default function TreinoDetalhe() {
   const criarTreino = async () => {
     if (!treinoNome.trim()) return;
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/orientacoes/treinos/`, {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/treinos/`, {
         secao: id,
         nome: treinoNome
       });
@@ -177,7 +177,7 @@ export default function TreinoDetalhe() {
     try {
       if (ex.id) {
         const res = await axios.put(
-          `${import.meta.env.VITE_API_URL}/api/orientacoes/exerciciosprescritos/${ex.id}/`,
+          `${import.meta.env.VITE_API_URL}/api/exerciciosprescritos/${ex.id}/`,
           {
             treino: treinoSelecionadoParaAdicionar.id,
             orientacao: ex.orientacao,
@@ -201,7 +201,7 @@ export default function TreinoDetalhe() {
         }));
       } else {
         const res = await axios.post(
-          `${import.meta.env.VITE_API_URL}/api/orientacoes/exerciciosprescritos/`,
+          `${import.meta.env.VITE_API_URL}/api/exerciciosprescritos/`,
           { treino: treinoSelecionadoParaAdicionar.id, ...ex }
         );
 
@@ -223,7 +223,7 @@ export default function TreinoDetalhe() {
   // 🔹 Excluir exercício
   const excluirExercicio = async (exercicioId, treinoId) => {
     try {
-      await axios.delete(`${import.meta.env.VITE_API_URL}/api/orientacoes/exerciciosprescritos/${exercicioId}/`);
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/exerciciosprescritos/${exercicioId}/`);
       setTreinosSecao(treinosSecao.map(t => {
         if (t.id === treinoId) {
           return {
@@ -272,7 +272,7 @@ export default function TreinoDetalhe() {
             onBlur={async () => {
               try {
                 const res = await axios.patch(
-                  `${import.meta.env.VITE_API_URL}/api/orientacoes/treinos/${t.id}/`,
+                  `${import.meta.env.VITE_API_URL}/api/treinos/${t.id}/`,
                   { nome: t.nome }
                 );
                 setTreinosSecao(treinosSecao.map(tr => tr.id === t.id ? { ...tr, nome: res.data.nome, editandoNome: false } : tr));

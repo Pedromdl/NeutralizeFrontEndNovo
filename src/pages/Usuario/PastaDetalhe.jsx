@@ -14,7 +14,7 @@ export default function PastaDetalhe() {
 
   useEffect(() => {
     if (!usuarioId) return; // evita requisição sem paciente
-    axios.get(`${import.meta.env.VITE_API_URL}/api/orientacoes/pastas/${id}/?paciente=${usuarioId}`)
+    axios.get(`${import.meta.env.VITE_API_URL}/api/pastas/${id}/?paciente=${usuarioId}`)
       .then(res => setPasta(res.data))
       .catch(err => console.error(err));
   }, [id, usuarioId]);
@@ -22,7 +22,7 @@ export default function PastaDetalhe() {
   const criarSecao = async () => {
     if (!novaSecao.trim()) return;
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/orientacoes/secoes/`, {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/secoes/`, {
         pasta: pasta.id,
         titulo: novaSecao,
       });
@@ -40,7 +40,7 @@ export default function PastaDetalhe() {
   const excluirSecao = async (secaoId) => {
     if (!window.confirm('Tem certeza que deseja excluir esta seção?')) return;
     try {
-      await axios.delete(`${import.meta.env.VITE_API_URL}/api/orientacoes/secoes/${secaoId}/`);
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/secoes/${secaoId}/`);
       setPasta({
         ...pasta,
         secoes: pasta.secoes.filter(secao => secao.id !== secaoId)

@@ -35,30 +35,35 @@ export default function Login() {
   // -------------------------------------------------
   // LOGIN FINAL (após receber token e pegar perfil)
   // -------------------------------------------------
-  const finalizarLogin = async (token) => {
-    try {
-      const userRes = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/auth/profile/`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+const finalizarLogin = async (token) => {
+  try {
+    const userRes = await axios.get(
+      `${import.meta.env.VITE_API_URL}/api/auth/profile/`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
 
-      const user = userRes.data;
+    const user = userRes.data;
 
-      login(token, user); // salva no AuthContext
+    // Sobrescreve token antigo
+    localStorage.setItem("access", token);
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-      navigate(redirectByRole(user.role));
-    } catch (err) {
-      console.error("Erro ao buscar perfil:", err);
-      setErro("Erro ao carregar dados do usuário.");
-    }
-  };
+    login(token, user); // atualiza contexto
+
+    navigate(redirectByRole(user.role));
+  } catch (err) {
+    console.error("Erro ao buscar perfil:", err);
+    setErro("Erro ao carregar dados do usuário.");
+  }
+};
 
   // -------------------------------------------------
   // LOGIN COM GOOGLE
   // -------------------------------------------------
   const handleGoogleCallback = async (response) => {
+
     setErro("");
     setLoading(true);
 
@@ -87,10 +92,11 @@ export default function Login() {
     script.async = true;
     script.defer = true;
     script.onload = () => {
-      google.accounts.id.initialize({
-        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-        callback: handleGoogleCallback,
-      });
+    google.accounts.id.initialize({
+      client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+      callback: handleGoogleCallback,
+      auto_select: false, // ⬅ força a escolha de conta
+    });
 
       google.accounts.id.renderButton(
         document.getElementById("googleSignInDiv"),

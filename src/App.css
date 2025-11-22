@@ -2,15 +2,10 @@ body {
   margin: 0;
   padding: 0;
   font-family: Arial, sans-serif;
-  /* opcional, define a fonte */
   box-sizing: border-box;
-  /* bom para controle de largura */
   background-color: #f1f5f9;
-  /* opcional, cor de fundo */
   height: 100vh;
-  /* se for usar layout full height */
 }
-
 
 #root {
   width: 100%;
@@ -18,23 +13,73 @@ body {
   text-align: center;
 }
 
+/* ==============================
+   LAYOUT PRINCIPAL
+================================ */
+.app-container {
+  display: flex;
+  flex-direction: row;
+  min-height: 100vh;
+  font-family: sans-serif;
+}
+
+.main-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding-bottom: 80px; /* 🔹 ESPAÇO PARA BOTTOM MENU */
+}
+
+.conteudo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 100%;
+  padding: 60px;
+  justify-content: flex-start;
+  background-color: #f1f5f9;
+  box-sizing: border-box;
+  flex: 1;
+  min-height: calc(100vh - 80px); /* 🔹 CONSIDERA O BOTTOM MENU */
+}
+
+/* ==============================
+   COMPONENTES DE LAYOUT
+================================ */
 .logo-container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 20px;
-  /* altura fixa para o container da logo */
 }
 
 .logo {
   height: 50%;
 }
 
-
-.title-h3 {
-  font-size: 1rem;
+.header {
+  background-color: #1e90ff;
+  color: white;
+  padding: 20px;
+  text-align: center;
 }
 
+.footer {
+  background-color: #eee;
+  text-align: center;
+  padding: 10px;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==============================
+   CARDS E GRIDS
+================================ */
 .info-cards {
   display: flex;
   flex-direction: column;
@@ -60,8 +105,8 @@ body {
 }
 
 .cards-row {
-  display: flex; /* padrão: um embaixo do outro */
-  gap: 20px; /* espaço entre eles */
+  display: flex;
+  gap: 20px;
   width: 100%;
 }
 
@@ -88,7 +133,6 @@ body {
 
 .card-al {
   width: 100%;
-  margin-bottom: 20px;
 }
 
 .carrossel {
@@ -110,141 +154,23 @@ body {
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
+/* ==============================
+   FORMULÁRIOS E INPUTS
+================================ */
 .input {
-  width: 300px;        /* define uma largura fixa */
+  width: 300px;
   padding: 8px;
   border: 2px solid #ccc;
   color: #000;
   border-radius: 4px;
   font-size: 14px;
-  margin: 0 auto 16px; /* 🔹 auto centraliza horizontal */
-  display: block;      /* garante que ocupe uma linha */
+  margin: 0 auto 16px;
+  display: block;
 }
 
-/* TIMELINE */
-.timeline {
-  position: relative;
-  text-align: left;
-  margin-left: 20px;
-  padding-left: 20px;
-  border-left: 2px solid #ddd;
-}
-
-.timeline-item {
-  position: relative;
-  margin-bottom: 20px;
-}
-
-.timeline-dot {
-  position: absolute;
-  left: -11px; /* alinhamento com a linha */
-  top: 5px;
-  width: 12px;
-  height: 12px;
-  background-color: #4f46e5; /* roxo */
-  border-radius: 50%;
-  border: 2px solid #fff;
-  box-shadow: 0 0 0 2px #ddd;
-}
-
-.timeline-content {
-  margin-left: 10px;
-}
-
-.timeline-content .acao {
-  font-weight: 500;
-  color: #333;
-  margin: 0;
-}
-
-.timeline-content .data {
-  font-size: 0.85rem;
-  color: #666;
-  margin-top: 2px;
-}
-
-/* Responsivo */
-@media (max-width: 768px) {
-  .dashboard-grid {
-    grid-template-columns: repeat(1, 1fr);
-  }
-
-  .card-sm,
-  .card-md,
-  .card-lg,
-  .card-xl {
-    grid-column: span 12;
-  }
-}
-
-.read-the-docs {
-  color: #888;
-}
-
-.app-container {
-  display: flex;
-  flex-direction: row;
-  min-height: 100vh;
-  font-family: sans-serif;
-  overflow: hidden;
-  /* impede scroll acidental */
-
-}
-
-/* Área da direita: coluna com Header, Conteúdo, Footer */
-.main-area {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-
-.header {
-  background-color: #1e90ff;
-  color: white;
-  padding: 20px;
-  text-align: center;
-}
-
-.app {
-  display: flex;
-  flex-direction: column;
-
-}
-
-.conteudo {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  max-width: 100%;
-  margin-top: -25px;
-  padding: 60px;
-  justify-content: flex-start;
-  background-color: #f1f5f9;
-  box-sizing: border-box;
-}
-
-
-.footer {
-  background-color: #eee;
-  text-align: center;
-  padding: 10px;
-}
-
-/* Adicione no seu CSS */
-.grafico-container {
-  width: 100%;
-  height: 350px;
-  /* padrão desktop */
-}
-
-.fc .fc-timegrid-slot {
-  border-top: 1px solid #e5e7eb;
-  height: 3rem;
-  /* linhas horizontais mais claras */
-}
-
+/* ==============================
+   BOTÕES E INTERAÇÕES
+================================ */
 button {
   padding: 0.5rem 1rem;
   margin-right: 0.5rem;
@@ -263,7 +189,7 @@ button:hover {
 }
 
 button.ativo {
-  background-color: #b7de42; /* indigo */
+  background-color: #b7de42;
   color: #fff;
   border-color: #b7de42;
 }
@@ -285,14 +211,102 @@ button.black:hover {
 }
 
 .btn-video {
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.2s ease;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
 }
 
+/* ==============================
+   COMPONENTES ESPECÍFICOS
+================================ */
+/* TIMELINE */
+.timeline {
+  position: relative;
+  text-align: left;
+  margin-left: 20px;
+  padding-left: 20px;
+  border-left: 2px solid #ddd;
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: -11px;
+  top: 5px;
+  width: 12px;
+  height: 12px;
+  background-color: #4f46e5;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 2px #ddd;
+}
+
+.timeline-content {
+  margin-left: 10px;
+}
+
+.timeline-content .acao {
+  font-weight: 500;
+  color: #333;
+  margin: 0;
+}
+
+.timeline-content .data {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 2px;
+}
+
+/* FOTO DE PERFIL */
+.secao-foto {
+  text-align: center;
+}
+
+.container-foto {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.foto-perfil {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease;
+}
+
+.foto-perfil:hover {
+  transform: scale(1.05);
+}
+
+.info-foto {
+  text-align: center;
+}
+
+.info-foto p {
+  margin: 0 0 8px 0;
+  color: #282829;
+  font-size: 1rem;
+}
+
+.texto-ajuda {
+  color: #6c757d;
+  font-size: 0.875rem;
+  font-style: italic;
+}
+
+/* TABELAS */
 .tabela-exercicios-wrapper {
-  overflow-x: auto; /* rolagem em telas pequenas */
+  overflow-x: auto;
   margin-bottom: 1rem;
 }
 
@@ -326,6 +340,7 @@ button.black:hover {
   color: #444;
 }
 
+/* MODAIS */
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -426,6 +441,7 @@ button.black:hover {
   background: #d1d5db;
 }
 
+/* COMPONENTES DIVERSOS */
 .treino-finalizado-container {
   display: flex;
   justify-content: center;
@@ -448,25 +464,52 @@ button.black:hover {
   gap: 1.5rem;
 }
 
+.grafico-container {
+  width: 100%;
+  height: 350px;
+}
+
+.fc .fc-timegrid-slot {
+  border-top: 1px solid #e5e7eb;
+  height: 3rem;
+}
+
+.title-h3 {
+  font-size: 1rem;
+}
+
+.read-the-docs {
+  color: #888;
+}
 
 @keyframes fadeIn {
   from { opacity: 0; transform: scale(0.95); }
   to { opacity: 1; transform: scale(1); }
 }
 
-/* --- Mobile (até 600px de largura, por exemplo) --- */
+/* ==============================
+   RESPONSIVO
+================================ */
 @media (max-width: 600px) {
   .grid-estabilidade {
-    grid-template-columns: 1fr; /* só uma coluna */
-    gap: 1rem; /* espaçamento menor */
-    padding: 0.5rem; /* adiciona uma folga nas bordas se quiser */
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 0.5rem;
+  }
+  
+  .conteudo {
+    padding: 15px;
+    padding-bottom: 80px;
   }
 }
 
 @media (min-width: 768px) {
   .app {
     flex-direction: row;
-    /* para telas maiores, vira lado a lado */
+  }
+  
+  .main-area {
+    padding-bottom: 1rem; /* Remove espaço extra no desktop */
   }
 }
 
@@ -474,25 +517,30 @@ button.black:hover {
   .data-avaliacao-card {
     max-width: 300px;
   }
-}
-
-@media (max-width: 768px) {
+  
   .grafico-container {
     height: 450px;
-    /* mais alto no celular para dar espaço */
+  }
+  
+  .dashboard-grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+
+  .card-sm,
+  .card-md,
+  .card-lg,
+  .card-xl {
+    grid-column: span 12;
+  }
+  
+  .conteudo {
+    padding: 15px;
+    padding-bottom: 80px;
   }
 }
 
-/* 📱 Responsivo para tablets */
 @media (max-width: 1024px) {
   .dashboard-grid {
     grid-template-columns: repeat(6, 1fr);
-  }
-}
-
-/* 📱 Responsivo para celular */
-@media (max-width: 768px) {
-  .dashboard-grid {
-    grid-template-columns: repeat(1, 1fr);
   }
 }

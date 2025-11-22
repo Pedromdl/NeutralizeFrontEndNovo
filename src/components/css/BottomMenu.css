@@ -1,15 +1,34 @@
+/* ==============================
+   BOTTOM MENU PRINCIPAL
+================================ */
 .bottom-menu {
   display: flex;
   justify-content: space-around;
   align-items: center;
+  padding: 0.5rem 1rem;
   border-top: 2px solid #282829;
   background-color: #282829;
   position: fixed;
   bottom: 0;
   width: 100%;
-  z-index: 100;
+  z-index: 1000;
+  height: 60px;
+  box-sizing: border-box;
 }
 
+/* Logo */
+.bottom-menu-logo {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.bottom-menu-logo img {
+  height: 32px;
+  width: auto;
+}
+
+/* Links de navegação */
 .bottom-menu a,
 .bottom-menu .menu-button {
   display: flex;
@@ -22,12 +41,14 @@
   background: none;
   border: none;
   cursor: pointer;
+  flex: 1;
 }
 
 .bottom-menu .ativo {
   color: #2ecc71;
 }
 
+/* Botão extra (Configurações) */
 .bottom-menu-extra {
   background: none;
   border: none;
@@ -37,14 +58,125 @@
   font-size: 1.2rem;
   cursor: pointer;
   color: inherit;
+  flex: 1;
 }
 
 .bottom-menu-extra span {
   font-size: 0.7rem;
   color: #edecea;
-
 }
 
+/* ==============================
+   BOTTOM SHEET MODAL
+================================ */
+/* Header do modal */
+.bottomsheet-header {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0;
+}
+
+.bottomsheet-header img {
+  height: 50px;
+  width: auto;
+}
+
+/* Container principal do modal */
+.bottomsheet-configuracoes {
+  padding: 0 1rem;
+}
+
+.bottomsheet-subtitle {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+/* Lista de opções */
+.bottomsheet-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Botões de configuração */
+.config-menu-btn {
+  width: 100%;
+  padding: 1rem;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+  margin-bottom: 0.5rem;
+}
+
+.config-menu-btn:hover {
+  background-color: #f5f5f5;
+}
+
+/* Conteúdo dos botões de configuração */
+.config-btn-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.config-btn-icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.config-btn-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.config-btn-title {
+  font-weight: 600;
+  color: #282829;
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+}
+
+.config-btn-description {
+  color: #666;
+  font-size: 0.8rem;
+  line-height: 1.3;
+}
+
+/* Item de fechar */
+.fechar-item {
+  border-top: 1px solid #e0e0e0;
+  margin-top: 1rem;
+  padding-top: 1rem;
+}
+
+.fechar-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  justify-content: center;
+  color: #282829;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.fechar-btn:hover {
+  background-color: #f5f5f5;
+}
+
+/* Estilos gerais do modal (se necessário) */
 .bottom-sheet-content ul {
   list-style: none;
   padding: 0;
@@ -58,27 +190,4 @@
   border: none;
   cursor: pointer;
   font-size: 1rem;
-}
-
-.bottom-menu {
-  display: flex;
-  align-items: center;
-  justify-content: space-around; /* ou space-between, se quiser mais espaço */
-  padding: 0.5rem 1rem;
-}
-
-.bottom-menu-logo img {
-  height: 32px;   /* ajuste o tamanho */
-  width: auto;
-}
-
-.bottomsheet-header {
-  display: flex;
-  justify-content: center;
-  padding: 1rem 0;
-}
-
-.bottomsheet-header img {
-  height: 50px;
-  width: auto;
 }

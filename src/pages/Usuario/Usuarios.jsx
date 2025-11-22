@@ -207,7 +207,7 @@ function Usuarios() {
         {usuarioSelecionado && (
           <Card title="Navegação" size="md">
             <div className="toggle-buttons">
-              {['Dashboard', 'Dados', 'Orientações', 'Avaliações', 'Sessões'].map((aba) => (
+              {['Dashboard', 'Dados', 'Orientações', 'Avaliações', 'Sessões', 'Progressão'].map((aba) => (
                 <button
                   key={aba}
                   onClick={() => setAbaAtiva(aba)}

@@ -23,6 +23,35 @@
   color: #282829;
 }
 
+.titulo-dashboard-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* espaço entre foto e texto */
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.avatar-dashboard {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%; /* deixa redonda */
+  object-fit: cover;
+  border: 2px solid #ddd; /* opcional, borda sutil */
+}
+
+.calendario-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 12px;
+  box-sizing: border-box;
+  overflow-x: hidden; /* 🔒 Impede ultrapassar o card */
+}
+
+
 /* =======================================
    🔹 GRID PRINCIPAL
 ======================================= */
@@ -31,6 +60,7 @@
   grid-template-columns: repeat(12, 1fr);
   width: 100%;
   gap: 20px;
+  margin-top: 20px;
 }
 
 .card-status {
@@ -42,68 +72,6 @@
   grid-column: span 12;
 }
 
-/* =======================================
-   🔸 RESPONSIVIDADE
-======================================= */
-@media (max-width: 1024px) {
-  .dashboard-grid {
-    grid-template-columns: repeat(6, 1fr);
-  }
-}
-
-@media (max-width: 768px) {
-  .dashboard-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-  }
-
-  .card-status {
-    grid-column: span 1 !important;
-  }
-
-  .card-atalho {
-    grid-column: span 2 !important;
-  }
-
-  .card-calendario {
-    grid-column: span 2 !important;
-  }
-
-  .btn-atalho-treino {
-    font-size: 16px;
-    padding: 12px;
-  }
-}
-
-/* =======================================
-   🟢 BOTÃO ATALHO
-======================================= */
-.btn-atalho-treino {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-  font-size: 18px;
-  color: #fff;
-  background-color: #282829;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  width: 100%;
-  height: 60px;
-  gap: 12px;
-  transition: background-color 0.2s ease;
-}
-
-.btn-atalho-treino:disabled {
-  background-color: #888;
-  cursor: not-allowed;
-}
-
-/* =======================================
-📅 CALENDÁRIO — Responsivo e sem overflow
-======================================= */
-
 .calendario-wrapper {
   display: flex;
   justify-content: center;
@@ -112,7 +80,6 @@
   padding: 1rem;
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   box-sizing: border-box;
   overflow-x: hidden; /* 🔒 Impede ultrapassar o card */
 }
@@ -208,6 +175,76 @@
   cursor: default;
 }
 
+/* =======================================
+   🔸 BOTÃO ATALHO DESKTOP
+======================================= */
+
+.btn-atalho-treino {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  font-size: 18px;
+  color: #fff;
+  background-color: #282829;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  width: 100%;
+  height: 60px;
+  gap: 12px;
+  transition: background-color 0.2s ease;
+}
+
+.btn-atalho-treino:disabled {
+  background-color: #888;
+  cursor: not-allowed;
+}
+
+/* =======================================
+   🔸 RESPONSIVIDADE
+======================================= */
+@media (max-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .card-status {
+    grid-column: span 1 !important;
+  }
+
+  .card-atalho {
+    grid-column: span 2 !important;
+  }
+
+  .card-calendario {
+    grid-column: span 2 !important;
+  }
+
+  .btn-atalho-treino {
+    font-size: 16px;
+    padding: 12px;
+  }
+
+@media (max-width: 480px) {
+  
+  .titulo-dashboard {
+    font-size: 1.4rem;
+  }
+  
+  .avatar-dashboard {
+    width: 40px;
+    height: 40px;
+  }
+}
+
 /* ======================
    RESPONSIVIDADE MOBILE
    ====================== */
@@ -223,7 +260,6 @@
     gap: 2px;
     width: 100%;
   }
-
 
   .rdp-day {
     font-size: 12px;
@@ -255,7 +291,6 @@
   overflow-x: hidden;
 }
 
-
 /* =======================================
    🪶 AJUSTES GERAIS
 ======================================= */
@@ -269,4 +304,5 @@
   border: none;
   box-shadow: none;
   padding: 0;
+}
 }

@@ -39,19 +39,124 @@ export default function Profile() {
   return (
     <div className="conteudo">
       <Card title="Perfil do Usuário" size="al">
-        <div className="dados-usuario">
-          <p><strong>Nome:</strong> {user.first_name} {user.last_name}</p>
-          <p><strong>Sobrenome:</strong> {user.last_name}</p>
-          <p><strong>Email:</strong> {user.email}</p>
-          <p><strong>CPF:</strong> {user.cpf}</p>
-          <p><strong>Endereço:</strong> {user.address}</p>
-          <p><strong>Telefone:</strong> {user.phone}</p>
+        <div className="usuario-secoes">
+          
+          {/* ==============================
+              SEÇÃO: FOTO DO PERFIL
+          =============================== */}
+          {user.photo_google && (
+            <div>
+              <div className="container-foto">
+                <img 
+                  src={user.photo_google} 
+                  className="foto-perfil"
+                />
+              </div>
+            </div>
+          )}
 
-          {/* Adicione outros campos se desejar */}
+          {/* ==============================
+              SEÇÃO: DADOS PESSOAIS
+          =============================== */}
+          <div className="secao-card">
+            <h3>Informações Pessoais</h3>
+
+            {/* Nome */}
+            <div className="linha-dado">
+              <label>Nome</label>
+              <span>{user.first_name || "Não informado"}</span>
+            </div>
+
+            {/* Sobrenome */}
+            <div className="linha-dado">
+              <label>Sobrenome</label>
+              <span>{user.last_name || "Não informado"}</span>
+            </div>
+
+            {/* Email */}
+            <div className="linha-dado">
+              <label>Email</label>
+              <span>{user.email || "Não informado"}</span>
+            </div>
+
+            {/* CPF */}
+            <div className="linha-dado">
+              <label>CPF</label>
+              <span>{user.cpf || "Não informado"}</span>
+            </div>
+
+            {/* Telefone */}
+            <div className="linha-dado">
+              <label>Telefone</label>
+              <span>{user.phone || "Não informado"}</span>
+            </div>
+          </div>
+
+          {/* ==============================
+              SEÇÃO: ENDEREÇO
+          =============================== */}
+          <div className="secao-card">
+            <h3>Endereço</h3>
+
+            {/* Endereço Completo */}
+            <div className="linha-dado">
+              <label>Endereço</label>
+              <span>{user.address || "Não informado"}</span>
+            </div>
+
+            {/* Se tiver campos separados de endereço, pode adicionar: */}
+            {/* 
+            <div className="linha-dado">
+              <label>CEP</label>
+              <span>{user.cep || "Não informado"}</span>
+            </div>
+
+            <div className="linha-dado">
+              <label>Cidade</label>
+              <span>{user.cidade || "Não informado"}</span>
+            </div>
+
+            <div className="linha-dado">
+              <label>Estado</label>
+              <span>{user.estado || "Não informado"}</span>
+            </div>
+            */}
+          </div>
+
+          {/* ==============================
+              SEÇÃO: OUTRAS INFORMAÇÕES
+          =============================== */}
+          {user.role && (
+            <div className="secao-card">
+              <h3>Informações da Conta</h3>
+              <div className="linha-dado">
+                <label>Tipo de Usuário</label>
+                <span>
+                  {user.role === 'admin' && 'Administrador'}
+                  {user.role === 'paciente' && 'Paciente'}
+                  {user.role === 'profissional' && 'Profissional'}
+                  {!['admin', 'paciente', 'profissional'].includes(user.role) && user.role}
+                </span>
+              </div>
+              
+              {/* Data de Criação da Conta (se disponível) */}
+              {user.date_joined && (
+                <div className="linha-dado">
+                  <label>Membro desde</label>
+                  <span>{new Date(user.date_joined).toLocaleDateString('pt-BR')}</span>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ==============================
+              BOTÕES DE AÇÃO
+          =============================== */}
           <div className="botoes-edicao">
             <button className="black" onClick={handleLogout}>Sair</button>
             <button className="grey" onClick={() => navigate(-1)}>Voltar</button>
           </div>
+
         </div>
       </Card>
     </div>

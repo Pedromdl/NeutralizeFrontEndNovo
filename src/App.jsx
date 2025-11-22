@@ -22,6 +22,7 @@ import Usuarios from './pages/Usuario/Usuarios';
 import BancoUsuarios from './pages/Usuario/BancoUsuarios'
 import Avaliacao from './pages/Avaliacao';
 import PreAvaliacoes from './pages/Configuracoes/PreAvaliacoes';
+import PreTestes from './pages/Configuracoes/PreTestes';
 import Agendamentos from './pages/Calendario/Agendamentos';
 import Cadastro from './pages/Cadastro';
 import Orientacao from './pages/Usuario/Orientacao';
@@ -34,6 +35,9 @@ import SessaoNova from './pages/Usuario/SessaoNova';
 import BancoExercicios from './pages/Usuario/BancoExercicios';
 import DemoBody from './pages/DemoBody';
 import TreinoInterativo from "./components/TreinoInterativo";
+import TreinosExecutadosAdmin from './pages/Usuario/TreinosExecutadosAdmin';
+
+
 import OrientacoesPaciente from './pages/Pacientes/OrientacoesPacientes';
 import TreinoInterativoPacientes from './pages/Pacientes/TreinoInterativoPacientes';
 import PainelInicialPaciente from "./pages/Pacientes/PainelInicialPacientes";
@@ -68,10 +72,11 @@ function LayoutComSidebar({ children }) {
   return (
     <div className="app-container">
       {!isMobile && !isNoSidebar && (isPacienteRoute ? <PacienteSidebar /> : <Sidebar />)}
+      {isMobile && !isNoSidebar && (isPacienteRoute ? <PacienteBottomMenu /> : <BottomMenu />)}
+
       <div className="main-area">
         <div className="logo-container"></div>
         {children}
-        {isMobile && !isNoSidebar && (isPacienteRoute ? <PacienteBottomMenu /> : <BottomMenu />)}
       </div>
     </div>
   );
@@ -132,7 +137,8 @@ function AppRoutes() {
           <Route path="/bancoexercicios" element={<BancoExercicios />} />
           <Route path="/banco-usuarios" element={<BancoUsuarios />} />
           <Route path="/integracoes" element={<Integracoes />} />
-
+          <Route path="/treinosexecutados" element={<TreinosExecutadosAdmin />} />
+          <Route path="/pre-testes" element={<PreTestes />} />
 
         </Routes>
       </LayoutComSidebar>

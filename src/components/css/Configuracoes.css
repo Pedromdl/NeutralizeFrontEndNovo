@@ -1,33 +1,233 @@
+/* =======================================
+   CONFIGURAÇÕES - DESIGN MODERNO
+======================================= */
+
 .conteudo-configuracoes {
-    display: flex;
+  padding: 24px;
+}
+
+/* ==============================
+   HEADER
+============================== */
+.config-header {
+  border-radius: 16px;
+  padding: 32px;
+  margin-bottom: 32px;
+  color: black;
+}
+
+.config-header-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.config-icon {
+  opacity: 0.9;
+}
+
+.config-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+}
+
+.config-subtitle {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin: 0;
+  font-weight: 400;
+}
+
+/* ==============================
+   GRID PRINCIPAL
+============================== */
+.config-grid {
+  width: 100%;
+}
+
+.category-grid {
+  display: grid;
+  grid-template-columns: 2fr 2fr;
+  gap: 20px;
+}
+
+/* ==============================
+   CARDS UNIFORMES
+============================== */
+.config-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #e1e5e9;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-left: 4px solid #282829;
+}
+
+.config-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(40, 40, 41, 0.15);
+  border-left: 4px solid #282829;
+}
+
+/* Efeito de hover */
+.card-hover-effect {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(40, 40, 41, 0.05), transparent);
+  transition: left 0.6s ease;
+}
+
+.config-card:hover .card-hover-effect {
+  left: 100%;
+}
+
+/* Header do Card */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.card-icon {
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #282829;
+}
+
+.card-arrow {
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: all 0.3s ease;
+  color: #282829;
+}
+
+.config-card:hover .card-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Conteúdo do Card */
+.card-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+}
+
+.card-title {
+  font-size: 1.1rem;
+  text-align: left;
+  font-weight: 600;
+  color: #282829;
+  margin: 0 0 8px 0;
+}
+
+.card-text {
+    text-align: left;
+}
+
+.card-description {
+  color: #6b7280;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* ==============================
+   RESPONSIVIDADE
+============================== */
+@media (max-width: 1024px) {
+  .category-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .conteudo-configuracoes {
+    padding: 16px;
+  }
+  
+  .config-header {
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+  
+  .config-header-content {
     flex-direction: column;
-    width: 100%;
-    max-width: 100%;
-    margin-top: -25px;
-    padding: 40px;
-    justify-content: flex-start;
-    background-color: #f1f5f9;
-    box-sizing: border-box;
+    text-align: center;
+    gap: 12px;
+  }
+  
+  .config-title {
+    font-size: 1.75rem;
+  }
+  
+  .category-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .config-card {
+    padding: 20px;
+    height: auto;
+  }
 }
 
-.coluna-botoes {
-    display: flex;
-    justify-content: space-evenly;
+@media (max-width: 480px) {
+  .config-title {
+    font-size: 1.5rem;
+  }
+  
+  .config-subtitle {
+    font-size: 1rem;
+  }
+  
+  .card-title {
+    font-size: 1rem;
+  }
+  
+  .card-description {
+    font-size: 0.85rem;
+  }
 }
 
-.coluna-esquerda {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    gap: 10px;
+/* ==============================
+   ANIMAÇÕES
+============================== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.coluna-direita {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 100%;
+.config-card {
+  animation: fadeInUp 0.5s ease forwards;
 }
 
-
-
+.config-card:nth-child(1) { animation-delay: 0.1s; }
+.config-card:nth-child(2) { animation-delay: 0.2s; }
+.config-card:nth-child(3) { animation-delay: 0.3s; }
+.config-card:nth-child(4) { animation-delay: 0.4s; }
+.config-card:nth-child(5) { animation-delay: 0.5s; }
+.config-card:nth-child(6) { animation-delay: 0.6s; }

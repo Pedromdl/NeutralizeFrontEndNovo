@@ -8,6 +8,7 @@ import { ptBR } from "date-fns/locale";
 import { useNavigate } from "react-router-dom";
 import { Dumbbell } from "lucide-react";
 import { motion } from "framer-motion";
+import NotificacaoBell from "../../components/NotificacaoBell"; // 🔹 Componente modular
 import "../../components/css/PaginaInicialPaciente.css";
 
 export default function DashboardPaciente() {
@@ -17,7 +18,6 @@ export default function DashboardPaciente() {
   const [ultimaSecaoId, setUltimaSecaoId] = useState(null);
   const navigate = useNavigate();
 
-  // 🔹 Busca estatísticas de treinos
   useEffect(() => {
     if (!loading && user) {
       axios
@@ -40,7 +40,6 @@ export default function DashboardPaciente() {
     }
   }, [user, loading]);
 
-  // 🔹 Busca última seção
   useEffect(() => {
     if (!loading && user) {
       axios
@@ -59,24 +58,8 @@ export default function DashboardPaciente() {
     }
   }, [user, loading]);
 
-  // 🔹 Estados de carregamento
-  if (loading)
-    return (
-      <div className="conteudo">
-        <Card title="Bem-vindo" size="al">
-          Carregando...
-        </Card>
-      </div>
-    );
-
-  if (!user)
-    return (
-      <div className="conteudo">
-        <Card title="Bem-vindo" size="al">
-          Usuário não autenticado.
-        </Card>
-      </div>
-    );
+  if (loading) return <div className="conteudo">Carregando...</div>;
+  if (!user) return <div className="conteudo">Usuário não autenticado.</div>;
 
   const cardVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -85,10 +68,19 @@ export default function DashboardPaciente() {
 
   return (
     <div className="conteudo">
-      <h1 className="titulo-dashboard">
-        Olá, {user?.first_name || "Paciente"} 👋
-      </h1>
-
+      <div className="titulo-dashboard-wrapper">
+        <img
+          src={user?.photo_google || "/default-avatar.png"}
+          alt="Foto do usuário"
+          className="avatar-dashboard"
+        />
+        <h1 className="titulo-dashboard">
+          Olá, {user?.first_name || "Paciente"} 👋
+        </h1>
+        
+        {/* 🔹 Agora usando o componente modular */}
+        <NotificacaoBell />
+      </div>
       <div className="dashboard-grid">
         {/* 🔹 Card 1 - Treinos realizados */}
         <motion.div
@@ -98,7 +90,7 @@ export default function DashboardPaciente() {
           transition={{ delay: 0.1, duration: 0.4 }}
           className="card-status"
         >
-          <Card title="Treinos Realizados" size="al">
+          <Card title="Treinos Realizados" size="al" >
             <p className="valor-principal">
               {stats?.totalTreinosExecutados}
             </p>

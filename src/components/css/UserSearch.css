@@ -1,64 +1,187 @@
-.user-search {
+/* 🔹 Container Principal */
+.user-search-container {
   position: relative;
   width: 100%;
+}
+
+.user-search-container.modal {
+  margin-bottom: 1rem;
+}
+
+/* 🔹 Input Style - Usando o mesmo padrão */
+.search-input-wrapper {
+  position: relative;
   display: flex;
+  align-items: center;
+  margin-bottom: 0;
 }
 
-/* Modo modal: mais compacto */
-.user-search.modal {
-  margin: 0;
-}
-
-.user-search input {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  color: #000;
-  border-radius: 4px;
-  font-size: 1rem;
-}
-
-/* Input mais compacto no modo modal */
-.user-search.modal input {
-  padding: 6px;
-  font-size: 1rem;
-  border-radius: 8px;
-  padding: 0.5rem 0.8rem;
-}
-
-.dropdown {
+.search-input-wrapper svg {
   position: absolute;
-  top: 38px;
+  left: 12px;
+  color: #6b7280;
+  z-index: 2;
+}
+
+.search-input-simple {
+  width: 100%;
+  padding: 12px 12px 12px 40px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  background: white;
+  position: relative;
+  z-index: 1;
+}
+
+.search-input-simple:focus {
+  outline: none;
+  border-color: #b7de42;
+  box-shadow: 0 0 0 3px rgba(183, 222, 66, 0.1);
+}
+
+/* 🔹 Loading State */
+.search-loading {
+  position: absolute;
+  right: 12px;
+  z-index: 2;
+}
+
+.loading-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #f3f4f6;
+  border-top: 2px solid #b7de42;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 🔹 Dropdown Style */
+.search-dropdown {
+  position: absolute;
+  top: 100%;
   left: 0;
   right: 0;
-  background: #edecea;
-  border: 1px solid #ddd;
-  border-top: none;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  z-index: 9999;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   max-height: 200px;
   overflow-y: auto;
+  z-index: 1000;
+  margin-top: 4px;
+  padding: 4px 0;
 }
 
-.dropdown li {
-  padding: 8px;
+.dropdown-item {
+  padding: 12px 16px;
   cursor: pointer;
-  font-size: 14px;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid #f3f4f6;
 }
 
-.user-search.modal .dropdown li {
-  padding: 6px 8px;
-  font-size: 13px;
+.dropdown-item:last-child {
+  border-bottom: none;
 }
 
-.dropdown li:hover {
-  background-color: #f0f0f0;
+.dropdown-item:hover {
+  background: #f8f9fa;
 }
 
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
 
-/* Impede qualquer rolagem lateral */
-.card-md {
-  overflow-x: visible !important;
+.user-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #1f2937;
+}
+
+.user-email {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+/* 🔹 Empty State */
+.search-empty {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin-top: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+/* 🔹 Modal Specific Styles */
+.user-search-container.modal .search-input-simple {
+  background: #f8f9fa;
+  border-color: #e5e7eb;
+}
+
+.user-search-container.modal .search-input-simple:focus {
+  background: white;
+  border-color: #b7de42;
+}
+
+/* 🔹 Responsividade */
+@media (max-width: 768px) {
+  .search-dropdown {
+    position: fixed;
+    top: auto;
+    left: 16px;
+    right: 16px;
+    max-height: 160px;
+    z-index: 1001;
+  }
+
+  .search-empty {
+    position: fixed;
+    top: auto;
+    left: 16px;
+    right: 16px;
+    z-index: 1001;
+  }
+
+  .user-search-container.modal .search-dropdown,
+  .user-search-container.modal .search-empty {
+    position: absolute;
+    left: 0;
+    right: 0;
+  }
+}
+
+/* 🔹 Scrollbar Personalizado */
+.search-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+
+.search-dropdown::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 0 8px 8px 0;
+}
+
+.search-dropdown::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.search-dropdown::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
 }

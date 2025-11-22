@@ -71,7 +71,7 @@ function FormText({ pacienteId, dataAvaliacao }) {
   };
 
   return (
-    <div className="card-avaliacao">
+    <div className="">
       <h3>Registrar Anamnese</h3>
       <form onSubmit={handleSubmit} className="form-anamnese-grid">
         {formularios.map((form, index) => (

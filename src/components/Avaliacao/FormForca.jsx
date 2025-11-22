@@ -98,7 +98,7 @@ function FormForca({ pacienteId, dataAvaliacao }) {
   };
 
   return (
-    <div className="card-avaliacao">
+    <div className="">
       <h3>Registrar Força Muscular</h3>
       <form
         onSubmit={async (e) => {
