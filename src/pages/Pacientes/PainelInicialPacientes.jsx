@@ -21,7 +21,7 @@ export default function DashboardPaciente() {
   useEffect(() => {
     if (!loading && user) {
       axios
-        .get(`${import.meta.env.VITE_API_URL}/api/orientacoes/resumo_treinos/`)
+        .get(`${import.meta.env.VITE_API_URL}/api/resumo_treinos/`)
         .then((res) => {
           const data = res.data;
           setStats({
@@ -43,7 +43,7 @@ export default function DashboardPaciente() {
   useEffect(() => {
     if (!loading && user) {
       axios
-        .get(`${import.meta.env.VITE_API_URL}/api/orientacoes/pastas/`)
+        .get(`${import.meta.env.VITE_API_URL}/api/pastas/`)
         .then((res) => {
           const pastas = res.data;
           if (pastas.length > 0) {
