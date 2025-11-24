@@ -73,7 +73,7 @@ function Usuarios() {
           
           {/* Botão de gerar relatório PDF */}
             {usuarioSelecionado && (
-            <Card size="al">
+            <Card size="usuario">
               <FiltroData
                 usuarioId={usuarioSelecionado.id}
                 valorSelecionado={dataSelecionada}

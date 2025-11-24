@@ -104,7 +104,7 @@ export default function BancoExercicios() {
     setAdding(true);
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/orientacoes/bancoexercicios/`,
+        `${import.meta.env.VITE_API_URL}/api/bancoexercicios/`,
         newExercicio
       );
       setExercicios(prev => [res.data, ...prev]);

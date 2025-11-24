@@ -307,7 +307,6 @@ export default function TreinoDetalhe() {
       }>
         {t.expandido ? '▼' : '►'}
       </button>
-      <button onClick={() => navigate(`/treinos/${t.id}/editar`)}>Editar</button>
     </div>
 
     {t.expandido && (

@@ -9,14 +9,17 @@ import PrivateRoute from './components/PrivateRoute';
 import ConsentBanner from './components/ConsentBanner.jsx';
 import './App.css';
 
+// Import do Provider da Assinatura
+import { AssinaturaProvider } from './context/AssinaturaContext';
+import ProtegidoPorAssinatura from './components/ProtegidoPorAssinatura';
 
+// Pages
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import RegistrarClinica from './pages/RegistrarClinica.jsx';
 import Profile from './pages/Profile';
 import Configuracoes from './pages/Configuracoes';
-
 
 import Usuarios from './pages/Usuario/Usuarios';
 import BancoUsuarios from './pages/Usuario/BancoUsuarios'
@@ -37,7 +40,6 @@ import DemoBody from './pages/DemoBody';
 import TreinoInterativo from "./components/TreinoInterativo";
 import TreinosExecutadosAdmin from './pages/Usuario/TreinosExecutadosAdmin';
 
-
 import OrientacoesPaciente from './pages/Pacientes/OrientacoesPacientes';
 import TreinoInterativoPacientes from './pages/Pacientes/TreinoInterativoPacientes';
 import PainelInicialPaciente from "./pages/Pacientes/PainelInicialPacientes";
@@ -49,10 +51,12 @@ import RelatorioInterativo from './pages/RelatorioInterativo';
 import Integracoes from './pages/Integracoes/Integracoes';
 import LiberacaoMiofascial from './pages/LiberacaoMiofascial';
 
-
+import AssinaturaInfo from '../src/pages/AssinaturaInfo';
 import TermosUso from "./pages/TermosUso";
 import PoliticaPrivacidade from './pages/PoliticaPrivacidade';
 
+import ListaPlanos from '../src/components/ListaPlanos';
+import AssinaturaDetalhes from '../src/components/AssinaturaDetalhes';
 
 function LayoutComSidebar({ children }) {
   const location = useLocation();
@@ -84,11 +88,11 @@ function LayoutComSidebar({ children }) {
 
 function AppRoutes() {
   const location = useLocation();
-  // Em vez de lista simples:
-  const rotasSemLayout = ['/login', '/register', '/registro-clinica', '/politica-privacidade', '/termos-de-uso', `/teste`, '/liberacao-miofascial'  // nova rota pública
+  const rotasSemLayout = [
+    '/login', '/register', '/registro-clinica', '/politica-privacidade',
+    '/termos-de-uso', '/teste', '/liberacao-miofascial'
   ];
 
-  // Adicione uma verificação dinâmica para rotas como /relatorio/:usuarioId
   const isTesteRoute = location.pathname.startsWith('/relatorio/');
 
   if (rotasSemLayout.includes(location.pathname) || isTesteRoute) {
@@ -97,7 +101,6 @@ function AppRoutes() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/registro-clinica" element={<RegistrarClinica />} />
-
         <Route path="/teste" element={<Teste />} />
         <Route path="/relatorio/:token" element={<RelatorioInterativo />} />
         <Route path="/politica-privacidade" element={<PoliticaPrivacidade />} />
@@ -109,39 +112,119 @@ function AppRoutes() {
 
   return (
     <PrivateRoute>
-      <LayoutComSidebar>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/perfil" element={<Profile />} />
-          <Route path="/usuarios" element={<Usuarios />} />
-          <Route path="/avaliacao" element={<Avaliacao />} />
-          <Route path="/cadastro" element={<Cadastro />} />
-          <Route path="/orientacao" element={<Orientacao />} />
-          <Route path="/pastas/:id" element={<PastaDetalhe />} />
-          <Route path="/secoes/:id/treino" element={<TreinoDetalhe />} />
-          <Route path="/configuracoes" element={<Configuracoes />} />
-          <Route path="/orientacoes/:pastaId/secao/:secaoId" element={<SecaoDetalhe />} />
-          <Route path="/avaliacoes/:avaliacaoId" element={<AvaliacaoDetalhe />} />
-          <Route path="/agendamentos" element={<Agendamentos />} />
-          <Route path="/sessoes/nova/:usuarioId" element={<SessaoNova />} />
-          <Route path="/sessoes/:sessaoId" element={<SessoesDetalhes />} />
-          <Route path="/configuracoes/pre-avaliacoes" element={<PreAvaliacoes />} />
-          <Route path="/demo" element={<DemoBody />} />
-          <Route path="/treinos/:secaoId" element={<TreinoInterativo />} />
-          <Route path="/paciente/orientacoes" element={<OrientacoesPaciente />} />
-          <Route path="/paciente/treinos/:treinoId" element={<TreinoInterativoPacientes />} />
-          <Route path="/paciente" element={<PainelInicialPaciente />} />
-          <Route path="/paciente/secao/:secaoId" element={<TreinosSecaoPaciente />} />
-          <Route path="/paciente/historico" element={<HistoricodeTreinos />} />
-          <Route path="/financeiro" element={<Financeiro />} />
-          <Route path="/bancoexercicios" element={<BancoExercicios />} />
-          <Route path="/banco-usuarios" element={<BancoUsuarios />} />
-          <Route path="/integracoes" element={<Integracoes />} />
-          <Route path="/treinosexecutados" element={<TreinosExecutadosAdmin />} />
-          <Route path="/pre-testes" element={<PreTestes />} />
+      <AssinaturaProvider>
+        <LayoutComSidebar>
+          <Routes>
+            {/* ✅ PÁGINAS SEMPRE LIBERADAS */}
+            <Route path="/" element={<Home />} />
+            <Route path="/perfil" element={<Profile />} />
+            <Route path="/usuarios" element={<Usuarios />} /> {/* 🔥 AGORA LIBERADA */}
+            <Route path="/orientacao" element={<Orientacao />} />
+            <Route path="/pastas/:id" element={<PastaDetalhe />} />
+            <Route path="/secoes/:id/treino" element={<TreinoDetalhe />} />
+            <Route path="/configuracoes" element={<Configuracoes />} /> {/* 🔥 AGORA LIBERADA */}
+            <Route path="/orientacoes/:pastaId/secao/:secaoId" element={<SecaoDetalhe />} />
+            <Route path="/avaliacoes/:avaliacaoId" element={<AvaliacaoDetalhe />} />
+            <Route path="/sessoes/:sessaoId" element={<SessoesDetalhes />} />
+            <Route path="/demo" element={<DemoBody />} />
+            <Route path="/treinos/:secaoId" element={<TreinoInterativo />} />
+            <Route path="/paciente/orientacoes" element={<OrientacoesPaciente />} />
+            <Route path="/paciente/treinos/:treinoId" element={<TreinoInterativoPacientes />} />
+            <Route path="/paciente" element={<PainelInicialPaciente />} />
+            <Route path="/paciente/secao/:secaoId" element={<TreinosSecaoPaciente />} />
+            <Route path="/paciente/historico" element={<HistoricodeTreinos />} />
+            <Route path="/treinosexecutados" element={<TreinosExecutadosAdmin />} />
 
-        </Routes>
-      </LayoutComSidebar>
+            {/* 🚫 PÁGINAS BLOQUEADAS se trial expirado */}
+            <Route
+              path="/bancoexercicios"
+              element={
+                <ProtegidoPorAssinatura>
+                  <BancoExercicios />
+                </ProtegidoPorAssinatura>
+              }
+            />
+            <Route
+              path="/avaliacao"
+              element={
+                <ProtegidoPorAssinatura>
+                  <Avaliacao />
+                </ProtegidoPorAssinatura>
+              }
+            />
+            <Route
+              path="/cadastro"
+              element={
+                <ProtegidoPorAssinatura>
+                  <Cadastro />
+                </ProtegidoPorAssinatura>
+              }
+            />
+            <Route
+              path="/agendamentos"
+              element={
+                <ProtegidoPorAssinatura>
+                  <Agendamentos />
+                </ProtegidoPorAssinatura>
+              }
+            />
+            <Route
+              path="/sessoes/nova/:usuarioId"
+              element={
+                <ProtegidoPorAssinatura>
+                  <SessaoNova />
+                </ProtegidoPorAssinatura>
+              }
+            />
+            <Route
+              path="/configuracoes/pre-avaliacoes"
+              element={
+                <ProtegidoPorAssinatura>
+                  <PreAvaliacoes />
+                </ProtegidoPorAssinatura>
+              }
+            />
+            <Route
+              path="/financeiro"
+              element={
+                <ProtegidoPorAssinatura>
+                  <Financeiro />
+                </ProtegidoPorAssinatura>
+              }
+            />
+            <Route
+              path="/banco-usuarios"
+              element={
+                <ProtegidoPorAssinatura>
+                  <BancoUsuarios />
+                </ProtegidoPorAssinatura>
+              }
+            />
+            <Route
+              path="/integracoes"
+              element={
+                <ProtegidoPorAssinatura>
+                  <Integracoes />
+                </ProtegidoPorAssinatura>
+              }
+            />
+            <Route
+              path="/pre-testes"
+              element={
+                <ProtegidoPorAssinatura>
+                  <PreTestes />
+                </ProtegidoPorAssinatura>
+              }
+            />
+
+            {/* ✅ PÁGINAS DE ASSINATURA SEMPRE LIBERADAS */}
+            <Route path="/assinatura-info" element={<AssinaturaInfo />} />
+            <Route path="/planos" element={<ListaPlanos />} />
+            <Route path="/assinatura" element={<AssinaturaDetalhes />} />
+            <Route path="/assinatura/:assinaturaId" element={<AssinaturaDetalhes />} />
+          </Routes>
+        </LayoutComSidebar>
+      </AssinaturaProvider>
     </PrivateRoute>
   );
 }
@@ -149,10 +232,8 @@ function AppRoutes() {
 function App() {
   return (
     <>
-
       <ConsentBanner />
       <AppRoutes />
-
     </>
   );
 }

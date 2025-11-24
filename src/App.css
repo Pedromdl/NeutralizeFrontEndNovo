@@ -133,6 +133,11 @@ body {
 
 .card-al {
   width: 100%;
+  margin-top: 20px;
+}
+
+.card-usuario {
+  width: 100%;
 }
 
 .carrossel {
