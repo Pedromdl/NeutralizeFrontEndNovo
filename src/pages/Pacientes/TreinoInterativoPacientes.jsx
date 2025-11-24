@@ -94,7 +94,7 @@ export default function TreinoInterativoPacientes() {
     setLoadingTreino(true);
 
     axios
-      .get(`${import.meta.env.VITE_API_URL}/api/orientacoes/treinos/${treinoId}/`)
+      .get(`${import.meta.env.VITE_API_URL}/api/treinos/${treinoId}/`)
       .then((res) => {
         const dados = res.data.exercicios || [];
         const orientacoesFormatadas = dados.map((ex) => ({
