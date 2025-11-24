@@ -11,7 +11,7 @@ import './App.css';
 
 // Import do Provider da Assinatura
 import { AssinaturaProvider } from './context/AssinaturaContext';
-import ProtegidoPorAssinatura from './components/ProtegidoPorAssinatura.jsx';
+import ProtegidoPorAssinatura from './components/ProtegidoPorAssinatura';
 
 // Pages
 import Home from './pages/Home';
