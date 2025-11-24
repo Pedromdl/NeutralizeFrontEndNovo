@@ -15,7 +15,7 @@ export default function OrientacoesPaciente() {
     async () => {
       if (!user) return [];
       const { data } = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/orientacoes/pastas/`
+        `${import.meta.env.VITE_API_URL}/api/pastas/`
       );
       return data;
     },
