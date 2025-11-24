@@ -271,7 +271,7 @@ export default function TreinoInterativoPacientes() {
     const payload = { treino: treinoId };
 
     axios
-      .post(`${import.meta.env.VITE_API_URL}/api/orientacoes/treinosexecutados/`, payload)
+      .post(`${import.meta.env.VITE_API_URL}/api/treinosexecutados/`, payload)
       .then((resExec) => {
         setTreinoExecutadoId(resExec.data.id);
         setTreinoIniciado(true);
@@ -311,7 +311,7 @@ export default function TreinoInterativoPacientes() {
   };
 
   axios.post(
-    `${import.meta.env.VITE_API_URL}/api/orientacoes/treinosexecutados/${treinoExecutadoId}/finalizar/`,
+    `${import.meta.env.VITE_API_URL}/api/treinosexecutados/${treinoExecutadoId}/finalizar/`,
     payload
   )
   .then(() => {
