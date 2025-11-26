@@ -11,6 +11,8 @@ export default function RegistrarClinica() {
     password: "",
     first_name: "",
     last_name: "",
+    documento: "",
+
   });
 
   const [erros, setErros] = useState([]);
@@ -47,6 +49,8 @@ export default function RegistrarClinica() {
           password: form.password,
           first_name: form.first_name,
           last_name: form.last_name,
+          documento: form.documento,
+
         }
       );
 
@@ -81,6 +85,15 @@ export default function RegistrarClinica() {
             name="nome_clinica"
             placeholder="Nome da Clínica"
             value={form.nome_clinica}
+            onChange={handleChange}
+            required
+          />
+          
+          <input
+            type="text"
+            name="documento"
+            placeholder="CPF ou CNPJ"
+            value={form.documento}
             onChange={handleChange}
             required
           />
