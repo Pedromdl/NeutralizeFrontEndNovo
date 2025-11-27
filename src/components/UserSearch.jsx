@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Search } from 'lucide-react';
-import './css/UserSearch.css';
+import styles from './css/UserSearch.module.css';
 
 function UserSearch({ onSelect, modoModal = false, valorInicial = '' }) {
   const [inputValue, setInputValue] = useState(valorInicial);
@@ -9,7 +9,6 @@ function UserSearch({ onSelect, modoModal = false, valorInicial = '' }) {
   const [mostrarDropdown, setMostrarDropdown] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Atualiza inputValue se valorInicial mudar (ex: abrir modal edição)
   useEffect(() => {
     setInputValue(valorInicial);
   }, [valorInicial]);
@@ -29,6 +28,7 @@ function UserSearch({ onSelect, modoModal = false, valorInicial = '' }) {
         const filtrados = res.data.filter(usuario =>
           usuario.nome.toLowerCase().includes(inputValue.toLowerCase())
         );
+
         setResultados(filtrados);
         setMostrarDropdown(true);
       } catch (err) {
@@ -38,65 +38,48 @@ function UserSearch({ onSelect, modoModal = false, valorInicial = '' }) {
       }
     };
 
-    const timeout = setTimeout(buscarUsuarios, 300); // debounce
+    const timeout = setTimeout(buscarUsuarios, 300);
     return () => clearTimeout(timeout);
   }, [inputValue]);
 
-  const handleChange = (e) => {
-    setInputValue(e.target.value);
-  };
-
-  const handleSelect = (usuario) => {
-    setInputValue(usuario.nome);
-    setResultados([]);
-    setMostrarDropdown(false);
-    if (onSelect) {
-      onSelect(usuario);
-    }
-  };
-
-  const handleFocus = () => {
-    if (inputValue && resultados.length > 0) {
-      setMostrarDropdown(true);
-    }
-  };
-
-  const handleBlur = () => {
-    setTimeout(() => setMostrarDropdown(false), 150);
-  };
-
   return (
-    <div className={`user-search-container ${modoModal ? 'modal' : ''}`}>
-      <div className="search-input-wrapper">
-        <Search size={20} />
+    <div className={`${styles.container} ${modoModal ? styles.modal : ''}`}>
+      <div className={styles.searchInputWrapper}>
+        <Search size={20} className={styles.searchIcon} />
+
         <input
           type="text"
           placeholder="Buscar usuário..."
           value={inputValue}
-          onChange={handleChange}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          className="search-input-simple"
+          onChange={(e) => setInputValue(e.target.value)}
+          onFocus={() => resultados.length > 0 && setMostrarDropdown(true)}
+          onBlur={() => setTimeout(() => setMostrarDropdown(false), 150)}
+          className={styles.searchInput}
         />
+
         {loading && (
-          <div className="search-loading">
-            <div className="loading-spinner"></div>
+          <div className={styles.searchLoading}>
+            <div className={styles.loadingSpinner}></div>
           </div>
         )}
       </div>
-      
+
       {mostrarDropdown && resultados.length > 0 && (
-        <ul className="search-dropdown">
+        <ul className={styles.dropdown}>
           {resultados.map((usuario) => (
-            <li 
-              key={usuario.id} 
-              onClick={() => handleSelect(usuario)}
-              className="dropdown-item"
+            <li
+              key={usuario.id}
+              onClick={() => {
+                setInputValue(usuario.nome);
+                setMostrarDropdown(false);
+                onSelect?.(usuario);
+              }}
+              className={styles.dropdownItem}
             >
-              <div className="user-info">
-                <span className="user-name">{usuario.nome}</span>
+              <div className={styles.userInfo}>
+                <span className={styles.userName}>{usuario.nome}</span>
                 {usuario.email && (
-                  <span className="user-email">{usuario.email}</span>
+                  <span className={styles.userEmail}>{usuario.email}</span>
                 )}
               </div>
             </li>
@@ -104,8 +87,8 @@ function UserSearch({ onSelect, modoModal = false, valorInicial = '' }) {
         </ul>
       )}
 
-      {mostrarDropdown && inputValue && resultados.length === 0 && !loading && (
-        <div className="search-empty">
+      {mostrarDropdown && resultados.length === 0 && !loading && (
+        <div className={styles.empty}>
           Nenhum usuário encontrado para "{inputValue}"
         </div>
       )}
