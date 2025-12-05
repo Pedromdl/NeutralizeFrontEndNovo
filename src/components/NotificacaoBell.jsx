@@ -17,6 +17,10 @@ export default function NotificacaoBell() {
         setNotificacoes(data);
       } catch (error) {
         console.error("Erro ao buscar notificações:", error);
+<<<<<<< HEAD
+=======
+        // Fallback com dados de exemplo
+>>>>>>> 2464111d3818bda4b4f39168a658986795320e7f
       }
     };
 
