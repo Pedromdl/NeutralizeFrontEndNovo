@@ -1,19 +1,16 @@
+/* Versão mobile-first - Base para telas pequenas */
 .integracoes-container {
-  padding: 2rem;
+  padding: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.5rem;
 }
 
 .integracoes-title {
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: #222;
-}
-
-.integracao-actions {
-    display: flex;
-    align-items: center;    
+  margin-bottom: 0.5rem;
 }
 
 .integracao-card {
@@ -21,8 +18,10 @@
   border: 1px solid #e3e3e3;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  padding: 1.5rem;
+  padding: 1rem;
   transition: box-shadow 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .integracao-card:hover {
@@ -31,20 +30,30 @@
 
 .integracao-header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
 }
 
 .integracao-header-left {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .integracao-header-left h2 {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 600;
   color: #333;
+  margin: 0;
+}
+
+.integracao-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: flex-start;
 }
 
 .integracao-content {
@@ -53,32 +62,48 @@
 
 .integracao-info-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 0.75rem;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
   color: #444;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
+}
+
+.integracao-info-grid p {
+  margin: 0.25rem 0;
+  line-height: 1.4;
 }
 
 .integracao-info-grid p strong {
   color: #111;
+  display: inline-block;
+  min-width: 80px;
 }
 
 .integracao-info-empty {
   color: #666;
   font-style: italic;
+  font-size: 0.9rem;
 }
 
+/* Botões responsivos */
 .btn-primary,
-.btn-outline {
+.btn-outline,
+.btn-danger {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 8px 14px;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 8px 12px;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   transition: all 0.2s ease;
   border: none;
+  min-height: 36px;
+  text-align: center;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 120px;
 }
 
 .btn-primary {
@@ -101,12 +126,6 @@
 }
 
 .btn-danger {
-  gap: 0.5rem;
-  padding: 8px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: all 0.2s ease;
   background-color: transparent;
   border: 1px solid #e53e3e;
   color: #e53e3e;
@@ -116,106 +135,251 @@
   background-color: rgba(229, 62, 62, 0.1);
 }
 
-
+/* Loading state */
 .integracoes-loading {
   text-align: center;
-  margin-top: 2rem;
-  font-size: 1.1rem;
+  margin-top: 1rem;
+  font-size: 1rem;
   color: #444;
+  padding: 1rem;
 }
 
-
+/* Gráfico */
 .strava-grafico-container h3 {
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 600;
   color: #333;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
   text-align: center;
 }
 
 .grafico-header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
 }
 
-.grafico-toggles button {
-  margin-left: 8px;
-  background: #eee;
-  border: none;
-  padding: 6px 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.grafico-toggles button.ativo {
-  background: #fc5200;
-  color: white;
-}
-
-.strava-profile-pic {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  border: 2px solid #fc5200;
-  object-fit: cover;
-  margin-top: 8px;
-}
-
-/* Tooltip */
-.tooltip-custom {
-  background-color: #fff;
-  padding: 10px 14px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  font-size: 0.9rem;
-}
-.tooltip-title {
-  margin: 0;
-  font-weight: bold;
-  color: #333;
-}
-.tooltip-info {
-  margin: 3px 0;
-  color: #555;
-}
-.tooltip-divider {
-  margin: 6px 0;
-  border: none;
-  border-top: 1px solid #eee;
-}
-.tooltip-value {
-  margin: 2px 0;
-  font-weight: 500;
-}
-
-/* Botões do gráfico */
 .grafico-toggles {
   display: flex;
-  gap: 6px;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
 }
+
 .grafico-toggle-btn {
   border: 1px solid #ccc;
   background: #f8f8f8;
   color: #444;
-  padding: 4px 10px;
+  padding: 6px 10px;
   border-radius: 6px;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 4px;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   cursor: pointer;
   transition: all 0.2s ease;
+  min-width: 80px;
 }
+
 .grafico-toggle-btn:hover {
   background: #eee;
 }
+
 .grafico-toggle-btn.ativo {
   border-color: #fc5200;
   background: #fff2eb;
   color: #fc5200;
 }
 
+/* Profile picture mobile */
+.strava-profile-pic {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid #fc5200;
+  object-fit: cover;
+  margin-top: 0.5rem;
+}
+
+/* Tooltip mobile */
+.tooltip-custom {
+  background-color: #fff;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  font-size: 0.8rem;
+  max-width: 200px;
+}
+
+.tooltip-title {
+  margin: 0;
+  font-weight: bold;
+  color: #333;
+  font-size: 0.85rem;
+}
+
+.tooltip-info {
+  margin: 2px 0;
+  color: #555;
+  font-size: 0.8rem;
+}
+
+.tooltip-divider {
+  margin: 4px 0;
+  border: none;
+  border-top: 1px solid #eee;
+}
+
+.tooltip-value {
+  margin: 2px 0;
+  font-weight: 500;
+  font-size: 0.8rem;
+}
+
+/* Media Queries para telas maiores */
+@media (min-width: 480px) {
+  .integracoes-container {
+    padding: 1.25rem;
+    gap: 1.75rem;
+  }
+  
+  .integracoes-title {
+    font-size: 1.6rem;
+  }
+  
+  .integracao-card {
+    padding: 1.25rem;
+  }
+  
+  .integracao-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .integracao-actions {
+    justify-content: flex-end;
+    flex-wrap: nowrap;
+  }
+  
+  .integracao-info-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+  
+  .grafico-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .grafico-toggles {
+    justify-content: flex-end;
+  }
+}
+
+@media (min-width: 768px) {
+  .integracoes-container {
+    padding: 2rem;
+    gap: 2rem;
+  }
+  
+  .integracoes-title {
+    font-size: 1.8rem;
+  }
+  
+  .integracao-card {
+    padding: 1.5rem;
+  }
+  
+  .integracao-header-left h2 {
+    font-size: 1.2rem;
+  }
+  
+  .integracao-info-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    font-size: 0.95rem;
+  }
+  
+  .btn-primary,
+  .btn-outline,
+  .btn-danger {
+    padding: 8px 14px;
+    font-size: 0.9rem;
+    min-width: 140px;
+  }
+  
+  .strava-profile-pic {
+    width: 56px;
+    height: 56px;
+  }
+  
+  .strava-grafico-container h3 {
+    font-size: 1.1rem;
+  }
+  
+  .grafico-toggle-btn {
+    min-width: 100px;
+    font-size: 0.85rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .integracao-info-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+}
+
+/* Adicione isso se estiver usando o gráfico Recharts */
+.recharts-wrapper {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.recharts-surface {
+  min-width: 300px;
+}
+
+/* Para garantir que o scroll horizontal funcione bem no mobile */
+.integracao-card {
+  overflow-x: hidden;
+}
+
+/* Ajustes para evitar overflow horizontal */
+.integracao-header-left,
+.integracao-actions {
+  overflow: hidden;
+}
+
+/* Ajuste para telas muito pequenas (iPhone SE, etc) */
+@media (max-width: 360px) {
+  .integracoes-container {
+    padding: 0.75rem;
+    gap: 1rem;
+  }
+  
+  .integracao-card {
+    padding: 0.75rem;
+  }
+  
+  .btn-primary,
+  .btn-outline,
+  .btn-danger {
+    min-width: 100px;
+    font-size: 0.8rem;
+    padding: 6px 10px;
+  }
+  
+  .integracao-header-left h2 {
+    font-size: 1rem;
+  }
+  
+  .grafico-toggle-btn {
+    min-width: 70px;
+    font-size: 0.75rem;
+    padding: 5px 8px;
+  }
+}

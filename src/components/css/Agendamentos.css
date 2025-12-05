@@ -1,4 +1,4 @@
-/* Overlay do modal */
+
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -146,7 +146,7 @@
 
 .form-input:focus,
 .form-select:focus {
-  border-color: #22d3ee;
+  border-color: #076653;
   box-shadow: 0 0 0 2px rgba(34,211,238,0.4);
   outline: none;
 }

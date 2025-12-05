@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import UserSearch from '../components/UserSearch';
 
 import FormMobilidade from '../components/Avaliacao/FormMobilidade.jsx';
@@ -38,15 +38,29 @@ function CadastrarDados() {
 
   const [resetKey, setResetKey] = useState(0);
 
-  // Paciente
-  const [pacienteSelecionado, setPacienteSelecionado] = useState(() => {
-    const salvo = localStorage.getItem('avaliacao_pacienteSelecionado');
-    return salvo ? JSON.parse(salvo) : null;
+  // Paciente (salva apenas ID no localStorage por segurança/LGPD)
+  const [pacienteSelecionado, setPacienteSelecionado] = useState(null);
+  const [pacienteId, setPacienteId] = useState(() => {
+    const salvoId = localStorage.getItem('avaliacao_pacienteSelecionadoId');
+    return salvoId ? JSON.parse(salvoId) : null;
   });
 
+  // Carregar dados do paciente ao iniciar (apenas ID foi salvo)
+  useEffect(() => {
+    if (pacienteId) {
+      fetch(`${import.meta.env.VITE_API_URL}/api/usuarios/${pacienteId}/`)
+        .then(res => res.json())
+        .then(data => setPacienteSelecionado(data))
+        .catch(err => console.error('Erro ao carregar paciente:', err));
+    }
+  }, [pacienteId]);
+
   const handleSelecionarPaciente = (paciente) => {
-    setPacienteSelecionado(paciente);
-    localStorage.setItem('avaliacao_pacienteSelecionado', JSON.stringify(paciente));
+    // Salvar apenas o ID no localStorage (segurança/LGPD)
+    setPacienteId(paciente.id);
+    localStorage.setItem('avaliacao_pacienteSelecionadoId', JSON.stringify(paciente.id));
+    // O objeto completo será carregado via fetch (vide useEffect acima)
+    setPacienteSelecionado(paciente);  // Já temos os dados do UserSearch
     setResetKey(k => k + 1);
   };
 

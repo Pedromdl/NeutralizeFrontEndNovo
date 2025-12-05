@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import styles from '../components/css/CheckoutModal.module.css';
 
-const CheckoutModal = ({ plano, onClose, onSuccess }) => {
+const CheckoutModal = ({ assinaturaId, plano, onClose, onSuccess }) => {
+  const [assinaturaAtual, setAssinaturaAtual] = useState(null);
+  const [organizacao, setOrganizacao] = useState(null);
+  const [hasCardToken, setHasCardToken] = useState(false);
   const [dadosCartao, setDadosCartao] = useState({
     holderName: '',
     number: '',
@@ -17,364 +21,352 @@ const CheckoutModal = ({ plano, onClose, onSuccess }) => {
     phone: '',
     mobilePhone: ''
   });
-  
-  const [assinaturaAtual, setAssinaturaAtual] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [modoPagamento, setModoPagamento] = useState('cartao_novo'); // 'cartao_novo' ou 'cartao_salvo'
 
-  // Buscar assinatura existente ao abrir modal
+  // ----------------------------------------------
+  // BUSCAR ASSINATURA + ORGANIZAÇÃO
+  // ----------------------------------------------
   useEffect(() => {
-    const buscarAssinaturaAtual = async () => {
+    const buscarDados = async () => {
       try {
         const token = localStorage.getItem('access');
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/api/assinatura/`,
-          {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
-            }
-          }
-        );
-        
-        if (response.data.assinatura) {
-          setAssinaturaAtual(response.data.assinatura);
-          console.log('📋 Assinatura atual:', response.data.assinatura);
-          
-          // Verificar se pode ser ativada
-          if (response.data.assinatura.status !== 'aguardando_pagamento') {
-            alert('❌ Esta assinatura não pode ser ativada com cartão.');
-            onClose();
-          }
-        } else {
-          alert('❌ Nenhuma assinatura encontrada. Crie uma assinatura primeiro.');
+        if (!token) {
+          alert('Usuário não autenticado.');
           onClose();
+          return;
         }
+
+        const res = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/assinatura/${assinaturaId}/`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        console.log("🔎 RES DETALHES ASSINATURA:", res.data);
+
+        setAssinaturaAtual(res.data.assinatura);
+        setOrganizacao(res.data.organizacao);
+
+        const tokenSalvo = res.data.organizacao?.credit_card_token;
+        setHasCardToken(Boolean(tokenSalvo));
+
+        // Se tem cartão salvo, oferece como opção padrão
+        if (tokenSalvo) {
+          setModoPagamento('cartao_salvo');
+        }
+
       } catch (error) {
-        console.error('Erro ao buscar assinatura:', error);
-        alert('❌ Erro ao carregar assinatura.');
+        console.error('Erro ao buscar dados:', error);
+        alert('Erro ao carregar informações da assinatura.');
         onClose();
       }
     };
 
-    buscarAssinaturaAtual();
-  }, []);
+    buscarDados();
+  }, [assinaturaId, onClose]);
 
-  const processarPagamento = async () => {
+  // ----------------------------------------------
+  // USAR CARTÃO SALVO
+  // ----------------------------------------------
+  const usarCartaoSalvo = async () => {
     const token = localStorage.getItem('access');
-    
-    if (!token) {
-      alert('❌ Usuário não autenticado.');
-      return;
-    }
-
-    // 🔥 VALIDAÇÃO: Verificar se temos assinatura para ativar
-    if (!assinaturaAtual || assinaturaAtual.status !== 'aguardando_pagamento') {
-      alert('❌ Não foi possível encontrar uma assinatura para ativar.');
-      return;
-    }
+    if (!token) return alert('❌ Usuário não autenticado.');
 
     setLoading(true);
     try {
-      console.log('🔄 [DEBUG] Ativando assinatura existente...');
-      
-      // 🔥 ATIVAR assinatura existente com cartão
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/assinatura/${assinaturaAtual.id}/ativar-com-cartao/`,
-        {
-          dados_cartao: {
-            ...dadosCartao,
-            number: dadosCartao.number.replace(/\s/g, ''),
-          }
-        },
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-          timeout: 30000
-        }
+      const resp = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/assinatura/${assinaturaId}/ativar-usando-token/`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      if (response.data.success) {
-        alert('✅ Pagamento processado! Assinatura ativada.');
-        onSuccess(response.data.assinatura);
+      if (resp.data.success) {
+        alert("✅ Assinatura ativada com sucesso!");
+        onSuccess(resp.data.assinatura);
       } else {
-        alert(`Erro: ${response.data.error}`);
+        alert(resp.data.error || "Erro ao ativar assinatura.");
       }
 
     } catch (error) {
-      console.error('❌ Erro:', error);
-      
-      if (error.response) {
-        alert(`Erro ${error.response.status}: ${error.response.data.error || error.response.statusText}`);
-      } else if (error.request) {
-        alert('❌ Não foi possível conectar com o servidor.');
-      } else {
-        alert(`Erro: ${error.message}`);
-      }
+      console.error("Erro ao usar cartão salvo:", error);
+      alert(error.response?.data?.error || "Erro ao ativar assinatura.");
     } finally {
       setLoading(false);
     }
   };
 
-  // Funções de formatação
-  const formatarNumeroCartao = (valor) => {
-    return valor.replace(/\D/g, '').replace(/(\d{4})/g, '$1 ').trim();
+  // ----------------------------------------------
+  // PAGAR COM CARTÃO NOVO
+  // ----------------------------------------------
+  const processarPagamento = async () => {
+    // Se escolheu usar cartão salvo, chama a função específica
+    if (modoPagamento === 'cartao_salvo') {
+      return await usarCartaoSalvo();
+    }
+
+    // Caso contrário, processa com cartão novo
+    const token = localStorage.getItem('access');
+    if (!token) return alert('❌ Usuário não autenticado.');
+
+    if (!dadosCartao.number || !dadosCartao.ccv || !dadosCartao.expiryMonth || !dadosCartao.expiryYear) {
+      return alert("Preencha os dados do cartão.");
+    }
+
+    setLoading(true);
+
+    try {
+      const remoteIp = await fetch("https://api.ipify.org/?format=json")
+        .then(r => r.json())
+        .then(r => r.ip)
+        .catch(() => null);
+
+      const payload = {
+        dados_cartao: {
+          holderName: dadosCartao.holderName,
+          number: dadosCartao.number.replace(/\s/g, ''),
+          expiryMonth: dadosCartao.expiryMonth,
+          expiryYear: dadosCartao.expiryYear,
+          ccv: dadosCartao.ccv
+        },
+        holder_info: {
+          name: dadosCartao.name,
+          email: dadosCartao.email,
+          cpfCnpj: dadosCartao.cpfCnpj.replace(/\D/g, ''),
+          postalCode: dadosCartao.postalCode.replace(/\D/g, ''),
+          addressNumber: dadosCartao.addressNumber,
+          addressComplement: dadosCartao.addressComplement,
+          phone: dadosCartao.phone.replace(/\D/g, ''),
+          remoteIp
+        }
+      };
+
+      console.log("📦 PAYLOAD:", payload);
+
+      const resp = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/assinatura/${assinaturaId}/ativar-com-cartao/`,
+        payload,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (resp.data.success) {
+        alert("✅ Pagamento realizado! Assinatura ativada.");
+        onSuccess(resp.data.assinatura);
+      } else {
+        alert(resp.data.error || "Erro ao processar pagamento.");
+      }
+
+    } catch (error) {
+      console.error("Erro ao pagar:", error);
+      alert(error.response?.data?.error || "Erro ao processar pagamento.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const formatarCPF = (valor) => {
-    return valor.replace(/\D/g, '')
-      .replace(/(\d{3})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d{1,2})/, '$1-$2')
-      .replace(/(-\d{2})\d+?$/, '$1');
+  // Handler para mudanças nos campos do formulário
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setDadosCartao(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
-  const formatarCEP = (valor) => {
-    return valor.replace(/\D/g, '')
-      .replace(/(\d{5})(\d)/, '$1-$2')
-      .replace(/(-\d{3})\d+?$/, '$1');
-  };
-
-  const formatarTelefone = (valor) => {
-    return valor.replace(/\D/g, '')
-      .replace(/(\d{2})(\d)/, '($1) $2')
-      .replace(/(\d{5})(\d)/, '$1-$2')
-      .replace(/(-\d{4})\d+?$/, '$1');
-  };
-
-  // Handlers
-  const handleNumeroCartaoChange = (e) => {
-    const valorFormatado = formatarNumeroCartao(e.target.value);
-    setDadosCartao({...dadosCartao, number: valorFormatado});
-  };
-
-  const handleCPFChange = (e) => {
-    const valorFormatado = formatarCPF(e.target.value);
-    setDadosCartao({...dadosCartao, cpfCnpj: valorFormatado});
-  };
-
-  const handleCEPChange = (e) => {
-    const valorFormatado = formatarCEP(e.target.value);
-    setDadosCartao({...dadosCartao, postalCode: valorFormatado});
-  };
-
-  const handleTelefoneChange = (e) => {
-    const valorFormatado = formatarTelefone(e.target.value);
-    setDadosCartao({...dadosCartao, phone: valorFormatado});
-  };
-
-  const handleCelularChange = (e) => {
-    const valorFormatado = formatarTelefone(e.target.value);
-    setDadosCartao({...dadosCartao, mobilePhone: valorFormatado});
-  };
-
+  // ----------------------------------------------
+  // RENDER
+  // ----------------------------------------------
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="checkout-modal" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
+    <div className={styles.modalOverlay} onClick={onClose}>
+      <div className={styles.checkoutModal} onClick={(e) => e.stopPropagation()}>
+
+        <div className={styles.modalHeader}>
           <h2>Finalizar Assinatura</h2>
-          <button onClick={onClose} className="btn-fechar">×</button>
+          <button className={styles.btnFechar} onClick={onClose}>×</button>
         </div>
-        
-        <div className="plano-info">
+
+        <div className={styles.planoInfo}>
           <h3>{plano.nome}</h3>
-          <p className="preco-destaque">R$ {plano.preco_mensal}/mês</p>
+          <p className={styles.precoDestaque}>R$ {plano.preco_mensal}/mês</p>
         </div>
 
-        <div className="form-section">
-          <h4>📋 Dados Pessoais</h4>
-          <div className="form-cartao">
-            <div className="input-group">
-              <label>Nome Completo *</label>
-              <input
-                type="text"
-                placeholder="Seu nome completo"
-                value={dadosCartao.name}
-                onChange={(e) => setDadosCartao({
-                  ...dadosCartao, 
-                  name: e.target.value,
-                  holderName: e.target.value // Preenche automaticamente
-                })}
-                disabled={loading}
-              />
-            </div>
-
-            <div className="input-group">
-              <label>Email *</label>
-              <input
-                type="email"
-                placeholder="seu@email.com"
-                value={dadosCartao.email}
-                onChange={(e) => setDadosCartao({...dadosCartao, email: e.target.value})}
-                disabled={loading}
-              />
-            </div>
-
-            <div className="input-group">
-              <label>CPF/CNPJ *</label>
-              <input
-                type="text"
-                placeholder="000.000.000-00"
-                value={dadosCartao.cpfCnpj}
-                onChange={handleCPFChange}
-                maxLength="18"
-                disabled={loading}
-              />
-            </div>
-
-            <div className="row">
-              <div className="input-group">
-                <label>CEP *</label>
+        {/* SELEÇÃO DO MODO DE PAGAMENTO */}
+        {hasCardToken && (
+          <div className={styles.selecaoPagamento}>
+            <h4>Escolha como pagar:</h4>
+            <div className={styles.opcoesPagamento}>
+              <label className={styles.radioOpcao}>
                 <input
-                  type="text"
-                  placeholder="00000-000"
-                  value={dadosCartao.postalCode}
-                  onChange={handleCEPChange}
-                  maxLength="9"
-                  disabled={loading}
+                  type="radio"
+                  name="modoPagamento"
+                  value="cartao_salvo"
+                  checked={modoPagamento === 'cartao_salvo'}
+                  onChange={(e) => setModoPagamento(e.target.value)}
                 />
-              </div>
-              <div className="input-group">
-                <label>Número *</label>
+                <span>🔒 Usar cartão salvo</span>
+                <small>Pagamento rápido e seguro</small>
+              </label>
+              
+              <label className={styles.radioOpcao}>
                 <input
-                  type="text"
-                  placeholder="123"
-                  value={dadosCartao.addressNumber}
-                  onChange={(e) => setDadosCartao({...dadosCartao, addressNumber: e.target.value})}
-                  disabled={loading}
+                  type="radio"
+                  name="modoPagamento"
+                  value="cartao_novo"
+                  checked={modoPagamento === 'cartao_novo'}
+                  onChange={(e) => setModoPagamento(e.target.value)}
                 />
-              </div>
-            </div>
-
-            <div className="input-group">
-              <label>Complemento</label>
-              <input
-                type="text"
-                placeholder="Apto, bloco, etc."
-                value={dadosCartao.addressComplement}
-                onChange={(e) => setDadosCartao({...dadosCartao, addressComplement: e.target.value})}
-                disabled={loading}
-              />
-            </div>
-
-            <div className="row">
-              <div className="input-group">
-                <label>Telefone *</label>
-                <input
-                  type="text"
-                  placeholder="(00) 0000-0000"
-                  value={dadosCartao.phone}
-                  onChange={handleTelefoneChange}
-                  maxLength="15"
-                  disabled={loading}
-                />
-              </div>
-              <div className="input-group">
-                <label>Celular</label>
-                <input
-                  type="text"
-                  placeholder="(00) 00000-0000"
-                  value={dadosCartao.mobilePhone}
-                  onChange={handleCelularChange}
-                  maxLength="15"
-                  disabled={loading}
-                />
-              </div>
+                <span>💳 Usar novo cartão</span>
+                <small>Digite os dados do cartão</small>
+              </label>
             </div>
           </div>
-        </div>
+        )}
 
-        <div className="form-section">
-          <h4>💳 Dados do Cartão</h4>
-          <div className="form-cartao">
-            <div className="input-group">
+        {/* FORMULÁRIO DE CARTÃO NOVO (só aparece se selecionado) */}
+        {modoPagamento === 'cartao_novo' && (
+          <div className={styles.formCartao}>
+            <h4>Dados do Cartão</h4>
+            
+            <div className={styles.formGroup}>
               <label>Nome no Cartão *</label>
               <input
                 type="text"
-                placeholder="Como está no cartão"
+                name="holderName"
                 value={dadosCartao.holderName}
-                onChange={(e) => setDadosCartao({...dadosCartao, holderName: e.target.value})}
-                disabled={loading}
+                onChange={handleInputChange}
+                placeholder="Ex: JOÃO DA SILVA"
+                required
               />
             </div>
 
-            <div className="input-group">
+            <div className={styles.formGroup}>
               <label>Número do Cartão *</label>
               <input
                 type="text"
-                placeholder="0000 0000 0000 0000"
+                name="number"
                 value={dadosCartao.number}
-                onChange={handleNumeroCartaoChange}
+                onChange={handleInputChange}
+                placeholder="0000 0000 0000 0000"
                 maxLength="19"
-                disabled={loading}
+                required
               />
             </div>
 
-            <div className="row">
-              <div className="input-group">
-                <label>Validade *</label>
-                <div className="row">
-                  <input
-                    type="text"
-                    placeholder="MM"
-                    maxLength="2"
-                    value={dadosCartao.expiryMonth}
-                    onChange={(e) => setDadosCartao({
-                      ...dadosCartao, 
-                      expiryMonth: e.target.value.replace(/\D/g, '')
-                    })}
-                    disabled={loading}
-                  />
-                  <span style={{margin: '0 0.5rem', lineHeight: '3rem'}}>/</span>
-                  <input
-                    type="text"
-                    placeholder="AAAA"
-                    maxLength="4"
-                    value={dadosCartao.expiryYear}
-                    onChange={(e) => setDadosCartao({
-                      ...dadosCartao, 
-                      expiryYear: e.target.value.replace(/\D/g, '')
-                    })}
-                    disabled={loading}
-                  />
-                </div>
-              </div>
-              <div className="input-group">
-                <label>CVV *</label>
+            <div className={styles.gridDuasColunas}>
+              <div className={styles.formGroup}>
+                <label>Validade (Mês) *</label>
                 <input
                   type="text"
-                  placeholder="123"
-                  maxLength="3"
-                  value={dadosCartao.ccv}
-                  onChange={(e) => setDadosCartao({
-                    ...dadosCartao, 
-                    ccv: e.target.value.replace(/\D/g, '')
-                  })}
-                  disabled={loading}
+                  name="expiryMonth"
+                  value={dadosCartao.expiryMonth}
+                  onChange={handleInputChange}
+                  placeholder="MM"
+                  maxLength="2"
+                  required
+                />
+              </div>
+              
+              <div className={styles.formGroup}>
+                <label>Validade (Ano) *</label>
+                <input
+                  type="text"
+                  name="expiryYear"
+                  value={dadosCartao.expiryYear}
+                  onChange={handleInputChange}
+                  placeholder="AAAA"
+                  maxLength="4"
+                  required
                 />
               </div>
             </div>
+
+            <div className={styles.formGroup}>
+              <label>CVV *</label>
+              <input
+                type="text"
+                name="ccv"
+                value={dadosCartao.ccv}
+                onChange={handleInputChange}
+                placeholder="123"
+                maxLength="4"
+                required
+              />
+            </div>
+
+            <h4>Dados do Titular</h4>
+            
+            <div className={styles.formGroup}>
+              <label>Nome Completo *</label>
+              <input
+                type="text"
+                name="name"
+                value={dadosCartao.name}
+                onChange={handleInputChange}
+                placeholder="Nome completo"
+                required
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label>CPF/CNPJ *</label>
+              <input
+                type="text"
+                name="cpfCnpj"
+                value={dadosCartao.cpfCnpj}
+                onChange={handleInputChange}
+                placeholder="000.000.000-00"
+                required
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label>E-mail *</label>
+              <input
+                type="email"
+                name="email"
+                value={dadosCartao.email}
+                onChange={handleInputChange}
+                placeholder="seu@email.com"
+                required
+              />
+            </div>
+
+            <div className={styles.formGroup}>
+              <label>Telefone *</label>
+              <input
+                type="text"
+                name="phone"
+                value={dadosCartao.phone}
+                onChange={handleInputChange}
+                placeholder="(11) 99999-9999"
+                required
+              />
+            </div>
           </div>
+        )}
+
+        {/* BOTÃO DE FINALIZAR */}
+        <div className={styles.botoesAcao}>
+          <button
+            className={modoPagamento === 'cartao_salvo' ? styles.btnCartaoSalvo : styles.btnCartaoNovo}
+            onClick={processarPagamento}
+            disabled={loading}
+          >
+            {loading ? '🔄 Processando...' : (
+              modoPagamento === 'cartao_salvo' 
+                ? `🔒 Confirmar com cartão salvo - R$ ${plano.preco_mensal}/mês`
+                : `💳 Pagar com cartão novo - R$ ${plano.preco_mensal}/mês`
+            )}
+          </button>
+          
+          <button 
+            className={styles.btnCancelar}
+            onClick={onClose}
+            disabled={loading}
+          >
+            Cancelar
+          </button>
         </div>
 
-        <button 
-          className="btn-pagar"
-          onClick={processarPagamento}
-          disabled={loading}
-        >
-          {loading ? '🔄 Processando...' : `💳 Assinar por R$ ${plano.preco_mensal}/mês`}
-        </button>
-        
-        <p style={{
-          textAlign: 'center', 
-          marginTop: '1rem', 
-          color: '#6c757d', 
-          fontSize: '0.8rem',
-          lineHeight: '1.4'
-        }}>
-          🔒 Pagamento 100% seguro processado pelo ASAAS
-        </p>
       </div>
     </div>
   );

@@ -22,7 +22,7 @@ export default function AceiteDocumentos() {
     if (!token) return;
 
     axios
-      .get(`${API_URL}/api/accounts/documentos/?tipo=termo_uso`, {
+      .get(`${API_URL}/api/documentos/?tipo=termo_uso`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
@@ -39,7 +39,7 @@ export default function AceiteDocumentos() {
     if (!token) return;
 
     axios
-      .get(`${API_URL}/api/accounts/documentos/?tipo=politica_privacidade`, {
+      .get(`${API_URL}/api/documentos/?tipo=politica_privacidade`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
@@ -57,14 +57,14 @@ export default function AceiteDocumentos() {
     try {
       // Aceitar termos
       await axios.post(
-        `${API_URL}/api/accounts/documentos/aceitar/`,
+        `${API_URL}/api/documentos/aceitar/`,
         { documento: termoUso.id },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
       // Aceitar política
       await axios.post(
-        `${API_URL}/api/accounts/documentos/aceitar/`,
+        `${API_URL}/api/documentos/aceitar/`,
         { documento: politica.id },
         { headers: { Authorization: `Bearer ${token}` } }
       );

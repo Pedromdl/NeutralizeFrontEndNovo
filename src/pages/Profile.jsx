@@ -40,16 +40,17 @@ export default function Profile() {
     <div className="conteudo">
       <Card title="Perfil do Usuário" size="al">
         <div className="usuario-secoes">
-          
+
           {/* ==============================
               SEÇÃO: FOTO DO PERFIL
           =============================== */}
-          {user.photo_google && (
+          {user.profile_picture_url && (
             <div>
               <div className="container-foto">
-                <img 
-                  src={user.photo_google} 
+                <img
+                  src={user.profile_picture_url}
                   className="foto-perfil"
+                  alt={`Foto de ${user.first_name || user.email}`}
                 />
               </div>
             </div>
@@ -138,7 +139,7 @@ export default function Profile() {
                   {!['admin', 'paciente', 'profissional'].includes(user.role) && user.role}
                 </span>
               </div>
-              
+
               {/* Data de Criação da Conta (se disponível) */}
               {user.date_joined && (
                 <div className="linha-dado">

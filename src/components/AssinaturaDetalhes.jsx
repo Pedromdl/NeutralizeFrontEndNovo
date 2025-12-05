@@ -19,39 +19,45 @@ const AssinaturaDetalhes = () => {
   useEffect(() => {
     fetchAssinatura();
     fetchPlanos();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [assinaturaId]);
 
   const fetchAssinatura = async () => {
     try {
+      setLoading(true);
       const token = localStorage.getItem('access');
-      
+
       if (!token) {
         setError('Usuário não autenticado. Faça login novamente.');
         setLoading(false);
         return;
       }
 
-      const url = assinaturaId 
+      const url = assinaturaId
         ? `${import.meta.env.VITE_API_URL}/api/assinatura/${assinaturaId}/`
         : `${import.meta.env.VITE_API_URL}/api/assinatura/`;
-      
+
       const response = await axios.get(url, {
         headers: {
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
-      
+
       setAssinatura(response.data.assinatura);
       setTransacoes(response.data.transacoes || []);
-      
-      // 🔥 MOSTRAR PLANOS AUTOMATICAMENTE se trial expirado
-      if (response.data.assinatura?.status === 'aguardando_pagamento') {
+
+      // 🔥 MOSTRAR PLANOS AUTOMATICAMENTE se trial expirado, aguardando pagamento ou assinatura expirada
+      const status = response.data.assinatura?.status;
+      if (status === 'aguardando_pagamento' || status === 'expirada') {
         setMostrarPlanos(true);
+      } else {
+        // manter o estado atual de mostrarPlanos caso o usuário já tenha aberto manualmente
+        // mas se a assinatura existir e não estiver em um estado que deva abrir planos automaticamente, não forçar fechar
       }
     } catch (err) {
       console.error('❌ Erro fetchAssinatura:', err);
-      
+
       if (err.response?.status === 401 || err.response?.status === 403) {
         setError('Acesso não autorizado. Token inválido ou expirado.');
       } else if (err.response?.status === 404) {
@@ -66,9 +72,7 @@ const AssinaturaDetalhes = () => {
 
   const fetchPlanos = async () => {
     try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/planos/`
-      );
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/planos/`);
       setPlanos(response.data.planos || []);
     } catch (err) {
       console.error('Erro ao carregar planos:', err);
@@ -82,13 +86,13 @@ const AssinaturaDetalhes = () => {
 
     try {
       const token = localStorage.getItem('access');
-      
+
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/assinatura/${assinatura.id}/cancelar/`,
         {},
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json'
           }
         }
@@ -123,18 +127,18 @@ const AssinaturaDetalhes = () => {
     setCheckoutAberto(false);
     setPlanoSelecionado(null);
     setMostrarPlanos(false);
-    
+
     // Recarregar dados da assinatura
     fetchAssinatura();
-    
+
     // Mostrar mensagem de sucesso
     alert('🎉 Assinatura ativada com sucesso! Todas as funcionalidades estão liberadas.');
-    
-    // Se estava em trial expirado, recarregar a página para remover bloqueios
-    if (assinatura?.status === 'aguardando_pagamento') {
+
+    // Se estava em trial expirado ou expirada, recarregar a página para remover bloqueios visuais
+    if (assinatura?.status === 'aguardando_pagamento' || assinatura?.status === 'expirada') {
       setTimeout(() => {
         window.location.reload();
-      }, 2000);
+      }, 1500);
     }
   };
 
@@ -142,7 +146,7 @@ const AssinaturaDetalhes = () => {
   const assinarPlano = async (planoId) => {
     try {
       const token = localStorage.getItem('access');
-      
+
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/assinatura/criar/`,
         {
@@ -151,7 +155,7 @@ const AssinaturaDetalhes = () => {
         },
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json'
           }
         }
@@ -181,7 +185,8 @@ const AssinaturaDetalhes = () => {
       ativa: '#007bff',
       suspensa: '#dc3545',
       cancelada: '#6c757d',
-      aguardando_pagamento: '#ffc107'
+      aguardando_pagamento: '#ffc107',
+      expirada: '#ff4d4f'
     };
     return colors[status] || '#6c757d';
   };
@@ -192,9 +197,10 @@ const AssinaturaDetalhes = () => {
   return (
     <div className="assinatura-detalhes">
       {/* 🔥 MODAL DE CHECKOUT */}
-      {checkoutAberto && planoSelecionado && (
-        <CheckoutModal 
+      {checkoutAberto && planoSelecionado && assinatura && (
+        <CheckoutModal
           plano={planoSelecionado}
+          assinaturaId={assinatura.id}
           onClose={fecharCheckout}
           onSuccess={handleSucessoCheckout}
         />
@@ -204,10 +210,7 @@ const AssinaturaDetalhes = () => {
       <div className="assinatura-header">
         <h1>Minha Assinatura</h1>
         {assinatura && (
-          <span 
-            className="status-badge"
-            style={{ backgroundColor: getStatusColor(assinatura.status) }}
-          >
+          <span className="status-badge" style={{ backgroundColor: getStatusColor(assinatura.status) }}>
             {assinatura.status_display}
           </span>
         )}
@@ -224,23 +227,34 @@ const AssinaturaDetalhes = () => {
         </div>
       )}
 
+      {/* 🔥 ALERTA - ASSINATURA EXPIRADA */}
+      {assinatura?.status === 'expirada' && (
+        <div className="alerta-importante alerta-expirada">
+          <div className="alerta-icon">⛔</div>
+          <div className="alerta-content">
+            <h3>Assinatura Expirada</h3>
+            <p>Sua assinatura anterior expirou. Para continuar usando a plataforma, crie uma nova assinatura.</p>
+          </div>
+        </div>
+      )}
+
       {/* 🔥 INFORMAÇÕES DA ASSINATURA (SEMPRE VISÍVEL) */}
       {assinatura && (
         <div className="assinatura-info">
           <div className="info-card">
             <h3>{assinatura.plano.nome}</h3>
-            
+
             <div className="info-grid">
               <div className="info-item">
                 <label>Valor:</label>
                 <span>R$ {assinatura.plano.preco_mensal}/mês</span>
               </div>
-              
+
               <div className="info-item">
                 <label>Método de pagamento:</label>
                 <span>{assinatura.metodo_pagamento_display}</span>
               </div>
-              
+
               <div className="info-item">
                 <label>Próximo pagamento:</label>
                 <span>{formatarData(assinatura.data_proximo_pagamento)}</span>
@@ -253,18 +267,23 @@ const AssinaturaDetalhes = () => {
               </div>
             )}
 
+            {/* 🔥 BOTÃO PARA CRIAR NOVA ASSINATURA QUANDO EXPIRADA */}
+            {assinatura.status === 'expirada' && !mostrarPlanos && (
+              <div className="acoes-expirada">
+                <button className="btn-renovar-assinatura" onClick={() => setMostrarPlanos(true)}>
+                  🔄 Criar nova assinatura
+                </button>
+                <p className="texto-ajuda">Sua assinatura terminou. Clique acima para escolher um novo plano.</p>
+              </div>
+            )}
+
             {/* 🔥 BOTÃO PARA VER PLANOS - Aparece no trial ativo */}
             {assinatura.status === 'trial' && !mostrarPlanos && (
               <div className="acoes-trial">
-                <button 
-                  className="btn-ver-planos"
-                  onClick={() => setMostrarPlanos(true)}
-                >
+                <button className="btn-ver-planos" onClick={() => setMostrarPlanos(true)}>
                   📋 Ver Planos Disponíveis
                 </button>
-                <p className="texto-ajuda">
-                  Conheça nossas opções para quando seu trial acabar
-                </p>
+                <p className="texto-ajuda">Conheça nossas opções para quando seu trial acabar</p>
               </div>
             )}
           </div>
@@ -281,17 +300,14 @@ const AssinaturaDetalhes = () => {
       )}
 
       {/* 🔥 SEÇÃO DE PLANOS - Controlada por estado */}
-      {(mostrarPlanos || !assinatura || assinatura.status === 'aguardando_pagamento') && (
+      {(mostrarPlanos || !assinatura || assinatura.status === 'aguardando_pagamento' || assinatura.status === 'expirada') && (
         <div className="planos-section">
           <div className="planos-header">
             <h2>📦 Escolha seu Plano</h2>
             <p>Selecione o plano ideal para o crescimento da sua clínica</p>
-            
+
             {assinatura?.status === 'trial' && (
-              <button 
-                className="btn-fechar-planos"
-                onClick={() => setMostrarPlanos(false)}
-              >
+              <button className="btn-fechar-planos" onClick={() => setMostrarPlanos(false)}>
                 Voltar aos detalhes
               </button>
             )}
@@ -303,7 +319,8 @@ const AssinaturaDetalhes = () => {
                 <div className="plano-header">
                   <h3>{plano.nome}</h3>
                   <div className="plano-preco">
-                    R$ {plano.preco_mensal}<span>/mês</span>
+                    R$ {plano.preco_mensal}
+                    <span>/mês</span>
                   </div>
                 </div>
 
@@ -312,17 +329,12 @@ const AssinaturaDetalhes = () => {
                     <li>✅ {plano.max_pacientes} pacientes</li>
                     <li>✅ {plano.max_usuarios} usuários</li>
                     <li>✅ {plano.max_avaliacoes_mes || 'Ilimitadas'} avaliações/mês</li>
-                    {plano.dias_trial > 0 && (
-                      <li>🆓 {plano.dias_trial} dias grátis</li>
-                    )}
+                    {plano.dias_trial > 0 && <li>🆓 {plano.dias_trial} dias grátis</li>}
                   </ul>
                 </div>
 
-                <button 
-                  className="btn-assinar"
-                  onClick={() => abrirCheckout(plano)} // 🔥 AGORA USA A NOVA FUNÇÃO
-                >
-                  {assinatura?.status === 'aguardando_pagamento' ? 'Assinar Agora' : 'Selecionar Plano'}
+                <button className="btn-assinar" onClick={() => abrirCheckout(plano)}>
+                  {assinatura?.status === 'aguardando_pagamento' || assinatura?.status === 'expirada' ? 'Assinar Agora' : 'Selecionar Plano'}
                 </button>
               </div>
             ))}
@@ -330,30 +342,22 @@ const AssinaturaDetalhes = () => {
         </div>
       )}
 
-      {/* 🔥 HISTÓRICO E AÇÕES (só mostra se tem assinatura) */}
-      {assinatura && assinatura.status !== 'aguardando_pagamento' && !mostrarPlanos && (
+      {/* 🔥 HISTÓRICO E AÇÕES (só mostra se tem assinatura e não está aguardando pagamento nem expirada) */}
+      {assinatura && assinatura.status !== 'aguardando_pagamento' && assinatura.status !== 'expirada' && !mostrarPlanos && (
         <>
           <div className="transacoes-section">
             <h3>Histórico de Pagamentos</h3>
-            
+
             {transacoes.length > 0 ? (
               <div className="transacoes-list">
                 {transacoes.map((transacao) => (
                   <div key={transacao.id} className="transacao-item">
                     <div className="transacao-data">
                       <span>{formatarData(transacao.data_vencimento)}</span>
-                      {transacao.data_pagamento && (
-                        <span className="pago-em">
-                          Pago em: {formatarData(transacao.data_pagamento)}
-                        </span>
-                      )}
+                      {transacao.data_pagamento && <span className="pago-em">Pago em: {formatarData(transacao.data_pagamento)}</span>}
                     </div>
-                    <div className="transacao-valor">
-                      R$ {transacao.valor}
-                    </div>
-                    <div className="transacao-status">
-                      {transacao.status}
-                    </div>
+                    <div className="transacao-valor">R$ {transacao.valor}</div>
+                    <div className="transacao-status">{transacao.status}</div>
                     {transacao.url_boleto && (
                       <a href={transacao.url_boleto} target="_blank" rel="noopener noreferrer">
                         Ver Boleto
@@ -369,10 +373,7 @@ const AssinaturaDetalhes = () => {
 
           {assinatura.status !== 'cancelada' && (
             <div className="actions">
-              <button 
-                className="btn-cancelar"
-                onClick={cancelarAssinatura}
-              >
+              <button className="btn-cancelar" onClick={cancelarAssinatura}>
                 Cancelar Assinatura
               </button>
             </div>

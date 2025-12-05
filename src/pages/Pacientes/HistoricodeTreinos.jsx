@@ -10,7 +10,7 @@ export default function HistoricoTreinos() {
     ['treinosHistoricoRapido'],
     async () => {
       const { data } = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/orientacoes/historico_treinos/`
+        `${import.meta.env.VITE_API_URL}/api/historico_treinos/`
       );
       return data;
     }

@@ -133,7 +133,6 @@ body {
 
 .card-al {
   width: 100%;
-  margin-top: 20px;
 }
 
 .card-usuario {
@@ -427,6 +426,16 @@ button.black:hover {
   border-radius: 6px;
   cursor: pointer;
   font-weight: 500;
+}
+
+.btn-resetar {
+  margin-right: 1rem;
+  background-color: rgb(244, 67, 54);
+  color: white;
+}
+
+.btn-resetar:hover {
+  background: rgba(255, 95, 84, 0.695);
 }
 
 .btn-cancelar {

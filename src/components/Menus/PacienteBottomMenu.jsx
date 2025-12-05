@@ -1,6 +1,14 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { House, File, Dumbbell, Cog, UserPen, CircleX } from "lucide-react";
+import { 
+  House, 
+  File, 
+  Dumbbell, 
+  Cog, 
+  UserPen, 
+  CircleX,
+  Link // Adicione o ícone de Link
+} from "lucide-react";
 import BottomSheetModal from "../BottomSheetModal";
 import "../css/BottomMenu.css";
 import Logo from '../../images/logo3.png';
@@ -22,7 +30,8 @@ function PacienteBottomMenu() {
         </div>
 
         <NavLink
-          to="/paciente"end
+          to="/paciente"
+          end
           className={({ isActive }) => (isActive ? "ativo" : "")}
         >
           <House size={20} />
@@ -58,6 +67,12 @@ function PacienteBottomMenu() {
             <button onClick={() => irPara("/perfil")} className="modal-btn">
               <UserPen size={18} style={{ marginRight: '8px' }} />
               Perfil
+            </button>
+          </li>
+          <li>
+            <button onClick={() => irPara("/paciente/integracoes")} className="modal-btn">
+              <Link size={18} style={{ marginRight: '8px' }} />
+              Integrações
             </button>
           </li>
           <li>

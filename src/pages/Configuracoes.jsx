@@ -44,7 +44,7 @@ export default function Configuracoes() {
       title: "Integrações",
       description: "Conecte com outras plataformas",
       icon: <Link size={24} />,
-      path: '/integracoes',
+      path: '/paciente/integracoes',
     },
     {
       title: "Dados da Conta",

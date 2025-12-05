@@ -158,6 +158,24 @@ export default function TreinoDetalhe() {
     }
   };
 
+  const duplicarTreino = async (treino) => {
+  try {
+    const res = await axios.post(
+      `${import.meta.env.VITE_API_URL}/api/treinos/${treino.id}/duplicar/`
+    );
+
+    const novoTreino = {
+      ...res.data,
+      expandido: false,
+      exerciciosDoTreino: res.data.exercicios || []
+    };
+
+    setTreinosSecao(prev => [...prev, novoTreino]);
+  } catch (err) {
+    console.error("Erro ao duplicar treino:", err);
+  }
+};
+
   // 🔹 Abrir modal adicionar
   const abrirModalAdicionar = (treino) => {
     setTreinoSelecionadoParaAdicionar(treino);
@@ -241,7 +259,7 @@ export default function TreinoDetalhe() {
   if (!secao) return <p>Carregando seção...</p>;
 
   return (
-    <div className="conteudo">
+    <div className="conteudo" style={{ gap: '20px' }}>
       <Card title={secao.titulo} size="al">
         <div className="user-search">
           <input
@@ -307,6 +325,8 @@ export default function TreinoDetalhe() {
       }>
         {t.expandido ? '▼' : '►'}
       </button>
+      <button onClick={() => duplicarTreino(t)}>Duplicar</button>
+
     </div>
 
     {t.expandido && (

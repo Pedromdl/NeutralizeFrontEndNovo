@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
-import '../components/css/Cadastro.css';
-
+import styles from '../components/css/Cadastro.module.css';
 
 function CadastrarPaciente() {
   const [formData, setFormData] = useState({
@@ -151,128 +150,171 @@ function CadastrarPaciente() {
   };
 
   return (
-    <div className="conteudo-cadastro">
-      <div className="card">
+    <div className={styles.conteudoCadastro}>
+      <div className={styles.card}>
         <h2>Ficha de Cadastro</h2>
         <form onSubmit={handleSubmit}>
 
           {/* DADOS PESSOAIS */}
-          <h3 className="secao-titulo">Dados Pessoais</h3>
+          <h3 className={styles.secaoTitulo}>Dados Pessoais</h3>
 
           {/* Nome sozinho */}
-          <div className="grid-1">
-            <div className="form-group grande">
+          <div className={styles.grid1}>
+            <div className={`${styles.formGroup} ${styles.grande}`}>
               <label>Nome</label>
               <input
                 type="text"
                 name="nome"
                 value={formData.nome}
                 onChange={handleChange}
-                className="form-input"
+                className={styles.formInput}
                 required
               />
             </div>
           </div>
 
           {/* CPF + Data de Nascimento */}
-          <div className="grid-2">
-            <div className="form-group medio">
+          <div className={styles.grid2}>
+            <div className={`${styles.formGroup} ${styles.medio}`}>
               <label>CPF</label>
               <input
                 type="text"
                 name="cpf"
                 value={formData.cpf}
                 onChange={handleChange}
-                className="form-input"
+                className={styles.formInput}
               />
             </div>
 
-            <div className="form-group medio">
+            <div className={`${styles.formGroup} ${styles.medio}`}>
               <label>Data de Nascimento</label>
               <input
                 type="date"
                 name="data_de_nascimento"
                 value={formData.data_de_nascimento}
                 onChange={handleChange}
-                className="form-input"
+                className={styles.formInput}
               />
             </div>
           </div>
 
           {/* Email + Telefone */}
-          <div className="grid-2">
-            <div className="form-group medio">
+          <div className={styles.grid2}>
+            <div className={`${styles.formGroup} ${styles.medio}`}>
               <label>E-mail</label>
               <input
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="form-input"
+                className={styles.formInput}
                 required
               />
             </div>
 
-            <div className="form-group medio">
+            <div className={`${styles.formGroup} ${styles.medio}`}>
               <label>Telefone</label>
               <input
                 type="text"
                 name="telefone"
                 value={formData.telefone}
                 onChange={handleChange}
-                className="form-input"
+                className={styles.formInput}
               />
             </div>
           </div>
 
-
           {/* ENDEREÇO */}
-          <h3 className="secao-titulo">Endereço</h3>
+          <h3 className={styles.secaoTitulo}>Endereço</h3>
 
-          <div className="grid-3">
-
-            <div className="form-group pequeno">
+          <div className={styles.grid3}>
+            <div className={`${styles.formGroup} ${styles.pequeno}`}>
               <label>CEP</label>
-              <input type="text" name="cep" value={formData.cep} onChange={handleChange} className="form-input" onBlur={buscarEnderecoPorCep} />
+              <input 
+                type="text" 
+                name="cep" 
+                value={formData.cep} 
+                onChange={handleChange} 
+                className={styles.formInput} 
+                onBlur={buscarEnderecoPorCep} 
+              />
             </div>
 
-            <div className="form-group grande">
+            <div className={`${styles.formGroup} ${styles.grande}`}>
               <label>Rua</label>
-              <input type="text" name="rua" value={formData.rua} onChange={handleChange} className="form-input" />
+              <input 
+                type="text" 
+                name="rua" 
+                value={formData.rua} 
+                onChange={handleChange} 
+                className={styles.formInput} 
+              />
             </div>
 
-            <div className="form-group pequeno">
+            <div className={`${styles.formGroup} ${styles.pequeno}`}>
               <label>Número</label>
-              <input type="text" name="numero" value={formData.numero} onChange={handleChange} className="form-input" />
+              <input 
+                type="text" 
+                name="numero" 
+                value={formData.numero} 
+                onChange={handleChange} 
+                className={styles.formInput} 
+              />
             </div>
 
-            <div className="form-group medio">
+            <div className={`${styles.formGroup} ${styles.medio}`}>
               <label>Bairro</label>
-              <input type="text" name="bairro" value={formData.bairro} onChange={handleChange} className="form-input" />
+              <input 
+                type="text" 
+                name="bairro" 
+                value={formData.bairro} 
+                onChange={handleChange} 
+                className={styles.formInput} 
+              />
             </div>
 
-            <div className="form-group medio">
+            <div className={`${styles.formGroup} ${styles.medio}`}>
               <label>Cidade</label>
-              <input type="text" name="cidade" value={formData.cidade} onChange={handleChange} className="form-input" />
+              <input 
+                type="text" 
+                name="cidade" 
+                value={formData.cidade} 
+                onChange={handleChange} 
+                className={styles.formInput} 
+              />
             </div>
 
-            <div className="form-group pequeno">
+            <div className={`${styles.formGroup} ${styles.pequeno}`}>
               <label>Estado</label>
-              <input type="text" name="estado" value={formData.estado} onChange={handleChange} className="form-input" maxLength={2} />
+              <input 
+                type="text" 
+                name="estado" 
+                value={formData.estado} 
+                onChange={handleChange} 
+                className={styles.formInput} 
+                maxLength={2} 
+              />
             </div>
-          </div>
-          <div className="form-group complemento">
+
+                      <div className={`${styles.formGroup} ${styles.grande}`}>
             <label>Complemento</label>
-            <input type="text" name="complemento" value={formData.complemento} onChange={handleChange} className="form-input" />
+            <input 
+              type="text" 
+              name="complemento" 
+              value={formData.complemento} 
+              onChange={handleChange} 
+              className={styles.formInput} 
+            />
           </div>
 
-          <button type="submit" className="btn">Cadastrar</button>
+          </div>
+          
 
-          {mensagem && <p className="mensagem">{mensagem}</p>}
+
+          <button type="submit" className={styles.btn}>Cadastrar</button>
+
+          {mensagem && <p className={styles.mensagem}>{mensagem}</p>}
         </form>
-
-
-        {mensagem && <p className="mensagem">{mensagem}</p>}
       </div>
     </div>
   );

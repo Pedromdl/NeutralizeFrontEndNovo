@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./Integracoes.css";
 import { Activity, Link, RefreshCw, Eye, EyeOff } from "lucide-react";
@@ -24,46 +25,71 @@ export default function Integracoes() {
     const [showFreq, setShowFreq] = useState(true);
     const [showTempo, setShowTempo] = useState(true);
 
-    // 🔗 URL dinâmica (funciona em local e produção)
     const API_URL = import.meta.env.VITE_API_URL;
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    // Extrai query param "strava_connected"
+    const query = new URLSearchParams(location.search);
+    const connectedParam = query.get("strava_connected");
+
+    const fetchStravaData = async () => {
+        setLoading(true);
+        try {
+            const res = await axios.get(`${API_URL}/api/strava/status/`);
+            setStravaData(res.data);
+
+            if (res.data.conectado) {
+                const atividadesRes = await axios.get(`${API_URL}/api/strava/atividades/`);
+                const formatadas = atividadesRes.data.map((a) => ({
+                    nome: a.name,
+                    tipo: a.type,
+                    tempo: Math.round(a.moving_time / 60),
+                    data: new Date(a.start_date_local).toLocaleDateString("pt-BR", {
+                        day: "2-digit",
+                        month: "2-digit",
+                    }),
+                    distancia: (a.distance / 1000).toFixed(2),
+                    freqMedia: a.average_heartrate ? Math.round(a.average_heartrate) : null,
+                    freqMax: a.max_heartrate ? Math.round(a.max_heartrate) : null,
+                    freqMin: a.min_heartrate ? Math.round(a.min_heartrate) : null,
+                }));
+                setAtividades(formatadas.reverse().slice(-10));
+            }
+        } catch (err) {
+            console.error("Erro ao buscar dados do Strava:", err);
+            setErro("Falha ao carregar dados do Strava.");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        async function fetchData() {
-            try {
-                const res = await axios.get(`${API_URL}/api/strava/status/`);
-                setStravaData(res.data);
+        fetchStravaData();
 
-                if (res.data.conectado) {
-                    const atividadesRes = await axios.get(`${API_URL}/api/strava/atividades/`);
-                    const formatadas = atividadesRes.data.map((a) => ({
-                        nome: a.name,
-                        tipo: a.type,
-                        tempo: Math.round(a.moving_time / 60),
-                        data: new Date(a.start_date_local).toLocaleDateString("pt-BR", {
-                            day: "2-digit",
-                            month: "2-digit",
-                        }),
-                        distancia: (a.distance / 1000).toFixed(2),
-                        freqMedia: a.average_heartrate ? Math.round(a.average_heartrate) : null,
-                        freqMax: a.max_heartrate ? Math.round(a.max_heartrate) : null,
-                        freqMin: a.min_heartrate ? Math.round(a.min_heartrate) : null,
-                    }));
-
-                    setAtividades(formatadas.reverse().slice(-10));
-                }
-            } catch (err) {
-                console.error("Erro ao buscar dados do Strava:", err);
-                setErro("Falha ao carregar dados do Strava.");
-            } finally {
-                setLoading(false);
-            }
+        // Se veio do callback Strava, remove o query param da URL
+        if (connectedParam === "1") {
+            const cleanUrl = location.pathname;
+            navigate(cleanUrl, { replace: true });
         }
-
-        fetchData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [API_URL]);
 
+    // Configura URL de autenticação Strava
+    const CLIENT_ID = import.meta.env.VITE_STRAVA_CLIENT_ID;
+    const REDIRECT_URI = encodeURIComponent(import.meta.env.VITE_STRAVA_REDIRECT_URI);
+    const SCOPE = encodeURIComponent(import.meta.env.VITE_STRAVA_SCOPE);
+    const token = localStorage.getItem("token"); // JWT ou token de sessão
+
+    const authUrl = `https://www.strava.com/oauth/authorize?client_id=${CLIENT_ID}` +
+        `&response_type=code` +
+        `&redirect_uri=${REDIRECT_URI}` +
+        `&approval_prompt=auto` +
+        `&scope=${SCOPE}` +
+        `&state=${encodeURIComponent(token)}`;
+
     const handleConnect = () => {
-        window.location.href = `${API_URL}/api/strava/authorize/`;
+        window.location.href = authUrl;
     };
 
     const handleDisconnect = async () => {
@@ -85,7 +111,7 @@ export default function Integracoes() {
                     </div>
                     {stravaData?.conectado ? (
                         <div className="integracao-actions">
-                            <button className="btn-outline" onClick={() => window.location.reload()}>
+                            <button className="btn-outline" onClick={fetchStravaData}>
                                 <RefreshCw size={16} /> Atualizar
                             </button>
                             <button className="btn-danger" onClick={handleDisconnect}>

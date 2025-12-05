@@ -14,7 +14,7 @@ export default function PoliticaPrivacidade() {
   useEffect(() => {
     if (!token) return;
 
-    axios.get(`${API_URL}/api/accounts/documentos/?tipo=politica_privacidade`, {
+    axios.get(`${API_URL}/api/documentos/?tipo=politica_privacidade`, {
       headers: { Authorization: `Bearer ${token}` },
     })
     .then((res) => {
@@ -26,8 +26,8 @@ export default function PoliticaPrivacidade() {
 
   const handleAceite = () => {
     if (!documento || !token) return;
-
-    axios.post(`${API_URL}/api/accounts/documentos/aceitar/`, 
+s
+    axios.post(`${API_URL}/api/documentos/aceitar/`, 
       { documento: documento.id },
       { headers: { Authorization: `Bearer ${token}` } }
     )

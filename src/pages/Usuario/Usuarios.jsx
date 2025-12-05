@@ -35,15 +35,20 @@ function Usuarios() {
 
   // 🔁 Carrega usuário e aba salvos
   useEffect(() => {
-    const salvo = localStorage.getItem('usuarioSelecionado');
-    if (salvo) setUsuarioSelecionado(JSON.parse(salvo));
+    const salvoId = localStorage.getItem('usuarioSelecionadoId');
+    if (salvoId) {
+      fetch(`${import.meta.env.VITE_API_URL}/api/usuarios/${JSON.parse(salvoId)}/`)
+        .then(res => res.json())
+        .then(data => setUsuarioSelecionado(data));
+    }
 
     if (location.state?.pacienteId) {
-      fetch(`${import.meta.env.VITE_API_URL}/api/usuarios/${location.state.pacienteId}/`)
+      const id = location.state.pacienteId;
+      fetch(`${import.meta.env.VITE_API_URL}/api/usuarios/${id}/`)
         .then(res => res.json())
         .then(data => {
           setUsuarioSelecionado(data);
-          localStorage.setItem('usuarioSelecionado', JSON.stringify(data));
+          localStorage.setItem('usuarioSelecionadoId', JSON.stringify(id));
         });
     }
 
@@ -59,9 +64,14 @@ function Usuarios() {
     localStorage.setItem('abaAtiva', abaAtiva);
   }, [abaAtiva]);
 
+  const handleSelecionaUsuario = (usuario) => {
+    setUsuarioSelecionado(usuario);
+    localStorage.setItem('usuarioSelecionadoId', JSON.stringify(usuario.id));
+  };
+
   const atualizarUsuario = (novoUsuario) => {
     setUsuarioSelecionado(novoUsuario);
-    localStorage.setItem('usuarioSelecionado', JSON.stringify(novoUsuario));
+    localStorage.setItem('usuarioSelecionadoId', JSON.stringify(novoUsuario.id));
   };
 
   // 🧠 Renderiza conteúdo das abas
@@ -189,11 +199,6 @@ function Usuarios() {
       default:
         return null;
     }
-  };
-
-  const handleSelecionaUsuario = (usuario) => {
-    setUsuarioSelecionado(usuario);
-    localStorage.setItem('usuarioSelecionado', JSON.stringify(usuario));
   };
 
   return (

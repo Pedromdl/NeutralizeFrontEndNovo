@@ -58,6 +58,9 @@ import PoliticaPrivacidade from './pages/PoliticaPrivacidade';
 import ListaPlanos from '../src/components/ListaPlanos';
 import AssinaturaDetalhes from '../src/components/AssinaturaDetalhes';
 
+import StravaCallback from "./components/StravaCallback";
+
+
 function LayoutComSidebar({ children }) {
   const location = useLocation();
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -90,7 +93,7 @@ function AppRoutes() {
   const location = useLocation();
   const rotasSemLayout = [
     '/login', '/register', '/registro-clinica', '/politica-privacidade',
-    '/termos-de-uso', '/teste', '/liberacao-miofascial'
+    '/termos-de-uso', '/teste', '/liberacao-miofascial, /strava/callback'
   ];
 
   const isTesteRoute = location.pathname.startsWith('/relatorio/');
@@ -106,6 +109,8 @@ function AppRoutes() {
         <Route path="/politica-privacidade" element={<PoliticaPrivacidade />} />
         <Route path="/termos-de-uso" element={<TermosUso />} />
         <Route path="/liberacao-miofascial" element={<LiberacaoMiofascial />} />
+        <Route path="/strava/callback" element={<StravaCallback />} />
+
       </Routes>
     );
   }
@@ -134,6 +139,7 @@ function AppRoutes() {
             <Route path="/paciente/secao/:secaoId" element={<TreinosSecaoPaciente />} />
             <Route path="/paciente/historico" element={<HistoricodeTreinos />} />
             <Route path="/treinosexecutados" element={<TreinosExecutadosAdmin />} />
+            <Route path="/paciente/integracoes" element={<Integracoes />} />
 
             {/* 🚫 PÁGINAS BLOQUEADAS se trial expirado */}
             <Route
@@ -197,14 +203,6 @@ function AppRoutes() {
               element={
                 <ProtegidoPorAssinatura>
                   <BancoUsuarios />
-                </ProtegidoPorAssinatura>
-              }
-            />
-            <Route
-              path="/integracoes"
-              element={
-                <ProtegidoPorAssinatura>
-                  <Integracoes />
                 </ProtegidoPorAssinatura>
               }
             />

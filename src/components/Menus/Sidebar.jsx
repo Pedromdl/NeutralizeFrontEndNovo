@@ -11,7 +11,6 @@ import { AuthContext } from '../../context/AuthContext';
 
 function Sidebar() {
   const { user } = useContext(AuthContext); // pega o usuário logado
-  console.log('Usuário logado:', user); // 🔹 veja o que está chegando
 
   const [aberto, setAberto] = useState(true);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -42,7 +41,7 @@ function Sidebar() {
 
         {aberto && (
           <div className="sidebar-logo">
-            <img src={Logo} alt="Logo" />
+            <img src={Logo} alt="Logo" style={{width: '200%'}}/>
           </div>
         )}
 

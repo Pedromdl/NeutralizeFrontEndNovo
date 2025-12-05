@@ -1,0 +1,311 @@
+/* === Overlay === */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeIn 0.25s ease-in-out;
+}
+
+/* === Modal === */
+.checkoutModal {
+  background: #fff;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 14px;
+  padding: 2.0rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  position: relative;
+  animation: slideUp 0.3s ease;
+}
+
+/* === Header === */
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.6rem;
+}
+
+.btnFechar {
+  font-size: 1.6rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #555;
+  transition: 0.2s;
+}
+
+.btnFechar:hover {
+  color: #000;
+}
+
+/* === Plano === */
+.planoInfo {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.precoDestaque {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #008b5e;
+}
+
+/* === Sections === */
+.formSection {
+  margin-bottom: 1.2rem;
+}
+
+.formSection h4 {
+  margin-bottom: 0.5rem;
+  color: #444;
+  font-size: 1rem;
+}
+
+/* === Form === */
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.inputGroup label {
+  font-size: 0.8rem;
+  color: #555;
+  margin-bottom: 0.25rem;
+}
+
+.inputGroup input {
+  padding: 0.6rem;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  transition: 0.15s;
+}
+
+.inputGroup input:focus {
+  border-color: #008b5e;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0,139,94,0.1);
+}
+
+/* === Row === */
+.row {
+  display: flex;
+  gap: 0.6rem;
+}
+
+/* Ajustes especiais para validade + CVV */
+.inputGroupSmall {
+  flex: 0 0 90px; /* impede crescer demais */
+}
+
+.valGroup {
+  flex: 2; /* ocupa mais espaço */
+}
+
+.cvvGroup {
+  flex: 1; /* ocupa espaço menor */
+}
+
+
+/* === Botão === */
+.btnPagar {
+  width: 100%;
+  padding: 0.85rem;
+  background: #008b5e;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  margin-top: 0.2rem;
+  transition: 0.25s ease;
+}
+
+.btnPagar:hover {
+  background: #006c43;
+}
+
+.btnPagar:disabled {
+  background: #a8a8a8;
+  cursor: not-allowed;
+}
+
+.selecaoPagamento {
+  margin: 20px 0;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.opcoesPagamento {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.radioOpcao {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 0.3s;
+}
+
+.radioOpcao:hover {
+  border-color: #4CAF50;
+}
+
+.radioOpcao input[type="radio"] {
+  margin-top: 4px;
+}
+
+.radioOpcao span {
+  font-weight: 600;
+  display: block;
+}
+
+.radioOpcao small {
+  color: #666;
+  font-size: 12px;
+  display: block;
+}
+
+.radioOpcao input[type="radio"]:checked + span {
+  color: #4CAF50;
+}
+
+.formCartao {
+  margin: 20px 0;
+}
+
+.formGroup {
+  margin-bottom: 15px;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+  color: #333;
+}
+
+.formGroup input {
+  width: 100%;
+  padding: 0.5rem;
+  box-sizing: border-box;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+
+.gridDuasColunas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+
+.botoesAcao {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btnCartaoSalvo {
+  background: #4CAF50;
+  color: white;
+  padding: 15px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btnCartaoSalvo:hover:not(:disabled) {
+  background: #45a049;
+}
+
+.btnCartaoNovo {
+  width: 100%;
+  background: #2196F3;
+  color: white;
+  padding: 15px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btnCartaoNovo:hover:not(:disabled) {
+  background: #0b7dda;
+}
+
+.btnCancelar {
+  width: 100%;
+  background: #f5f5f5;
+  color: #666;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btnCancelar:hover:not(:disabled) {
+  background: #e0e0e0;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* === Responsividade === */
+@media (max-width: 480px) {
+  .checkoutModal {
+    padding: 1rem;
+    max-width: 95%;
+  }
+
+  .row {
+    flex-direction: column;
+  }
+
+  .inputGroupSmall {
+    flex: 1;
+  }
+}
+
+/* === Animações === */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
