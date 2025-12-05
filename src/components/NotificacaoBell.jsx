@@ -18,11 +18,6 @@ export default function NotificacaoBell() {
       } catch (error) {
         console.error("Erro ao buscar notificações:", error);
         // Fallback com dados de exemplo
-        const notificacoesExemplo = [
-          { id: 1, mensagem: "Novo treino disponível", lida: false, data: new Date() },
-          { id: 2, mensagem: "Lembrete: treino de hoje", lida: true, data: new Date() },
-        ];
-        setNotificacoes(notificacoesExemplo);
       }
     };
 
