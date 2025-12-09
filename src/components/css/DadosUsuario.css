@@ -1,3 +1,118 @@
+/* Em DadosUsuario.css ou similar */
+.carregando {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+}
+
+.spinner, .spinner-pequeno, .spinner-cep {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 0.5rem;
+}
+
+.spinner-pequeno {
+  width: 0.8rem;
+  height: 0.8rem;
+}
+
+.spinner-cep {
+  width: 0.6rem;
+  height: 0.6rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.erro-container {
+  text-align: center;
+  padding: 2rem;
+}
+
+.erro-mensagem {
+  color: #d32f2f;
+  margin-bottom: 1rem;
+}
+
+.mensagem-erro {
+  background-color: #ffebee;
+  color: #d32f2f;
+  padding: 0.75rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  border-left: 4px solid #d32f2f;
+}
+
+.mensagem-salvando {
+  background-color: #e8f4fd;
+  color: #1976d2;
+  padding: 0.75rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  border-left: 4px solid #1976d2;
+}
+
+.btn-tentar-novamente {
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-tentar-novamente:hover {
+  background-color: #1565c0;
+}
+
+.modo-visualizacao {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.info-visualizacao {
+  color: #666;
+  font-style: italic;
+  text-align: center;
+}
+
+.botoes-edicao {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #eee;
+}
+
+.btn-salvar {
+  background-color: #4caf50;
+  color: white;
+}
+
+.btn-cancelar {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.btn-editar {
+  background-color: #1976d2;
+  color: white;
+}
+
+/* Estados desabilitados */
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .usuario-secoes {
   display: flex;
   flex-direction: column;

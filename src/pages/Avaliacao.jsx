@@ -10,6 +10,15 @@ import FormText from '../components/Avaliacao/FormText.jsx';
 
 import '../components/css/Avaliacao.css';
 
+// Objeto para mapear as chaves para nomes amigáveis
+const NOMES_SECOES = {
+  anamnese: 'Anamnese',
+  mobilidade: 'Mobilidade',
+  forca: 'Força',
+  estabilidade: 'Estabilidade',
+  funcao: 'Função',
+  dor: 'Dor'
+};
 
 // ------------------- COMPONENTE DE ACCORDION -------------------
 function SecaoAvaliacao({ titulo, aberto, onToggle, children }) {
@@ -32,10 +41,8 @@ function SecaoAvaliacao({ titulo, aberto, onToggle, children }) {
   );
 }
 
-
 // ------------------- COMPONENTE PRINCIPAL -------------------
 function CadastrarDados() {
-
   const [resetKey, setResetKey] = useState(0);
 
   // Paciente (salva apenas ID no localStorage por segurança/LGPD)
@@ -46,7 +53,7 @@ function CadastrarDados() {
   });
 
   // Carregar dados do paciente ao iniciar (apenas ID foi salvo)
-  useState(() => {
+  useEffect(() => {
     if (pacienteId) {
       fetch(`${import.meta.env.VITE_API_URL}/api/usuarios/${pacienteId}/`)
         .then(res => res.json())
@@ -76,7 +83,6 @@ function CadastrarDados() {
     localStorage.setItem('avaliacao_dataAvaliacao', novaData);
   };
 
-
   // ------------------- CONTROLE DOS CHECKBOXES -------------------
   const [visiveis, setVisiveis] = useState({
     anamnese: true,
@@ -86,7 +92,6 @@ function CadastrarDados() {
     funcao: false,
     dor: false,
   });
-
 
   // ------------------- CONTROLE DOS ACCORDIONS -------------------
   const [abertos, setAbertos] = useState({
@@ -101,7 +106,6 @@ function CadastrarDados() {
   const toggleAccordion = (key) => {
     setAbertos(prev => ({ ...prev, [key]: !prev[key] }));
   };
-
 
   return (
     <div className="conteudo">
@@ -130,35 +134,32 @@ function CadastrarDados() {
         />
       </div>
 
-
       {/* SELEÇÃO DOS MÓDULOS */}
       <div className="card-avaliacao">
         <h3>O que deseja avaliar?</h3>
 
-       <div className="checkbox-row">
-  {Object.keys(visiveis).map(key => (
-    <label key={key} className="checkbox-item">
-      <input
-        type="checkbox"
-        checked={visiveis[key]}
-        onChange={() =>
-          setVisiveis(v => ({ ...v, [key]: !v[key] }))
-        }
-      />
-      {key.toUpperCase()}
-    </label>
-  ))}
-</div>
-</div>
-
+        <div className="checkbox-row">
+          {Object.keys(visiveis).map(key => (
+            <label key={key} className="checkbox-item">
+              <input
+                type="checkbox"
+                checked={visiveis[key]}
+                onChange={() =>
+                  setVisiveis(v => ({ ...v, [key]: !v[key] }))
+                }
+              />
+              {NOMES_SECOES[key] || key}
+            </label>
+          ))}
+        </div>
+      </div>
 
       {/* RENDERIZAÇÃO DOS FORMULÁRIOS */}
       {pacienteSelecionado && (
         <>
-
           {visiveis.anamnese && (
             <SecaoAvaliacao
-              titulo="Anamnese"
+              titulo={NOMES_SECOES.anamnese}
               aberto={abertos.anamnese}
               onToggle={() => toggleAccordion("anamnese")}
             >
@@ -166,10 +167,9 @@ function CadastrarDados() {
             </SecaoAvaliacao>
           )}
 
-
           {visiveis.mobilidade && (
             <SecaoAvaliacao
-              titulo="Mobilidade"
+              titulo={NOMES_SECOES.mobilidade}
               aberto={abertos.mobilidade}
               onToggle={() => toggleAccordion("mobilidade")}
             >
@@ -177,10 +177,9 @@ function CadastrarDados() {
             </SecaoAvaliacao>
           )}
 
-
           {visiveis.forca && (
             <SecaoAvaliacao
-              titulo="Força"
+              titulo={NOMES_SECOES.forca}
               aberto={abertos.forca}
               onToggle={() => toggleAccordion("forca")}
             >
@@ -188,10 +187,9 @@ function CadastrarDados() {
             </SecaoAvaliacao>
           )}
 
-
           {visiveis.estabilidade && (
             <SecaoAvaliacao
-              titulo="Estabilidade"
+              titulo={NOMES_SECOES.estabilidade}
               aberto={abertos.estabilidade}
               onToggle={() => toggleAccordion("estabilidade")}
             >
@@ -199,10 +197,9 @@ function CadastrarDados() {
             </SecaoAvaliacao>
           )}
 
-
           {visiveis.funcao && (
             <SecaoAvaliacao
-              titulo="Função"
+              titulo={NOMES_SECOES.funcao}
               aberto={abertos.funcao}
               onToggle={() => toggleAccordion("funcao")}
             >
@@ -214,20 +211,17 @@ function CadastrarDados() {
             </SecaoAvaliacao>
           )}
 
-
           {visiveis.dor && (
             <SecaoAvaliacao
-              titulo="Dor"
+              titulo={NOMES_SECOES.dor}
               aberto={abertos.dor}
               onToggle={() => toggleAccordion("dor")}
             >
               <FormDor pacienteId={pacienteSelecionado.id} dataAvaliacao={dataAvaliacao} />
             </SecaoAvaliacao>
           )}
-
         </>
       )}
-
     </div>
   );
 }

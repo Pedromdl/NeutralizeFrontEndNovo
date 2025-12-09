@@ -1,16 +1,22 @@
-// DadosUsuario.jsx
-import { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+// DadosUsuario.jsx - VERSÃO CORRIGIDA (usando axios já configurado)
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import axios from 'axios'; // JÁ CONFIGURADO PELO AuthProvider
 import Card from '../../components/Card';
 import { useCep } from '../../useCep';
 import '../../components/css/DadosUsuario.css';
 
-export default function DadosUsuario({ usuarioSelecionado, atualizarUsuario, token, mostrarEndereco = true }) {
+export default function DadosUsuario({ 
+  usuarioId,
+  atualizarUsuario, 
+  token,
+  mostrarEndereco = true 
+}) {
   const [editando, setEditando] = useState(false);
   const [dados, setDados] = useState({});
-  const cepInputRef = useRef(null);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState(null);
+  const [salvando, setSalvando] = useState(false);
   
-  // Usar o hook de CEP
   const { 
     buscarEnderecoPorCep, 
     formatarCep, 
@@ -20,321 +26,302 @@ export default function DadosUsuario({ usuarioSelecionado, atualizarUsuario, tok
     limparErro 
   } = useCep();
 
-  // Carregar dados (público ou privado)
+  // Buscar dados completos
+  const buscarDadosCompletos = useCallback(async () => {
+  if (!usuarioId && !token) {
+    setCarregando(false);
+    return;
+  }
+  
+  setCarregando(true);
+  setErro(null);
+  
+  try {
+    let url;
+    
+    if (token) {
+      // URL COMPLETA para modo público
+      url = `${import.meta.env.VITE_API_URL}/api/usuario-publico/${token}/`;
+    } else {
+      // URL COMPLETA para modo admin (igual ao BancoExercicios)
+      url = `${import.meta.env.VITE_API_URL}/api/usuarios/${usuarioId}/dados_completos/`;
+    }
+    
+    console.log('Fazendo requisição para:', url);
+    
+    const response = await axios.get(url);
+    setDados(response.data);
+    
+  } catch (error) {
+    // ... tratamento de erro
+  } finally {
+    setCarregando(false);
+  }
+}, [usuarioId, token]);
+
   useEffect(() => {
-    async function fetchUsuarioPublico() {
-      if (!token) {
-        setDados({ ...usuarioSelecionado });
-        return;
-      }
-      try {
-        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/usuario-publico/${token}/`);
-        setDados(res.data);
-      } catch (error) {
-        console.error('Erro ao carregar usuário público:', error);
-      }
-    }
-    fetchUsuarioPublico();
-  }, [usuarioSelecionado, token]);
+    buscarDadosCompletos();
+  }, [buscarDadosCompletos]);
 
-  const calcularIdade = (dataNascimento) => {
-    if (!dataNascimento) return 'Não informada';
+  // Calcular idade
+  const idade = useMemo(() => {
+    if (!dados.data_de_nascimento) return 'Não informada';
     const hoje = new Date();
-    const nascimento = new Date(dataNascimento);
-    let idade = hoje.getFullYear() - nascimento.getFullYear();
+    const nascimento = new Date(dados.data_de_nascimento);
+    let idadeCalculada = hoje.getFullYear() - nascimento.getFullYear();
     const m = hoje.getMonth() - nascimento.getMonth();
-    if (m < 0 || (m === 0 && hoje.getDate() < nascimento.getDate())) idade--;
-    return idade;
-  };
-
-  // Manipulador específico para CEP
-  const handleCepChange = (e) => {
-    const valor = e.target.value;
-    const cepComMascara = aplicarMascaraCep(valor);
-    const cepNumerico = valor.replace(/\D/g, '');
-    
-    // Atualiza o campo com máscara
-    if (cepInputRef.current) {
-      cepInputRef.current.value = cepComMascara;
+    if (m < 0 || (m === 0 && hoje.getDate() < nascimento.getDate())) {
+      idadeCalculada--;
     }
+    return idadeCalculada;
+  }, [dados.data_de_nascimento]);
+
+  // Manipulador de CEP
+  const handleCepChange = useCallback((e) => {
+    const valor = e.target.value;
+    const cepNumerico = valor.replace(/\D/g, '');
+    const cepFormatado = aplicarMascaraCep(valor);
     
-    // Atualiza o estado com apenas números
-    setDados(prev => ({ ...prev, cep: cepNumerico }));
+    setDados(prev => ({ 
+      ...prev, 
+      cep: cepNumerico,
+      cep_formatado: cepFormatado
+    }));
     
-    // Limpa erro ao digitar
     if (erroCep) {
       limparErro();
     }
-  };
+  }, [aplicarMascaraCep, erroCep, limparErro]);
 
-  // Buscar CEP quando o campo perde o foco
-  const handleCepBlur = async () => {
+  // Buscar endereço por CEP
+  const handleCepBlur = useCallback(async () => {
     const cepNumerico = dados.cep || '';
-    
     if (cepNumerico.length === 8) {
       const endereco = await buscarEnderecoPorCep(cepNumerico);
       if (endereco) {
-        setDados(prev => ({
-          ...prev,
-          ...endereco
-        }));
+        setDados(prev => ({ ...prev, ...endereco }));
       }
     }
-  };
+  }, [dados.cep, buscarEnderecoPorCep]);
 
-  // Manipulador genérico para outros campos
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  // Manipulador genérico
+  const handleChange = useCallback((e) => {
+    const { name, value, type } = e.target;
     
-    // Se for o campo estado, converte para maiúsculas
-    if (name === 'estado') {
-      setDados(prev => ({ ...prev, [name]: value.toUpperCase() }));
+    if (type === 'date') {
+      setDados(prev => ({ ...prev, [name]: value }));
+    } else if (name === 'estado') {
+      setDados(prev => ({ ...prev, [name]: value.toUpperCase().slice(0, 2) }));
     } else {
       setDados(prev => ({ ...prev, [name]: value }));
     }
-  };
+  }, []);
 
-  const salvar = async () => {
+  // Salvar alterações
+  const salvar = useCallback(async () => {
+    if (salvando || buscandoCep) return;
+    
+    setSalvando(true);
+    setErro(null);
+    
     try {
-      const response = await axios.put(`${import.meta.env.VITE_API_URL}/api/usuarios/${dados.id}/`, dados);
-      atualizarUsuario(response.data);
+      const dadosParaEnviar = { ...dados };
+      delete dadosParaEnviar.cep_formatado;
+      
+      // Usa axios diretamente (já configurado com autenticação)
+      const response = await axios.put(
+        `${import.meta.env.VITE_API_URL}/api/usuarios/${dados.id}/`, // URL COMPLETA aqui também
+        dadosParaEnviar
+      );
+      
+      setDados(response.data);
+      if (atualizarUsuario) atualizarUsuario(response.data);
       setEditando(false);
+      
     } catch (error) {
-      console.error('Erro ao salvar usuário:', error);
+      console.error('Erro ao salvar:', error);
+      
+      let mensagemErro = 'Erro ao salvar os dados';
+      if (error.response?.data) {
+        if (typeof error.response.data === 'object') {
+          const erros = Object.values(error.response.data).flat();
+          mensagemErro = erros.join(', ') || mensagemErro;
+        } else {
+          mensagemErro = error.response.data;
+        }
+      }
+      
+      setErro(mensagemErro);
+    } finally {
+      setSalvando(false);
     }
-  };
+  }, [dados, atualizarUsuario, salvando, buscandoCep]);
 
-  const cancelar = () => {
-    setDados({ ...usuarioSelecionado });
+  // Cancelar edição
+  const cancelar = useCallback(() => {
+    buscarDadosCompletos();
     setEditando(false);
+    setErro(null);
     limparErro();
-  };
+  }, [buscarDadosCompletos, limparErro]);
+
+  // Estados
+  const modoVisualizacao = !!token;
+  const podeEditar = !modoVisualizacao && !carregando;
+
+  // Renderização
+  if (carregando) return (
+    <Card title="Dados do Usuário" size="al">
+      <div className="carregando">Carregando...</div>
+    </Card>
+  );
+
+  if (erro && !dados.id) return (
+    <Card title="Dados do Usuário" size="al">
+      <div className="erro-container">
+        <div className="erro-mensagem">⚠️ {erro}</div>
+        {!modoVisualizacao && (
+          <button onClick={buscarDadosCompletos}>Tentar novamente</button>
+        )}
+      </div>
+    </Card>
+  );
+
+  if (!dados.id) return (
+    <Card title="Dados do Usuário" size="al">
+      <div className="sem-dados">Nenhum usuário selecionado</div>
+    </Card>
+  );
 
   return (
     <Card title="Dados do Usuário" size="al">
-      <div className="usuario-secoes">
+      {erro && <div className="mensagem-erro">⚠️ {erro}</div>}
+      {salvando && <div className="mensagem-salvando">Salvando...</div>}
 
-        {/* ==============================
-            SEÇÃO: DADOS PESSOAIS
-        =============================== */}
+      <div className="usuario-secoes">
+        {/* Seção Dados Pessoais */}
         <div className="secao-card">
           <h3>Informações Pessoais</h3>
-
-          {/* Nome */}
-          <div className="linha-dado">
-            <label>Nome</label>
-            {editando && !token ? (
-              <input name="nome" value={dados.nome || ''} onChange={handleChange} />
-            ) : (
-              <span>{dados.nome || "Não informado"}</span>
-            )}
-          </div>
-
-          {/* Email */}
-          <div className="linha-dado">
-            <label>Email</label>
-            {editando && !token ? (
-              <input 
-                name="email" 
-                type="email"
-                value={dados.email || ''} 
-                onChange={handleChange} 
-              />
-            ) : (
-              <span>{dados.email || "Não informado"}</span>
-            )}
-          </div>
-
-          {/* Telefone */}
-          <div className="linha-dado">
-            <label>Telefone</label>
-            {editando && !token ? (
-              <input 
-                name="telefone" 
-                value={dados.telefone || ''} 
-                onChange={handleChange}
-                placeholder="(11) 99999-9999"
-              />
-            ) : (
-              <span>{dados.telefone || "Não informado"}</span>
-            )}
-          </div>
-
-          {/* Data de nascimento */}
+          
+          {/* Nome, Email, Telefone, Data Nasc, Idade */}
+          {['nome', 'email', 'telefone'].map((campo) => (
+            <div key={campo} className="linha-dado">
+              <label>{campo.charAt(0).toUpperCase() + campo.slice(1)}</label>
+              {editando && podeEditar ? (
+                <input 
+                  name={campo}
+                  type={campo === 'email' ? 'email' : 'text'}
+                  value={dados[campo] || ''}
+                  onChange={handleChange}
+                  disabled={salvando}
+                  placeholder={campo === 'telefone' ? '(11) 99999-9999' : ''}
+                />
+              ) : (
+                <span>{dados[campo] || "Não informado"}</span>
+              )}
+            </div>
+          ))}
+          
           <div className="linha-dado">
             <label>Data de Nascimento</label>
-            {editando && !token ? (
+            {editando && podeEditar ? (
               <input
                 type="date"
                 name="data_de_nascimento"
-                value={dados.data_de_nascimento || ''}
+                value={dados.data_de_nascimento ? dados.data_de_nascimento.split('T')[0] : ''}
                 onChange={handleChange}
                 max={new Date().toISOString().split('T')[0]}
+                disabled={salvando}
               />
             ) : (
-              <span>{dados.data_de_nascimento ? new Date(dados.data_de_nascimento).toLocaleDateString('pt-BR') : "Não informada"}</span>
+              <span>
+                {dados.data_de_nascimento 
+                  ? new Date(dados.data_de_nascimento).toLocaleDateString('pt-BR') 
+                  : "Não informada"}
+              </span>
             )}
           </div>
-
-          {/* Idade */}
+          
           <div className="linha-dado">
             <label>Idade</label>
-            {editando && !token ? (
-              <input disabled value={calcularIdade(dados.data_de_nascimento)} />
-            ) : (
-              <span>{calcularIdade(dados.data_de_nascimento)}</span>
-            )}
+            <span>{idade}</span>
           </div>
         </div>
 
-        {/* ==============================
-            SEÇÃO: ENDEREÇO (condicional)
-        =============================== */}
+        {/* Seção Endereço */}
         {mostrarEndereco && (
           <div className="secao-card">
             <h3>Endereço</h3>
-
-            {/* CEP com busca automática */}
+            
+            {/* CEP */}
             <div className="linha-dado">
               <label>CEP</label>
-              {editando && !token ? (
+              {editando && podeEditar ? (
                 <div className="cep-input-container">
                   <input
-                    ref={cepInputRef}
                     name="cep"
-                    defaultValue={formatarCep(dados.cep)}
+                    value={dados.cep_formatado || formatarCep(dados.cep) || ''}
                     onChange={handleCepChange}
                     onBlur={handleCepBlur}
                     placeholder="00000-000"
                     maxLength={9}
-                    disabled={buscandoCep}
+                    disabled={salvando || buscandoCep}
                     className={erroCep ? 'input-erro' : ''}
                   />
-                  {buscandoCep && (
-                    <span className="carregando-cep">
-                      <span className="spinner-cep"></span> Buscando...
-                    </span>
-                  )}
-                  {erroCep && !buscandoCep && (
-                    <span className="erro-cep">{erroCep}</span>
-                  )}
+                  {buscandoCep && <span>Buscando...</span>}
+                  {erroCep && <span className="erro-cep">{erroCep}</span>}
                 </div>
               ) : (
                 <span>{formatarCep(dados.cep) || "Não informado"}</span>
               )}
             </div>
 
-            {/* Rua */}
-            <div className="linha-dado">
-              <label>Rua</label>
-              {editando && !token ? (
-                <input 
-                  name="rua" 
-                  value={dados.rua || ''} 
-                  onChange={handleChange} 
-                  disabled={buscandoCep}
-                />
-              ) : (
-                <span>{dados.rua || "Não informado"}</span>
-              )}
-            </div>
-
-            {/* Número */}
-            <div className="linha-dado">
-              <label>Número</label>
-              {editando && !token ? (
-                <input 
-                  name="numero" 
-                  value={dados.numero || ''} 
-                  onChange={handleChange}
-                  disabled={buscandoCep}
-                />
-              ) : (
-                <span>{dados.numero || "Não informado"}</span>
-              )}
-            </div>
-
-            {/* Bairro */}
-            <div className="linha-dado">
-              <label>Bairro</label>
-              {editando && !token ? (
-                <input 
-                  name="bairro" 
-                  value={dados.bairro || ''} 
-                  onChange={handleChange} 
-                  disabled={buscandoCep}
-                />
-              ) : (
-                <span>{dados.bairro || "Não informado"}</span>
-              )}
-            </div>
-
-            {/* Cidade */}
-            <div className="linha-dado">
-              <label>Cidade</label>
-              {editando && !token ? (
-                <input 
-                  name="cidade" 
-                  value={dados.cidade || ''} 
-                  onChange={handleChange} 
-                  disabled={buscandoCep}
-                />
-              ) : (
-                <span>{dados.cidade || "Não informado"}</span>
-              )}
-            </div>
-
-            {/* Estado */}
-            <div className="linha-dado">
-              <label>Estado</label>
-              {editando && !token ? (
-                <input 
-                  name="estado" 
-                  value={dados.estado || ''} 
-                  onChange={handleChange} 
-                  disabled={buscandoCep}
-                  maxLength={2}
-                  style={{ width: '60px', textTransform: 'uppercase' }}
-                />
-              ) : (
-                <span>{dados.estado || "Não informado"}</span>
-              )}
-            </div>
-
-            {/* Complemento */}
-            <div className="linha-dado">
-              <label>Complemento</label>
-              {editando && !token ? (
-                <input 
-                  name="complemento" 
-                  value={dados.complemento || ''} 
-                  onChange={handleChange} 
-                  disabled={buscandoCep}
-                  placeholder="Apto, bloco, etc."
-                />
-              ) : (
-                <span>{dados.complemento || "Não informado"}</span>
-              )}
-            </div>
+            {/* Outros campos de endereço */}
+            {['rua', 'numero', 'bairro', 'cidade', 'estado', 'complemento'].map((campo) => (
+              <div key={campo} className="linha-dado">
+                <label>
+                  {campo === 'rua' ? 'Rua' :
+                   campo === 'numero' ? 'Número' :
+                   campo === 'bairro' ? 'Bairro' :
+                   campo === 'cidade' ? 'Cidade' :
+                   campo === 'estado' ? 'Estado' : 'Complemento'}
+                </label>
+                {editando && podeEditar ? (
+                  <input
+                    name={campo}
+                    value={dados[campo] || ''}
+                    onChange={handleChange}
+                    disabled={salvando || buscandoCep}
+                    maxLength={campo === 'estado' ? 2 : undefined}
+                    style={campo === 'estado' ? { width: '60px', textTransform: 'uppercase' } : {}}
+                  />
+                ) : (
+                  <span>{dados[campo] || "Não informado"}</span>
+                )}
+              </div>
+            ))}
           </div>
         )}
 
-        {/* Botões de edição */}
-        {!token && editando && (
+        {/* Botões */}
+        {podeEditar && (
           <div className="botoes-edicao">
-            <button onClick={salvar} disabled={buscandoCep}>
-              {buscandoCep ? 'Salvando...' : 'Salvar'}
-            </button>
-            <button onClick={cancelar} disabled={buscandoCep}>Cancelar</button>
+            {editando ? (
+              <>
+                <button onClick={salvar} disabled={salvando || buscandoCep}>
+                  {salvando ? 'Salvando...' : 'Salvar'}
+                </button>
+                <button onClick={cancelar} disabled={salvando || buscandoCep}>
+                  Cancelar
+                </button>
+              </>
+            ) : (
+              <button onClick={() => setEditando(true)}>
+                Editar Dados
+              </button>
+            )}
           </div>
         )}
-
-        {!token && !editando && (
-          <div className="botoes-edicao">
-            <button className="black" onClick={() => setEditando(true)}>Editar</button>
-          </div>
-        )}
-
       </div>
     </Card>
   );

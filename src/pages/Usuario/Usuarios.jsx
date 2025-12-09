@@ -161,7 +161,7 @@ function Usuarios() {
           <motion.div {...containerAnimacao}>
             {usuarioSelecionado && (
               <DadosUsuario
-                usuarioSelecionado={usuarioSelecionado}
+                usuarioId={usuarioSelecionado.id}  // APENAS O ID
                 atualizarUsuario={atualizarUsuario}
               />
             )}
