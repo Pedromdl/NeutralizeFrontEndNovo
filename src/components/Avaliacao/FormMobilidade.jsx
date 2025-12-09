@@ -175,17 +175,15 @@ function FormMobilidade({ pacienteId, dataAvaliacao }) {
             type="button"
             onClick={resetarFormulario}
             className="btn-resetar"
-            style={{ marginRight: '1rem', backgroundColor: '#f44336', color: 'white' }}
+            style={{backgroundColor: '#f44336', color: 'white' }}
           >
             Resetar
           </button>
           <button
             type="button"
             onClick={adicionarFormulario}
-            className="btn-adicionar"
-            style={{ marginRight: '1rem' }}
-          >
-            + Adicionar Mobilidade
+            className="btn-adicionar"          >
+          Adicionar Mobilidade
           </button>
           <button type="submit" className="btn-salvar">
             Salvar Todos

@@ -46,7 +46,7 @@ function CadastrarDados() {
   });
 
   // Carregar dados do paciente ao iniciar (apenas ID foi salvo)
-  useEffect(() => {
+  useState(() => {
     if (pacienteId) {
       fetch(`${import.meta.env.VITE_API_URL}/api/usuarios/${pacienteId}/`)
         .then(res => res.json())

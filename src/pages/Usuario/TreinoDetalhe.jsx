@@ -87,7 +87,7 @@ function ModalExercicio({ isOpen, onClose, exerciciosDisponiveis, onSalvar, exer
         </div>
         <div className="modal-botoes">
           <button className="btn-salvar" onClick={handleSalvar}>Salvar</button>
-          <button className="btn-cancelar" onClick={onClose}>Cancelar</button>
+          <button className="btn-resetar" onClick={onClose}>Cancelar</button>
         </div>
       </div>
     </div>

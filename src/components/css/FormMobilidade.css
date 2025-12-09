@@ -1,5 +1,102 @@
 /* Container geral que organiza os formulários lado a lado */
 
+/* FormMobilidade.css - Adicione estas regras */
+
+/* Reset e ajustes básicos para mobile */
+@media screen and (max-width: 768px) {
+  /* 1. CORRIGIR OS BOTÕES (seu problema principal) */
+  .ql-snow.ql-toolbar button, 
+  .ql-snow .ql-toolbar button {
+    width: 24px !important;
+    height: 28px !important;
+    padding: 0px !important;
+  }
+  
+  /* 2. CORRIGIR OS FORMATS (grupos de botões) */
+  .ql-toolbar.ql-snow .ql-formats {
+    margin-right: 0px !important;
+    margin-bottom: 0px !important;
+    display: inline-flex !important;
+  }
+  
+  /* 3. Toolbar inteira - organizar melhor */
+  .ql-toolbar.ql-snow {
+    padding: 0px !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+  }
+  
+  /* 4. Ícones dentro dos botões */
+  .ql-snow.ql-toolbar button svg,
+  .ql-snow .ql-toolbar button svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+  
+  /* 5. Inputs dentro do toolbar (como selects) */
+  .ql-snow .ql-toolbar .ql-picker.ql-expanded .ql-picker-label,
+  .ql-snow .ql-toolbar .ql-picker-label {
+    padding: 4px 8px !important;
+    height: 32px !important;
+  }
+  
+  .ql-snow .ql-toolbar .ql-picker-options {
+    padding: 4px !important;
+  }
+  
+  /* 6. Ajustar tamanho da fonte no editor */
+  .ql-editor {
+    font-size: 16px !important;
+    min-height: 200px !important;
+    padding: 12px 10px !important;
+  }
+  
+  /* 7. Container do editor */
+  .ql-container.ql-snow {
+    width: 100% !important;
+    max-height: 200px !important;
+    font-size: 16px !important;
+  }
+}
+
+/* Para telas MUITO pequenas (smartphones menores) */
+@media screen and (max-width: 480px) {
+  .ql-snow.ql-toolbar button, 
+  .ql-snow .ql-toolbar button {
+    width: 32px !important;
+    height: 32px !important;
+    padding: 4px !important;
+    margin: 1px !important;
+  }
+  
+  .ql-snow.ql-toolbar button svg,
+  .ql-snow .ql-toolbar button svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
+  
+  .ql-toolbar.ql-snow .ql-formats {
+    margin-right: 4px !important;
+  }
+  
+  /* Reduzir ainda mais a toolbar */
+  .ql-toolbar.ql-snow {
+    padding: 6px 4px !important;
+  }
+}
+
+/* Para tablets (tamanho intermediário) */
+@media screen and (min-width: 769px) and (max-width: 1024px) {
+  .ql-snow.ql-toolbar button, 
+  .ql-snow .ql-toolbar button {
+    width: 40px !important;
+    height: 40px !important;
+    padding: 8px !important;
+  }
+}
+
 .form-mobilidade-grid {
   display: flex;
   flex-wrap: wrap;

@@ -104,24 +104,6 @@ export default function Profile() {
               <label>Endereço</label>
               <span>{user.address || "Não informado"}</span>
             </div>
-
-            {/* Se tiver campos separados de endereço, pode adicionar: */}
-            {/* 
-            <div className="linha-dado">
-              <label>CEP</label>
-              <span>{user.cep || "Não informado"}</span>
-            </div>
-
-            <div className="linha-dado">
-              <label>Cidade</label>
-              <span>{user.cidade || "Não informado"}</span>
-            </div>
-
-            <div className="linha-dado">
-              <label>Estado</label>
-              <span>{user.estado || "Não informado"}</span>
-            </div>
-            */}
           </div>
 
           {/* ==============================

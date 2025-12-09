@@ -141,16 +141,14 @@ function FormEstabilidade({ pacienteId, dataAvaliacao }) {
             type="button"
             onClick={resetarFormulario}
             className="btn-resetar"
-            style={{ marginRight: '1rem', backgroundColor: '#f44336', color: 'white' }}
+            style={{backgroundColor: '#f44336', color: 'white' }}
           >
             Resetar
           </button>
           <button
             type="button"
             onClick={adicionarFormulario}
-            className="btn-adicionar"
-            style={{ marginRight: '1rem' }}
-          >
+            className="btn-adicionar"          >
             + Adicionar Teste
           </button>
           <button type="submit" className="btn-salvar">

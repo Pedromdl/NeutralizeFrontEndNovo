@@ -130,7 +130,7 @@ function FormDor({ pacienteId, dataAvaliacao }) {
             type="button"
             onClick={resetarFormulario}
             className="btn-resetar"
-            style={{ marginRight: '1rem', backgroundColor: '#f44336', color: 'white' }}
+            style={{backgroundColor: '#f44336', color: 'white' }}
           >
             Resetar
           </button>
@@ -138,7 +138,6 @@ function FormDor({ pacienteId, dataAvaliacao }) {
             type="button"
             onClick={adicionarFormulario}
             className="btn-adicionar"
-            style={{ marginRight: '1rem' }}
           >
             + Adicionar Teste
           </button>
