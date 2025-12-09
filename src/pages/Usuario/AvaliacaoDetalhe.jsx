@@ -67,7 +67,7 @@ const baixarDocx = () => {
           <ReactQuill theme="snow" value={conteudo} onChange={setConteudo} />
         </div>
 
-        <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem' }}>
+        <div style={{ marginTop: '5rem', display: 'flex', gap: '1rem' }}>
           <button onClick={salvar}>
             Salvar
           </button>

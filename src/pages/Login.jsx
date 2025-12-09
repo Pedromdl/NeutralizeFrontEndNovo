@@ -11,7 +11,6 @@ export default function Login() {
   const location = useLocation();
   const [mostrarDestaqueGoogle, setMostrarDestaqueGoogle] = useState(false);
 
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [erro, setErro] = useState("");
@@ -35,35 +34,34 @@ export default function Login() {
   // -------------------------------------------------
   // LOGIN FINAL (após receber token e pegar perfil)
   // -------------------------------------------------
-const finalizarLogin = async (token) => {
-  try {
-    const userRes = await axios.get(
-      `${import.meta.env.VITE_API_URL}/api/auth/profile/`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
+  const finalizarLogin = async (token) => {
+    try {
+      const userRes = await axios.get(
+        `${import.meta.env.VITE_API_URL}/api/auth/profile/`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
-    const user = userRes.data;
+      const user = userRes.data;
 
-    // Sobrescreve token antigo
-    localStorage.setItem("access", token);
-    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      // Sobrescreve token antigo
+      localStorage.setItem("access", token);
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-    login(token, user); // atualiza contexto
+      login(token, user); // atualiza contexto
 
-    navigate(redirectByRole(user.role));
-  } catch (err) {
-    console.error("Erro ao buscar perfil:", err);
-    setErro("Erro ao carregar dados do usuário.");
-  }
-};
+      navigate(redirectByRole(user.role));
+    } catch (err) {
+      console.error("Erro ao buscar perfil:", err);
+      setErro("Erro ao carregar dados do usuário.");
+    }
+  };
 
   // -------------------------------------------------
   // LOGIN COM GOOGLE
   // -------------------------------------------------
   const handleGoogleCallback = async (response) => {
-
     setErro("");
     setLoading(true);
 
@@ -92,11 +90,11 @@ const finalizarLogin = async (token) => {
     script.async = true;
     script.defer = true;
     script.onload = () => {
-    google.accounts.id.initialize({
-      client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-      callback: handleGoogleCallback,
-      auto_select: false, // ⬅ força a escolha de conta
-    });
+      google.accounts.id.initialize({
+        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+        callback: handleGoogleCallback,
+        auto_select: false, // ⬅ força a escolha de conta
+      });
 
       google.accounts.id.renderButton(
         document.getElementById("googleSignInDiv"),
@@ -198,6 +196,30 @@ const finalizarLogin = async (token) => {
                 id="googleSignInDiv"
                 className={mostrarDestaqueGoogle ? "google-highlight" : ""}
               ></div>
+            </div>
+
+            {/* LINK PARA REGISTRO - AGORA COMO LINK EM VEZ DE BOTÃO */}
+            <div style={{ textAlign: 'center', marginTop: '1.5rem' }}>
+              <p style={{ color: '#666', fontSize: '0.9rem' }}>
+                Não tem uma conta?{' '}
+                <a 
+                  href="/register" 
+                  style={{ 
+                    color: '#4CAF50', 
+                    textDecoration: 'none', 
+                    fontWeight: '600',
+                    cursor: 'pointer'
+                  }}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate('/register');
+                  }}
+                  onMouseEnter={(e) => e.target.style.textDecoration = 'underline'}
+                  onMouseLeave={(e) => e.target.style.textDecoration = 'none'}
+                >
+                  Criar nova conta
+                </a>
+              </p>
             </div>
           </>
         )}

@@ -26,7 +26,7 @@ export default function Configuracoes() {
       title: "Cadastro de Testes Pré-Padronizados",
       description: "Configure testes e protocolos padrão",
       icon: <ClipboardList size={24} />,
-      path: '/configuracoes/testes-pre-padronizados',
+      path: '/configuracoes/pre-testes',
     },
     {
       title: "Banco de Exercícios",

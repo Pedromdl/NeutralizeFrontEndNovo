@@ -21,93 +21,52 @@ export default function useFuncaoCalendario(calendarRef) {
     responsavel: '',
   });
 
-  // 🔹 Helper para criar objetos Date válidos
-  const criarDate = (data, hora) => {
-    if (!data || !hora) return null;
-    return new Date(`${data}T${hora}`);
-  };
-
   // ✅ Salvar ou editar evento
   const salvarEdicaoMutation = useMutation(
     async (dadosParaEnviar) => {
       if (dadosParaEnviar.id) {
-        // Edição
         return axios.patch(
           `${import.meta.env.VITE_API_URL}/api/eventosagenda/${dadosParaEnviar.id}/`,
           dadosParaEnviar
         );
       } else {
-        // Novo evento
         const payload = { ...dadosParaEnviar };
-        delete payload.id; // 🚫 evita conflito de chave primária
-        return axios.post(
-          `${import.meta.env.VITE_API_URL}/api/eventosagenda/`,
-          payload
-        );
+        delete payload.id;
+        return axios.post(`${import.meta.env.VITE_API_URL}/api/eventosagenda/`, payload);
       }
-
     },
     {
-      onSuccess: (response, dadosParaEnviar) => {
-        fecharModal();
-
+      onSuccess: (_, dadosParaEnviar) => {
         const calendarApi = calendarRef?.current?.getApi();
-
-        // Corrige caso o backend retorne array
-        const novoEvento = Array.isArray(response.data)
-          ? response.data[0]
-          : response.data;
-
-        console.log("✅ Evento criado com sucesso:", novoEvento);
-
-        // Remove evento antigo se estiver editando
-        if (dadosParaEnviar.id) {
-          const eventoAntigo = calendarApi?.getEventById(dadosParaEnviar.id.toString());
-          eventoAntigo?.remove();
-        }
-
-        // Adiciona evento visualmente no calendário
-        calendarApi?.addEvent({
-          id: novoEvento.id,
-          title: novoEvento.paciente_nome || 'Horário ocupado',
-          start: criarDate(novoEvento.data, novoEvento.hora_inicio),
-          end: criarDate(novoEvento.data, novoEvento.hora_fim),
-          allDay: false,
-          extendedProps: novoEvento,
-          backgroundColor:
-            novoEvento.status?.toLowerCase() === 'realizado' ? '#b7de42' :
-              novoEvento.status?.toLowerCase() === 'confirmado' ? '#25CED1' :
-                novoEvento.status?.toLowerCase() === 'cancelado' ? '#FF5C5C' :
-                  'grey',
-          borderColor: 'transparent',
-        });
+        calendarApi?.refetchEvents(); // ✅ atualiza o calendário sem zerar cache
+        fecharModal();
       },
       onError: (error) => {
-        console.error("❌ Erro ao criar evento:", error.response?.data || error.message);
+        console.error("❌ Erro ao criar/editar evento:", error.response?.data || error.message);
       },
-      
     }
   );
-// 🔹 Excluir evento
-const excluirEventoMutation = useMutation(
-  async ({ id, escopo }) => {
-    return axios.delete(
-      `${import.meta.env.VITE_API_URL}/api/eventosagenda/${id}/`,
-      { data: { escopo_exclusao: escopo } } // 🔹 enviar no corpo da requisição
-    );
-  },
-  {
-    onSuccess: (_, { id }) => {
-      const calendarApi = calendarRef?.current?.getApi();
-      const evento = calendarApi?.getEventById(id.toString());
-      evento?.remove();
-    },
-    onError: (error) => {
-      console.error("❌ Erro ao excluir evento:", error.response?.data || error.message);
-    },
-  }
-);
 
+  // ✅ Excluir evento
+  const excluirEventoMutation = useMutation(
+    async ({ id, escopo }) => {
+      return axios.delete(
+        `${import.meta.env.VITE_API_URL}/api/eventosagenda/${id}/`,
+        { data: { escopo_exclusao: escopo } }
+      );
+    },
+    {
+      onSuccess: (_, { id }) => {
+        const calendarApi = calendarRef?.current?.getApi();
+        const evento = calendarApi?.getEventById(id.toString());
+        if (evento) evento.remove(); // remove visualmente
+        calendarApi?.refetchEvents(); // busca atualizações do backend
+      },
+      onError: (error) => {
+        console.error("❌ Erro ao excluir evento:", error.response?.data || error.message);
+      },
+    }
+  );
 
   const handleClickEvento = (info) => {
     const ev = info.event.extendedProps;
@@ -163,39 +122,38 @@ const excluirEventoMutation = useMutation(
   };
 
   const salvarEdicao = () => {
-  let escopo = "unico";
-  if (form.repetir) {
-    const escolha = window.prompt(
-      "Editar apenas este evento (1), este e os futuros (2), ou todos (3)?"
-    );
-    if (escolha === "2") escopo = "futuros";
-    else if (escolha === "3") escopo = "todos";
-  }
+    let escopo = "unico";
+    if (form.repetir) {
+      const escolha = window.prompt(
+        "Editar apenas este evento (1), este e os futuros (2), ou todos (3)?"
+      );
+      if (escolha === "2") escopo = "futuros";
+      else if (escolha === "3") escopo = "todos";
+    }
 
-  const dadosParaEnviar = {
-    ...form,
-    paciente: form.paciente ? Number(form.paciente) : null,
-    escopo_edicao: escopo,
+    const dadosParaEnviar = {
+      ...form,
+      paciente: form.paciente ? Number(form.paciente) : null,
+      escopo_edicao: escopo,
+    };
+    salvarEdicaoMutation.mutate(dadosParaEnviar);
   };
-  salvarEdicaoMutation.mutate(dadosParaEnviar);
-};
 
   const excluirEvento = async (id) => {
-  const eventoId = id || eventoSelecionado?.id;
-  if (!eventoId) return;
+    const eventoId = id || eventoSelecionado?.id;
+    if (!eventoId) return;
 
-  const escolha = window.prompt(
-    "Excluir apenas este evento (1), este e os futuros (2), ou todos (3)?"
-  );
+    const escolha = window.prompt(
+      "Excluir apenas este evento (1), este e os futuros (2), ou todos (3)?"
+    );
 
-  let escopo = "unico";
-  if (escolha === "2") escopo = "futuros";
-  else if (escolha === "3") escopo = "todos";
+    let escopo = "unico";
+    if (escolha === "2") escopo = "futuros";
+    else if (escolha === "3") escopo = "todos";
 
-  excluirEventoMutation.mutate({ id: eventoId, escopo });
-  fecharModal();
-};
-
+    excluirEventoMutation.mutate({ id: eventoId, escopo });
+    fecharModal();
+  };
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;

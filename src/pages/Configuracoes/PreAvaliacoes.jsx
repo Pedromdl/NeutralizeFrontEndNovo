@@ -222,7 +222,7 @@ export default function PreAvaliacoes() {
                   </div>
                   
                   <div className="botoes-direita">
-                    <button className="btn-cancelar" onClick={cancelarEdicao}>
+                    <button className="btn-resetar" onClick={cancelarEdicao}>
                       Cancelar
                     </button>
                     <button className="btn-salvar" onClick={salvarAvaliacao}>

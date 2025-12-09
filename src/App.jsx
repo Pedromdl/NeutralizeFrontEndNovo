@@ -207,7 +207,7 @@ function AppRoutes() {
               }
             />
             <Route
-              path="/pre-testes"
+              path="/configuracoes/pre-testes"
               element={
                 <ProtegidoPorAssinatura>
                   <PreTestes />

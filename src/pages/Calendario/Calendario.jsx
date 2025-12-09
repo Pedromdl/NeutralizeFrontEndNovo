@@ -11,19 +11,13 @@ export default function Calendario({ onEventClick, onDateClick, calendarRef }) {
 
   const cacheIntervalo = useRef({ start: null, end: null });
   const cacheEventos = useRef([]);
-  window.__cacheEventos = cacheEventos; // 🔹 Torna o cache acessível ao hook
+  window.__cacheEventos = cacheEventos;
 
-  // 🔹 Detecta se é mobile para usar 3 dias
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth <= 768) {
-        setInitialView('timeGridThreeDay');
-      } else {
-        setInitialView('timeGridWeek');
-      }
+      setInitialView(window.innerWidth <= 768 ? 'timeGridThreeDay' : 'timeGridWeek');
     };
-
-    handleResize(); // executa uma vez na montagem
+    handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -31,18 +25,9 @@ export default function Calendario({ onEventClick, onDateClick, calendarRef }) {
   const fetchEventos = useCallback(async (fetchInfo, successCallback, failureCallback) => {
     try {
       setLoading(true);
+
       const visivelStart = new Date(fetchInfo.start);
       const visivelEnd = new Date(fetchInfo.end);
-
-      if (
-        cacheIntervalo.current.start &&
-        cacheIntervalo.current.end &&
-        visivelStart >= cacheIntervalo.current.start &&
-        visivelEnd <= cacheIntervalo.current.end
-      ) {
-        successCallback(cacheEventos.current);
-        return;
-      }
 
       const startDate = new Date(visivelStart);
       startDate.setDate(startDate.getDate() - 15);
@@ -69,16 +54,15 @@ export default function Calendario({ onEventClick, onDateClick, calendarRef }) {
       const data = await response.json();
 
       const eventosFormatados = data.map(ev => ({
-        id: ev.id?.toString() || `${ev.data}-${ev.hora_inicio}`, // garante string
-        title: `${ev.paciente_nome || 'Horário ocupado'}`,       // usa apenas o nome do paciente
-        start: `${ev.data}T${ev.hora_inicio}`,                   // data + hora início
-        end: ev.hora_fim ? `${ev.data}T${ev.hora_fim}` : undefined, // opcional
-        extendedProps: ev,                                       // mantém todos os dados para tooltip ou clique
+        id: ev.id?.toString() || `${ev.data}-${ev.hora_inicio}`,
+        title: ev.paciente_nome || 'Horário ocupado',
+        start: `${ev.data}T${ev.hora_inicio}`,
+        end: ev.hora_fim ? `${ev.data}T${ev.hora_fim}` : undefined,
+        extendedProps: ev,
         backgroundColor:
           ev.status?.toLowerCase() === 'realizado' ? '#b7de42' :
-            ev.status?.toLowerCase() === 'confirmado' ? '#25CED1' :
-              ev.status?.toLowerCase() === 'cancelado' ? '#FF5C5C' :
-                'grey',
+          ev.status?.toLowerCase() === 'confirmado' ? '#25CED1' :
+          ev.status?.toLowerCase() === 'cancelado' ? '#FF5C5C' : 'grey',
         borderColor: 'transparent',
       }));
 
