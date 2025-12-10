@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Card from '../components/Card';
+import { Loader2 } from 'lucide-react'; // Importar spinner
 import '../components/css/DadosUsuario.css';
 
 export default function Profile() {
@@ -9,6 +10,7 @@ export default function Profile() {
   const [organizacao, setOrganizacao] = useState(null);
   const [erro, setErro] = useState('');
   const [isLoadingOrga, setIsLoadingOrga] = useState(false);
+  const [isLoadingUser, setIsLoadingUser] = useState(true); // Novo estado
   const [viewMode, setViewMode] = useState('profile');
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState({});
@@ -25,6 +27,7 @@ export default function Profile() {
       return;
     }
 
+    setIsLoadingUser(true); // Iniciar loading
     axios.get(`${import.meta.env.VITE_API_URL}/api/auth/profile/`, {
       headers: {
         Authorization: `Bearer ${token}`
@@ -36,7 +39,10 @@ export default function Profile() {
           fetchOrganizacao(token);
         }
       })
-      .catch(() => setErro('Não foi possível carregar os dados do usuário.'));
+      .catch(() => setErro('Não foi possível carregar os dados do usuário.'))
+      .finally(() => {
+        setIsLoadingUser(false); // Finalizar loading
+      });
   }, [navigate]);
 
   const fetchOrganizacao = (token) => {
@@ -83,7 +89,6 @@ export default function Profile() {
     setErro('');
     setSuccess('');
 
-    // Envia apenas os campos editáveis
     const dadosParaEnviar = {
       nome: formData.nome,
       telefone: formData.telefone,
@@ -139,8 +144,58 @@ export default function Profile() {
     navigate('/login');
   };
 
+  // 1. REMOVER loading global:
+  // ❌ if (!user) return <p>Carregando...</p>;
+
+  // 2. Adicionar função para renderizar loading elegante
+  const renderLoadingState = (isLoading, customText = null) => {
+    if (!isLoading) return null;
+    
+    return (
+      <div className="profile-loading-overlay">
+        <div className="profile-spinner">
+          <Loader2 size={32} className="spinner-animation" />
+          <p>{customText || 'Carregando...'}</p>
+        </div>
+      </div>
+    );
+  };
+
+  // 3. Loading inicial do perfil
+  if (isLoadingUser) {
+    return (
+      <div className="conteudo">
+        <Card title="Perfil do Usuário" size="al">
+          <div className="usuario-secoes">
+            {renderLoadingState(true, 'Carregando seus dados...')}
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
+  // 4. Erro global (mantém layout)
+  if (erro && !user) {
+    return (
+      <div className="conteudo">
+        <Card title="Perfil do Usuário" size="al">
+          <div className="profile-error">
+            <p style={{ color: 'red', textAlign: 'center', padding: '2rem' }}>{erro}</p>
+            <div className="botoes-edicao">
+              <button className="primary" onClick={() => navigate('/login')}>
+                Ir para Login
+              </button>
+            </div>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
   const renderProfileView = () => (
     <>
+      {renderLoadingState(isLoadingUser, 'Carregando perfil...')}
+      
       {user.profile_picture_url && (
         <div>
           <div className="container-foto">
@@ -215,8 +270,25 @@ export default function Profile() {
   );
 
   const renderOrganizacaoView = () => {
+    // 5. Melhorar loading da organização
     if (isLoadingOrga) {
-      return <p>Carregando informações da organização...</p>;
+      return (
+        <div className="organizacao-loading">
+          {renderLoadingState(true, 'Carregando organização...')}
+          {/* Mantém layout básico enquanto carrega */}
+          <div className="secao-card" style={{ opacity: 0.5 }}>
+            <h3>Organização</h3>
+            <div className="linha-dado">
+              <label>Nome</label>
+              <span className="skeleton-text"></span>
+            </div>
+            <div className="linha-dado">
+              <label>Tipo</label>
+              <span className="skeleton-text"></span>
+            </div>
+          </div>
+        </div>
+      );
     }
 
     if (!organizacao) {
@@ -244,6 +316,16 @@ export default function Profile() {
             {success && <div className="success-message" style={{color: 'green', marginBottom: '1rem'}}>{success}</div>}
             {erro && <div className="error-message" style={{color: 'red', marginBottom: '1rem'}}>{erro}</div>}
 
+            {/* Overlay de saving */}
+            {saving && (
+              <div className="saving-overlay">
+                <div className="saving-spinner">
+                  <Loader2 size={24} className="spinner-animation" />
+                  <span>Salvando alterações...</span>
+                </div>
+              </div>
+            )}
+
             {/* NOME (EDITÁVEL) */}
             <div className="linha-dado">
               <label>Nome*</label>
@@ -254,6 +336,7 @@ export default function Profile() {
                 onChange={handleInputChange}
                 className="form-input"
                 required
+                disabled={saving}
               />
             </div>
 
@@ -297,6 +380,7 @@ export default function Profile() {
                 onChange={handleInputChange}
                 className="form-input"
                 placeholder="(11) 99999-9999"
+                disabled={saving}
               />
             </div>
 
@@ -310,6 +394,7 @@ export default function Profile() {
                 onChange={handleInputChange}
                 className="form-input"
                 placeholder="Rua, Avenida, etc."
+                disabled={saving}
               />
             </div>
 
@@ -322,6 +407,7 @@ export default function Profile() {
                 value={formData.numero}
                 onChange={handleInputChange}
                 className="form-input"
+                disabled={saving}
               />
             </div>
 
@@ -334,6 +420,7 @@ export default function Profile() {
                 value={formData.complemento}
                 onChange={handleInputChange}
                 className="form-input"
+                disabled={saving}
               />
             </div>
           </div>
@@ -344,7 +431,12 @@ export default function Profile() {
               onClick={handleSaveOrganizacao}
               disabled={saving}
             >
-              {saving ? 'Salvando...' : 'Salvar Alterações'}
+              {saving ? (
+                <>
+                  <Loader2 size={16} className="spinner-animation" />
+                  Salvando...
+                </>
+              ) : 'Salvar Alterações'}
             </button>
             <button 
               className="grey"
@@ -456,7 +548,6 @@ export default function Profile() {
               <span>{new Date(organizacao.data_criacao).toLocaleDateString('pt-BR')}</span>
             </div>
           )}
-
         </div>
 
         <div className="botoes-edicao">
@@ -484,32 +575,24 @@ export default function Profile() {
     if (user?.role !== 'admin') return null;
 
     return (
-      <div className="toggle-view-buttons" style={{
-        marginBottom: '2rem',
-        display: 'flex',
-        gap: '1rem',
-        justifyContent: 'center'
-      }}>
+      <div className="toggle-view-buttons">
         <button
           className={viewMode === 'profile' ? 'primary' : 'grey'}
           onClick={() => setViewMode('profile')}
-          style={{ padding: '0.5rem 1.5rem' }}
+          disabled={isLoadingUser}
         >
           Meu Perfil
         </button>
         <button
           className={viewMode === 'organizacao' ? 'primary' : 'grey'}
           onClick={() => setViewMode('organizacao')}
-          style={{ padding: '0.5rem 1.5rem' }}
+          disabled={isLoadingUser}
         >
           Minha Organização
         </button>
       </div>
     );
   };
-
-  if (erro) return <p style={{ color: 'red' }}>{erro}</p>;
-  if (!user) return <p>Carregando...</p>;
 
   return (
     <div className="conteudo">

@@ -2,6 +2,132 @@
    DADOSUSUARIO.CSS - VERSÃO ORGANIZADA
    ============================================ */
 
+
+   /* Loading States */
+.profile-loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  border-radius: 8px;
+}
+
+.profile-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  color: #666;
+}
+
+.spinner-animation {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Skeleton loading */
+.skeleton-text {
+  display: inline-block;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  border-radius: 4px;
+  color: transparent;
+  min-width: 100px;
+  min-height: 1.2em;
+}
+
+@keyframes loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Organização loading */
+.organizacao-loading {
+  position: relative;
+  min-height: 300px;
+}
+
+/* Saving overlay */
+.saving-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  border-radius: 8px;
+}
+
+.saving-spinner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: white;
+  padding: 1rem 1.5rem;
+  border-radius: 6px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Toggle buttons */
+.toggle-view-buttons {
+  margin-bottom: 2rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.toggle-view-buttons button {
+  padding: 0.5rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.toggle-view-buttons button.primary {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.toggle-view-buttons button.grey {
+  background-color: #e5e7eb;
+  color: #4b5563;
+}
+
+.toggle-view-buttons button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Botões com spinner */
+.botoes-edicao button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Error states */
+.profile-error {
+  text-align: center;
+  padding: 2rem;
+}
+
 /* ==============================
    1. ESTADOS DE CARREGAMENTO E ERRO
    ============================== */
