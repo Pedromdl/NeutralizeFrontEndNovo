@@ -1,4 +1,68 @@
 /* 🔹 Wrapper específico do Banco de Exercícios */
+/* Container principal da tabela com posição relativa para o overlay */
+.banco-exercicios-wrapper {
+  position: relative;
+  min-height: 200px; /* Altura mínima para evitar "pulos" */
+}
+
+/* Overlay de loading */
+.banco-exercicios-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  border-radius: 4px;
+}
+
+/* Spinner e texto */
+.banco-exercicios-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: #666;
+}
+
+/* Animação do spinner */
+.spinner-icon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Quando está loading, reduzir opacidade da tabela */
+.banco-exercicios-wrapper.loading .banco-exercicios-table {
+  opacity: 0.6;
+  filter: blur(0.5px);
+}
+
+/* Mensagem de erro */
+.banco-exercicios-erro {
+  background-color: #fee;
+  border: 1px solid #fcc;
+  color: #c00;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+/* Desabilitar interação durante loading */
+.banco-exercicios-paginacao-botoes button:disabled,
+.banco-exercicios-paginacao-info select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .banco-exercicios-wrapper {
   width: 100%;
   max-width: 100%;

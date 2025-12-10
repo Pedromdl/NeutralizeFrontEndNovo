@@ -93,7 +93,7 @@ export default function RelatorioPublico({ usuarioSelecionado }) {
       {/* Título */}
       <motion.div {...containerAnimacao}>
         <h1 className="text-3xl font-bold text-center mb-2">
-Relatório Interativo
+          Relatório Interativo
 
         </h1>
         <p className="text-center text-gray-600">
@@ -109,53 +109,53 @@ Relatório Interativo
       </motion.div>
 
       {/* Dados do Paciente */}
-<motion.div {...containerAnimacao} style={{ width: '100%' }}>
-  <DadosUsuario token={token} mostrarEndereco={false} />
-</motion.div>
+      <motion.div {...containerAnimacao} style={{ width: '100%', marginTop: '20px' }}>
+        <DadosUsuario token={token} mostrarEndereco={false} />
+      </motion.div>
 
       {/* Grid de Gráficos */}
       <div className="dashboard-grid mt-6">
-  {[
+        {[
 
-    {
-      title: "Força Muscular",
-      comp: <GraficoForca token={token} dataSelecionada={dataSelecionada} />,
-      size: "md",
-    },
-    {
-      title: "Mobilidade",
-      comp: <GraficoMobilidade token={token} dataSelecionada={dataSelecionada} />,
-      size: "md",
-    },
-    {
-      title: "Estabilidade",
-      comp: <GraficoEstabilidade token={token} dataSelecionada={dataSelecionada} />,
-      size: "lg",
-    },
-    {
-      title: "Dor",
-      comp: <GraficoTesteDor token={token} dataSelecionada={dataSelecionada} />,
-      size: "sm",
-    },
-    {
-      title: "Função",
-      comp: <GraficoTesteFuncao token={token} dataSelecionada={dataSelecionada} />,
-      size: "lg",
-    },
-  ].map((item, i) => (
-    <motion.div
-      key={item.title}
-      style={{ display: 'contents' }}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.1 * i, duration: 0.4 }}
-    >
-      <Card title={item.title} size={item.size}>
-        {item.comp}
-      </Card>
-    </motion.div>
-  ))}
-</div>
+          {
+            title: "Força Muscular",
+            comp: <GraficoForca token={token} dataSelecionada={dataSelecionada} />,
+            size: "md",
+          },
+          {
+            title: "Mobilidade",
+            comp: <GraficoMobilidade token={token} dataSelecionada={dataSelecionada} />,
+            size: "md",
+          },
+          {
+            title: "Estabilidade",
+            comp: <GraficoEstabilidade token={token} dataSelecionada={dataSelecionada} />,
+            size: "lg",
+          },
+          {
+            title: "Dor",
+            comp: <GraficoTesteDor token={token} dataSelecionada={dataSelecionada} />,
+            size: "sm",
+          },
+          {
+            title: "Função",
+            comp: <GraficoTesteFuncao token={token} dataSelecionada={dataSelecionada} />,
+            size: "lg",
+          },
+        ].map((item, i) => (
+          <motion.div
+            key={item.title}
+            style={{ display: 'contents' }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 * i, duration: 0.4 }}
+          >
+            <Card title={item.title} size={item.size}>
+              {item.comp}
+            </Card>
+          </motion.div>
+        ))}
+      </div>
     </div>
   );
 }
