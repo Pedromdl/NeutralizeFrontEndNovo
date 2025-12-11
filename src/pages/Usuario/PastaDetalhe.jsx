@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import Card from '../../components/Card';
+import LoadingSpinner from '../../components/LoadingSpinner'; // Importando o componente
 
 export default function PastaDetalhe() {
   const { id } = useParams(); // id da pasta
@@ -11,12 +12,37 @@ export default function PastaDetalhe() {
   const [pasta, setPasta] = useState(null);
   const [novaSecao, setNovaSecao] = useState('');
   const [secaoCriada, setSecaoCriada] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [isTimeout, setIsTimeout] = useState(false);
 
   useEffect(() => {
-    if (!usuarioId) return; // evita requisição sem paciente
+    if (!usuarioId) {
+      setError('Nenhum paciente selecionado');
+      setLoading(false);
+      return;
+    }
+
+    const timeoutId = setTimeout(() => {
+      setIsTimeout(true);
+    }, 5000);
+
     axios.get(`${import.meta.env.VITE_API_URL}/api/pastas/${id}/?paciente=${usuarioId}`)
-      .then(res => setPasta(res.data))
-      .catch(err => console.error(err));
+      .then(res => {
+        setPasta(res.data);
+        setLoading(false);
+        setIsTimeout(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setError('Erro ao carregar pasta');
+        setLoading(false);
+      })
+      .finally(() => {
+        clearTimeout(timeoutId);
+      });
+
+    return () => clearTimeout(timeoutId);
   }, [id, usuarioId]);
 
   const criarSecao = async () => {
@@ -34,6 +60,7 @@ export default function PastaDetalhe() {
       setNovaSecao('');
     } catch (err) {
       console.error(err);
+      alert('Erro ao criar seção');
     }
   };
 
@@ -48,6 +75,7 @@ export default function PastaDetalhe() {
       if (secaoCriada?.id === secaoId) setSecaoCriada(null);
     } catch (err) {
       console.error('Erro ao excluir seção:', err);
+      alert('Erro ao excluir seção');
     }
   };
 
@@ -55,7 +83,61 @@ export default function PastaDetalhe() {
     navigate(`/secoes/${secaoId}/treino`);
   };
 
-  if (!pasta) return <p>Carregando...</p>;
+  const handleRetry = () => {
+    setLoading(true);
+    setError(null);
+    setIsTimeout(false);
+    
+    axios.get(`${import.meta.env.VITE_API_URL}/api/pastas/${id}/?paciente=${usuarioId}`)
+      .then(res => {
+        setPasta(res.data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setError('Erro ao carregar pasta');
+        setLoading(false);
+      });
+  };
+
+  // Estado de loading com timeout
+  if (loading) {
+    return (
+      <LoadingSpinner
+        message="Carregando pasta..."
+        showTimeout={isTimeout}
+        timeoutMessage="Carregamento da pasta está demorando mais que o esperado"
+        onRetry={handleRetry}
+        size="medium"
+      />
+    );
+  }
+
+  // Estado de erro
+  if (error) {
+    return (
+      <LoadingSpinner
+        message={error}
+        showTimeout={true}
+        timeoutMessage={error}
+        onRetry={handleRetry}
+        size="medium"
+      />
+    );
+  }
+
+  // Verifica se pasta existe
+  if (!pasta) {
+    return (
+      <LoadingSpinner
+        message="Pasta não encontrada"
+        showTimeout={true}
+        timeoutMessage="A pasta solicitada não existe ou você não tem permissão para acessá-la"
+        onRetry={() => navigate(-1)}
+        size="medium"
+      />
+    );
+  }
 
   return (
     <div className="conteudo">
@@ -97,6 +179,14 @@ export default function PastaDetalhe() {
           }>
           </Card>
         ))}
+        
+        {(!pasta.secoes || pasta.secoes.length === 0) && (
+          <Card title="Nenhuma seção encontrada">
+            <p style={{ textAlign: 'center', color: '#666' }}>
+              Crie sua primeira seção usando o campo acima
+            </p>
+          </Card>
+        )}
       </div>
     </div>
   );

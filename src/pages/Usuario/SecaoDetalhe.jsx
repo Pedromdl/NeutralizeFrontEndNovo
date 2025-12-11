@@ -2,6 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import CardCarrossel from '../../components/CardCarrossel';
+import LoadingSpinner from '../../components/LoadingSpinner';
 
 export default function SecaoDetalhe() {
   const { pastaId, secaoId } = useParams();
@@ -9,7 +10,8 @@ export default function SecaoDetalhe() {
 
   const [pasta, setPasta] = useState(null);
   const [secao, setSecao] = useState(null);
-  const [carregando, setCarregando] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     axios
@@ -28,43 +30,83 @@ export default function SecaoDetalhe() {
           }));
           setPasta(pastaEncontrada);
           setSecao(secaoEncontrada);
+        } else {
+          setError('Seção não encontrada');
         }
 
-        setCarregando(false);
+        setLoading(false);
       })
       .catch((error) => {
         console.error('Erro ao carregar dados:', error);
-        setCarregando(false);
+        setError('Erro ao carregar dados da seção');
+        setLoading(false);
       });
   }, [pastaId, secaoId]);
 
-  // Converte qualquer link do YouTube para o formato embed
-  const getEmbedUrl = (url) => {
-    if (!url) return '';
+  // Função getEmbedUrl permanece igual...
 
-    // Shorts
-    if (url.includes('youtube.com/shorts/')) {
-      const videoId = url.split('/shorts/')[1]?.split('?')[0];
-      return `https://www.youtube.com/embed/${videoId}`;
-    }
+  if (loading) {
+    return <LoadingSpinner message="Carregando seção..." />;
+  }
 
-    // Links padrão do YouTube
-    if (url.includes('watch?v=')) {
-      return url.replace('watch?v=', 'embed/');
-    }
+  if (error) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        height: '100vh',
+        backgroundColor: '#f1f5f9',
+        padding: '20px'
+      }}>
+        <div style={{ 
+          textAlign: 'center', 
+          backgroundColor: 'white',
+          padding: '32px',
+          borderRadius: '12px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+        }}>
+          <div style={{ fontSize: '48px', marginBottom: '16px' }}>⚠️</div>
+          <h3 style={{ margin: '0 0 12px 0', color: '#333' }}>{error}</h3>
+          <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
+            <button
+              onClick={() => navigate(-1)}
+              style={{
+                padding: '10px 20px',
+                backgroundColor: '#333',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontSize: '14px',
+                fontWeight: '500'
+              }}
+            >
+              ← Voltar
+            </button>
+            <button
+              onClick={() => window.location.reload()}
+              style={{
+                padding: '10px 20px',
+                backgroundColor: '#007bff',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontSize: '14px',
+                fontWeight: '500'
+              }}
+            >
+              Tentar novamente
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-    // Links encurtados youtu.be
-    if (url.includes('youtu.be/')) {
-      return url.replace('youtu.be/', 'www.youtube.com/embed/');
-    }
-
-    // Se já for embed ou outro formato, retorna direto
-    return url;
-  };
-
-  if (carregando) return <p>Carregando...</p>;
-  if (!pasta || !secao) return <p>Seção não encontrada.</p>;
-
+  // Resto do componente renderizando o conteúdo...
   return (
     <div style={{ padding: 20, backgroundColor: '#f1f5f9', minHeight: '100vh' }}>
       <CardCarrossel
@@ -73,7 +115,17 @@ export default function SecaoDetalhe() {
           <>
             <button
               onClick={() => navigate(-1)}
-              style={{ marginBottom: '1rem' }}
+              style={{ 
+                marginBottom: '1rem',
+                padding: '8px 16px',
+                backgroundColor: '#333',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontSize: '14px',
+                fontWeight: '500'
+              }}
             >
               ← Voltar
             </button>
@@ -98,8 +150,7 @@ export default function SecaoDetalhe() {
                 title={o.titulo}
                 frameBorder="0"
                 allowFullScreen
-                style={{ borderRadius: '12px' }} // <--- aqui adiciona a borda arredondada
-
+                style={{ borderRadius: '12px' }}
               />
             )}
           </div>

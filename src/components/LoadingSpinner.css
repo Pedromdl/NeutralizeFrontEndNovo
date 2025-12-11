@@ -1,0 +1,180 @@
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100vw;
+  background: #f5f5f5;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+}
+
+.loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Spinner base */
+.spinner {
+  border: 4px solid #e0e0e0;
+  border-top: 4px solid #333;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Tamanhos do spinner */
+.spinner-small {
+  width: 40px;
+  height: 40px;
+  border-width: 3px;
+}
+
+.spinner-medium {
+  width: 60px;
+  height: 60px;
+  border-width: 4px;
+}
+
+.spinner-large {
+  width: 80px;
+  height: 80px;
+  border-width: 5px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-text {
+  color: #333;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  margin: 0;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Estilos para timeout */
+.timeout-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.timeout-text {
+  color: #d32f2f;
+  font-size: 18px;
+  font-weight: 500;
+  text-align: center;
+  max-width: 300px;
+  line-height: 1.5;
+  margin: 0 0 24px 0;
+}
+
+.retry-button {
+  background: #333;
+  color: white;
+  border: none;
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.5px;
+}
+
+.retry-button:hover {
+  background: #555;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.retry-button:active {
+  transform: translateY(0);
+}
+
+/* Estados especiais */
+.loading-content.timeout .loading-text {
+  animation: none;
+  color: #d32f2f;
+}
+
+/* Responsivo para mobile */
+@media (max-width: 768px) {
+  .loading-container {
+    padding: 20px;
+  }
+  
+  .spinner-small {
+    width: 35px;
+    height: 35px;
+  }
+
+  .spinner-medium {
+    width: 50px;
+    height: 50px;
+  }
+
+  .spinner-large {
+    width: 65px;
+    height: 65px;
+  }
+
+  .loading-text {
+    font-size: 16px;
+  }
+  
+  .timeout-text {
+    font-size: 16px;
+    max-width: 250px;
+  }
+  
+  .timeout-icon {
+    font-size: 40px;
+  }
+  
+  .retry-button {
+    padding: 10px 24px;
+    font-size: 15px;
+  }
+}
+
+/* Para tablets */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .loading-content {
+    gap: 20px;
+  }
+  
+  .timeout-text {
+    max-width: 280px;
+  }
+}

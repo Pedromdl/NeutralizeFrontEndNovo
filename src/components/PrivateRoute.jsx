@@ -1,7 +1,8 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import './PrivateRoute.css';
+import LoadingSpinner from '../components/LoadingSpinner'; // Importação do componente
+import './PrivateRoute.css'; // Mantenha se tiver estilos específicos
 
 const LOADING_TIMEOUT = 5000; // 5 segundos de timeout
 
@@ -22,14 +23,21 @@ export default function PrivateRoute({ children }) {
     return () => clearTimeout(timer);
   }, [loading]);
 
+  const handleRetry = () => {
+    setIsTimeout(false);
+    window.location.reload();
+  };
+
   if (loading) {
     return (
-      <div className="loading-container">
-        <div className="loading-content">
-          <div className="spinner"></div>
-          <p className="loading-text">Carregando...</p>
-        </div>
-      </div>
+      <LoadingSpinner
+        message="Verificando autenticação..."
+        fullScreen={true}
+        size="medium"
+        showTimeout={isTimeout}
+        timeoutMessage="A verificação de autenticação está demorando mais que o esperado"
+        onRetry={handleRetry}
+      />
     );
   }
 
