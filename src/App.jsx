@@ -93,7 +93,7 @@ function AppRoutes() {
   const location = useLocation();
   const rotasSemLayout = [
     '/login', '/register', '/registro-clinica', '/politica-privacidade',
-    '/termos-de-uso', '/teste', '/liberacao-miofascial, /strava/callback'
+    '/termos-de-uso', '/teste', '/liberacao-miofascial', '/strava/callback'
   ];
 
   const isTesteRoute = location.pathname.startsWith('/relatorio/');

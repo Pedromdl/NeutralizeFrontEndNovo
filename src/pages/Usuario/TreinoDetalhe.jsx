@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Card from '../../components/Card';
+import LoadingSpinner from '../../components/LoadingSpinner'; // Importar o componente
 import "../../components/css/TreinoDetalhe.css";
-import { Edit, X, Check } from 'lucide-react'; // 🔹 ícones
+import { Edit, X, Check } from 'lucide-react';
 
 // 🔹 Modal para adicionar/editar exercício
 function ModalExercicio({ isOpen, onClose, exerciciosDisponiveis, onSalvar, exercicioAtual }) {
@@ -105,11 +106,17 @@ export default function TreinoDetalhe() {
   const [modalAberto, setModalAberto] = useState(false);
   const [treinoSelecionadoParaAdicionar, setTreinoSelecionadoParaAdicionar] = useState(null);
   const [exercicioSelecionadoParaEditar, setExercicioSelecionadoParaEditar] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // 🔹 Carrega treinos da seção
+  // 🔹 Carrega dados iniciais
   useEffect(() => {
-    const fetchTreinos = async () => {
+    const fetchData = async () => {
       try {
+        setLoading(true);
+        setError(null);
+
+        // Carrega treinos da seção
         const resTreinos = await axios.get(
           `${import.meta.env.VITE_API_URL}/api/treinos/?secao=${id}`
         );
@@ -123,25 +130,21 @@ export default function TreinoDetalhe() {
 
         setSecao({ id, titulo: tituloSecao });
         setTreinosSecao(treinosComExpandido);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchTreinos();
-  }, [id]);
 
-  // 🔹 Carrega exercícios disponíveis
-  useEffect(() => {
-    const fetchExercicios = async () => {
-      try {
-        const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/bancoexercicios/`);
-        setExerciciosDisponiveis(res.data);
+        // Carrega exercícios disponíveis
+        const resExercicios = await axios.get(`${import.meta.env.VITE_API_URL}/api/bancoexercicios/`);
+        setExerciciosDisponiveis(resExercicios.data);
+
+        setLoading(false);
       } catch (err) {
-        console.error('Erro ao buscar exercícios:', err);
+        console.error('Erro ao carregar dados:', err);
+        setError('Erro ao carregar treinos. Por favor, tente novamente.');
+        setLoading(false);
       }
     };
-    fetchExercicios();
-  }, []);
+
+    fetchData();
+  }, [id]);
 
   // 🔹 Criar treino
   const criarTreino = async () => {
@@ -155,26 +158,28 @@ export default function TreinoDetalhe() {
       setTreinoNome('');
     } catch (err) {
       console.error(err);
+      alert('Erro ao criar treino');
     }
   };
 
   const duplicarTreino = async (treino) => {
-  try {
-    const res = await axios.post(
-      `${import.meta.env.VITE_API_URL}/api/treinos/${treino.id}/duplicar/`
-    );
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/treinos/${treino.id}/duplicar/`
+      );
 
-    const novoTreino = {
-      ...res.data,
-      expandido: false,
-      exerciciosDoTreino: res.data.exercicios || []
-    };
+      const novoTreino = {
+        ...res.data,
+        expandido: false,
+        exerciciosDoTreino: res.data.exercicios || []
+      };
 
-    setTreinosSecao(prev => [...prev, novoTreino]);
-  } catch (err) {
-    console.error("Erro ao duplicar treino:", err);
-  }
-};
+      setTreinosSecao(prev => [...prev, novoTreino]);
+    } catch (err) {
+      console.error("Erro ao duplicar treino:", err);
+      alert('Erro ao duplicar treino');
+    }
+  };
 
   // 🔹 Abrir modal adicionar
   const abrirModalAdicionar = (treino) => {
@@ -235,11 +240,14 @@ export default function TreinoDetalhe() {
       }
     } catch (err) {
       console.error(err);
+      alert('Erro ao salvar exercício');
     }
   };
 
   // 🔹 Excluir exercício
   const excluirExercicio = async (exercicioId, treinoId) => {
+    if (!window.confirm('Tem certeza que deseja excluir este exercício?')) return;
+    
     try {
       await axios.delete(`${import.meta.env.VITE_API_URL}/api/exerciciosprescritos/${exercicioId}/`);
       setTreinosSecao(treinosSecao.map(t => {
@@ -253,10 +261,89 @@ export default function TreinoDetalhe() {
       }));
     } catch (err) {
       console.error(err);
+      alert('Erro ao excluir exercício');
     }
   };
 
-  if (!secao) return <p>Carregando seção...</p>;
+  const handleRetry = () => {
+    window.location.reload();
+  };
+
+  const handleBack = () => {
+    navigate(-1);
+  };
+
+  // Estado de loading
+  if (loading) {
+    return (
+      <LoadingSpinner
+        message="Carregando treinos..."
+        size="medium"
+      />
+    );
+  }
+
+  // Estado de erro
+  if (error) {
+    return (
+      <LoadingSpinner
+        message={error}
+        showTimeout={true}
+        timeoutMessage={error}
+        onRetry={handleRetry}
+        size="medium"
+      />
+    );
+  }
+
+  // Seção não encontrada
+  if (!secao) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: 'column',
+        alignItems: 'center', 
+        justifyContent: 'center',
+        height: '100vh',
+        backgroundColor: '#f5f5f5',
+        padding: '20px'
+      }}>
+        <div style={{ 
+          textAlign: 'center', 
+          backgroundColor: 'white',
+          padding: '40px',
+          borderRadius: '12px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+          maxWidth: '400px',
+          width: '100%'
+        }}>
+          <div style={{ fontSize: '48px', marginBottom: '16px' }}>📂</div>
+          <h3 style={{ margin: '0 0 12px 0', color: '#333' }}>
+            Seção não encontrada
+          </h3>
+          <p style={{ color: '#666', marginBottom: '24px' }}>
+            A seção que você está procurando não existe ou foi removida.
+          </p>
+          <button
+            onClick={handleBack}
+            style={{
+              padding: '12px 24px',
+              backgroundColor: '#333',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '500',
+              width: '100%'
+            }}
+          >
+            ← Voltar
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="conteudo" style={{ gap: '20px' }}>
@@ -274,118 +361,117 @@ export default function TreinoDetalhe() {
       </Card>
 
       {treinosSecao.map(t => (
-  <Card 
-    key={t.id} 
-    title={
-      <div className="treino-titulo-container">
-        {t.editandoNome ? (
-          <input
-            type="text"
-            value={t.nome}
-            autoFocus
-            className="treino-titulo-input"
-            onChange={e => setTreinosSecao(
-              treinosSecao.map(tr => tr.id === t.id ? { ...tr, nome: e.target.value } : tr)
-            )}
-            onBlur={async () => {
-              try {
-                const res = await axios.patch(
-                  `${import.meta.env.VITE_API_URL}/api/treinos/${t.id}/`,
-                  { nome: t.nome }
-                );
-                setTreinosSecao(treinosSecao.map(tr => tr.id === t.id ? { ...tr, nome: res.data.nome, editandoNome: false } : tr));
-              } catch (err) {
-                console.error(err);
-              }
-            }}
-            onKeyDown={e => { if (e.key === 'Enter') e.target.blur(); }}
-          />
-        ) : (
-          <>
-            <span className="treino-titulo-texto">{t.nome || 'Treino sem nome'}</span>
-            <Edit 
-              size={18} 
-              className="treino-titulo-icone"
-              onClick={() => setTreinosSecao(
-                treinosSecao.map(tr => tr.id === t.id ? { ...tr, editandoNome: true } : tr)
+        <Card 
+          key={t.id} 
+          title={
+            <div className="treino-titulo-container">
+              {t.editandoNome ? (
+                <input
+                  type="text"
+                  value={t.nome}
+                  autoFocus
+                  className="treino-titulo-input"
+                  onChange={e => setTreinosSecao(
+                    treinosSecao.map(tr => tr.id === t.id ? { ...tr, nome: e.target.value } : tr)
+                  )}
+                  onBlur={async () => {
+                    try {
+                      const res = await axios.patch(
+                        `${import.meta.env.VITE_API_URL}/api/treinos/${t.id}/`,
+                        { nome: t.nome }
+                      );
+                      setTreinosSecao(treinosSecao.map(tr => tr.id === t.id ? { ...tr, nome: res.data.nome, editandoNome: false } : tr));
+                    } catch (err) {
+                      console.error(err);
+                    }
+                  }}
+                  onKeyDown={e => { if (e.key === 'Enter') e.target.blur(); }}
+                />
+              ) : (
+                <>
+                  <span className="treino-titulo-texto">{t.nome || 'Treino sem nome'}</span>
+                  <Edit 
+                    size={18} 
+                    className="treino-titulo-icone"
+                    onClick={() => setTreinosSecao(
+                      treinosSecao.map(tr => tr.id === t.id ? { ...tr, editandoNome: true } : tr)
+                    )}
+                  />
+                </>
               )}
-            />
-          </>
-        )}
-      </div>
-    } 
-    size="al"
-  >
-    {/* =================== AQUI MANTÉM O CONTEÚDO ORIGINAL =================== */}
-    <div className="treino-header-botoes">
-      <button onClick={() =>
-        setTreinosSecao(
-          treinosSecao.map(tr => tr.id === t.id ? { ...tr, expandido: !tr.expandido } : tr)
-        )
-      }>
-        {t.expandido ? '▼' : '►'}
-      </button>
-      <button onClick={() => duplicarTreino(t)}>Duplicar</button>
-
-    </div>
-
-    {t.expandido && (
-      <div>
-        {t.exerciciosDoTreino.length > 0 ? (
-          <div className="tabela-exercicios-wrapper">
-            <table className="tabela-exercicios">
-              <thead>
-                <tr>
-                  <th>Exercício</th>
-                  <th>Séries</th>
-                  <th>Repetições</th>
-                  <th>Carga</th>
-                  <th>Observação</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                {t.exerciciosDoTreino.map(ex => (
-                  <tr key={ex.id}>
-                    <td>{ex.orientacao_detalhes?.titulo}</td>
-                    <td>{ex.series_planejadas}</td>
-                    <td>{ex.repeticoes_planejadas}</td>
-                    <td>{ex.carga_planejada}</td>
-                    <td>{ex.observacao || '-'}</td>
-                    <td>
-                      <button 
-                        onClick={() => abrirModalEditar(ex, t)} 
-                        style={{ background: 'none', border: 'none', cursor: 'pointer', marginRight: '0.5rem' }}
-                      >
-                        <Edit size={18} />
-                      </button>
-                      <button 
-                        onClick={() => excluirExercicio(ex.id, t.id)} 
-                        style={{ background: 'none', border: 'none', cursor: 'pointer' }}
-                      >
-                        <X size={18} />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <p>Nenhum exercício adicionado ainda.</p>
-        )}
-
-        <button 
-          className="btn-adicionar-exercicio"
-          onClick={() => abrirModalAdicionar(t)}
+            </div>
+          } 
+          size="al"
         >
-          Adicionar Exercício
-        </button>
-      </div>
-    )}
-    {/* ======================================================================= */}
-  </Card>
-))}
+          {/* =================== AQUI MANTÉM O CONTEÚDO ORIGINAL =================== */}
+          <div className="treino-header-botoes">
+            <button onClick={() =>
+              setTreinosSecao(
+                treinosSecao.map(tr => tr.id === t.id ? { ...tr, expandido: !tr.expandido } : tr)
+              )
+            }>
+              {t.expandido ? '▼' : '►'}
+            </button>
+            <button onClick={() => duplicarTreino(t)}>Duplicar</button>
+          </div>
+
+          {t.expandido && (
+            <div>
+              {t.exerciciosDoTreino.length > 0 ? (
+                <div className="tabela-exercicios-wrapper">
+                  <table className="tabela-exercicios">
+                    <thead>
+                      <tr>
+                        <th>Exercício</th>
+                        <th>Séries</th>
+                        <th>Repetições</th>
+                        <th>Carga</th>
+                        <th>Observação</th>
+                        <th>Ações</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {t.exerciciosDoTreino.map(ex => (
+                        <tr key={ex.id}>
+                          <td>{ex.orientacao_detalhes?.titulo}</td>
+                          <td>{ex.series_planejadas}</td>
+                          <td>{ex.repeticoes_planejadas}</td>
+                          <td>{ex.carga_planejada}</td>
+                          <td>{ex.observacao || '-'}</td>
+                          <td>
+                            <button 
+                              onClick={() => abrirModalEditar(ex, t)} 
+                              style={{ background: 'none', border: 'none', cursor: 'pointer', marginRight: '0.5rem' }}
+                            >
+                              <Edit size={18} />
+                            </button>
+                            <button 
+                              onClick={() => excluirExercicio(ex.id, t.id)} 
+                              style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+                            >
+                              <X size={18} />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p>Nenhum exercício adicionado ainda.</p>
+              )}
+
+              <button 
+                className="btn-adicionar-exercicio"
+                onClick={() => abrirModalAdicionar(t)}
+              >
+                Adicionar Exercício
+              </button>
+            </div>
+          )}
+          {/* ======================================================================= */}
+        </Card>
+      ))}
 
       <ModalExercicio
         isOpen={modalAberto}
