@@ -497,7 +497,6 @@
   background-color: #fff;
   color: #333;
   border-top: 1px solid #eee;
-  width: 100%;
   margin-top: 0px;
 }
 
@@ -1017,4 +1016,125 @@
 
 .input input::-ms-input-placeholder {
   color: rgba(255, 255, 255, 0.6);
+}
+
+/* ADICIONE ESTAS REGRAS NO FINAL DO SEU CSS */
+
+/* 1. Corrigir seção .about para mobile */
+@media (max-width: 768px) {
+  .about {
+    padding: 4px 16px !important; /* Reduzir padding */
+    overflow: hidden; /* Prevenir overflow */
+  }
+  
+  .aboutContainer {
+    padding: 0 8px; /* Padding interno adicional */
+  }
+}
+
+/* 2. Corrigir grid do rodapé para mobile */
+@media (max-width: 768px) {
+  .footerGrid {
+    grid-template-columns: 1fr !important;
+    min-width: 0 !important; /* Remover min-width fixo */
+    gap: 30px;
+  }
+  
+  .footerContainer {
+    padding: 40px 16px 20px !important; /* Reduzir padding lateral */
+    overflow: hidden; /* Prevenir overflow */
+  }
+}
+
+/* 3. Garantir que o mapa não ultrapasse os limites */
+.mapContainer {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.mapContainer iframe {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* 4. Corrigir seção de testemunhos para mobile */
+@media (max-width: 768px) {
+  .testimonials {
+    padding: 4px 16px !important; /* Reduzir padding */
+    overflow: hidden;
+  }
+  
+  .testimonialsGrid {
+    grid-template-columns: 1fr !important; /* Uma coluna no mobile */
+    gap: 1rem;
+  }
+}
+
+/* 5. Corrigir seção de benefícios para mobile */
+@media (max-width: 768px) {
+  .benefits {
+    padding: 4rem 16px !important; /* Reduzir padding */
+    overflow: hidden;
+  }
+  
+  .benefitsContainer {
+    padding: 0 8px;
+  }
+}
+
+/* 6. Corrigir container principal para mobile */
+@media (max-width: 768px) {
+  .container {
+    padding: 4rem 16px !important;
+    overflow: hidden;
+  }
+}
+
+/* 7. Adicionar regra geral para prevenir overflow horizontal */
+html, body {
+  overflow-x: hidden;
+  max-width: 100%;
+  width: 100%;
+}
+
+/* 8. Garantir que todas as imagens não ultrapassem */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* 9. Corrigir seção FAQ para mobile */
+@media (max-width: 768px) {
+  .faq {
+    padding: 4rem 16px !important;
+    overflow: hidden;
+  }
+  
+  .faqCard {
+    margin: 0 8px;
+  }
+}
+
+/* 10. Corrigir cardLight para mobile */
+@media (max-width: 768px) {
+  .cardLight {
+    padding: 24px 16px !important;
+    margin: 0 -8px; /* Compensar padding */
+    border-radius: 0;
+  }
+}
+
+/* 11. Garantir que inputs não ultrapassem */
+.input input, .input select {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* 12. Corrigir glassCard no mobile */
+@media (max-width: 768px) {
+  .glassCard {
+    margin: 0 8px;
+    max-width: calc(100% - 16px);
+  }
 }
