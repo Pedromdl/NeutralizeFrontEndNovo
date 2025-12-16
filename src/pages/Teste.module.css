@@ -993,3 +993,28 @@
 .faqCard:hover {
   border-color: #3498db;
 }
+
+.input input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.input select::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Para compatibilidade com navegadores mais antigos */
+.input input::-webkit-input-placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.input input::-moz-placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.input input:-ms-input-placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.input input::-ms-input-placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}

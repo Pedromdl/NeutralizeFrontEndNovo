@@ -255,61 +255,148 @@ export default function HeroSection() {
             </motion.div>
           </motion.div>
 
-          {/* Right Card */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className={styles.right}
-          >
-            <motion.div
-              className={styles.glassCard}
-              whileHover={{ y: -5 }}
-            >
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.6 }}
-              >
-                <h3>Agendamento</h3>
-                <p>Escolha data e horário</p>
-              </motion.div>
+{/* Right Card - Formulário de Agendamento */}
+<motion.div
+  initial={{ opacity: 0, scale: 0.9 }}
+  animate={{ opacity: 1, scale: 1 }}
+  transition={{ duration: 0.6, delay: 0.4 }}
+  className={styles.right}
+>
+  <motion.div
+    className={styles.glassCard}
+    whileHover={{ y: -5 }}
+  >
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ delay: 0.6 }}
+      style={{ color: "white" }}
+    >
+      <h3 style={{ color: "white", margin: "0 0 8px 0" }}>Agende uma avaliação</h3>
+      <p style={{ color: "rgba(255, 255, 255, 0.8)", fontSize: "14px", margin: 0 }}>
+        Preencha os dados e entraremos em contato.
+      </p>
+    </motion.div>
 
-              <div className={styles.inputs}>
-                <motion.div
-                  className={styles.input}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.7 }}
-                >
-                  <Calendar size={18} />
-                  <span>12 Outubro 2025</span>
-                </motion.div>
+    <form
+      className={styles.inputs}
+      onSubmit={(e) => {
+        e.preventDefault();
 
-                <motion.div
-                  className={styles.input}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.8 }}
-                >
-                  <Clock size={18} />
-                  <span>09:00 – 10:00</span>
-                </motion.div>
-              </div>
+        const nome = e.target.nome.value;
+        const contato = e.target.contato.value;
+        const motivo = e.target.motivo.value || "Não informado";
+        const preferencia = e.target.preferencia.value;
 
-              <motion.button
-                className={styles.confirm}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.9 }}
-              >
-                Confirmar sessão
-              </motion.button>
-            </motion.div>
-          </motion.div>
-        </div>
+        const mensagem = `Olá, meu nome é ${nome}.\nTelefone/WhatsApp: ${contato}\nMotivo: ${motivo}\nPreferência de horário: ${preferencia}`;
+
+        const url = `https://wa.me/554831974163?text=${encodeURIComponent(
+          mensagem
+        )}`;
+        window.open(url, "_blank");
+      }}
+    >
+      <motion.div
+        className={styles.input}
+        initial={{ opacity: 0, x: -10 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.7 }}
+      >
+        <input 
+          id="nome" 
+          type="text" 
+          required 
+          style={{ 
+            border: 'none', 
+            background: 'transparent', 
+            width: '100%', 
+            outline: 'none',
+            color: 'white'
+          }}
+          placeholder="Nome completo"
+        />
+      </motion.div>
+
+      <motion.div
+        className={styles.input}
+        initial={{ opacity: 0, x: -10 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.75 }}
+      >
+        <input 
+          id="contato" 
+          type="tel" 
+          required 
+          style={{ 
+            border: 'none', 
+            background: 'transparent', 
+            width: '100%', 
+            outline: 'none',
+            color: 'white'
+          }}
+          placeholder="Telefone/WhatsApp"
+        />
+      </motion.div>
+
+      <motion.div
+        className={styles.input}
+        initial={{ opacity: 0, x: -10 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.8 }}
+      >
+        <input 
+          id="motivo" 
+          type="text" 
+          style={{ 
+            border: 'none', 
+            background: 'transparent', 
+            width: '100%', 
+            outline: 'none',
+            color: 'white'
+          }}
+          placeholder="Motivo principal (opcional)"
+        />
+      </motion.div>
+
+      <motion.div
+        className={styles.input}
+        initial={{ opacity: 0, x: -10 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.85 }}
+      >
+        <select 
+          id="preferencia"
+          style={{ 
+            border: 'none', 
+            background: 'transparent', 
+            width: '100%', 
+            outline: 'none', 
+            color: 'white'
+          }}
+        >
+          <option style={{ color: '#333' }}>Qualquer horário</option>
+          <option style={{ color: '#333' }}>Manhã</option>
+          <option style={{ color: '#333' }}>Tarde</option>
+          <option style={{ color: '#333' }}>Noite</option>
+        </select>
+      </motion.div>
+
+      <motion.button
+        className={styles.confirm}
+        type="submit"
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.9 }}
+        style={{ color: 'white' }}
+      >
+        Solicitar contato
+      </motion.button>
+    </form>
+  </motion.div>
+</motion.div>
+  </div>
       </section>
 
       {/* BENEFÍCIOS COM ANIMAÇÃO */}
