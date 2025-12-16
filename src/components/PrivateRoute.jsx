@@ -4,7 +4,7 @@ import { AuthContext } from '../context/AuthContext';
 import LoadingSpinner from '../components/LoadingSpinner'; // Importação do componente
 import './PrivateRoute.css'; // Mantenha se tiver estilos específicos
 
-const LOADING_TIMEOUT = 5000; // 5 segundos de timeout
+const LOADING_TIMEOUT = 9000; // 5 segundos de timeout
 
 export default function PrivateRoute({ children }) {
   const { token, loading } = useContext(AuthContext);
