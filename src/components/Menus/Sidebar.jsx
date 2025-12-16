@@ -60,7 +60,7 @@ function Sidebar() {
             </NavLink>
           </li>
           <li>
-            /* <NavLink to="/cadastro" className={({ isActive }) => (isActive ? 'ativo' : '')}>
+            <NavLink to="/cadastro" className={({ isActive }) => (isActive ? 'ativo' : '')}>
               <FileText size={20} />
               {aberto && <span>Cadastro</span>}
             </NavLink>
