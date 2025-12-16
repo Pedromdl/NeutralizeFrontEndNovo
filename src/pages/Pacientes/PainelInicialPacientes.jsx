@@ -8,7 +8,7 @@ import { ptBR } from "date-fns/locale";
 import { useNavigate } from "react-router-dom";
 import { Dumbbell } from "lucide-react";
 import { motion } from "framer-motion";
-import NotificacaoBell from "../../components/NotificacaoBell"; // 🔹 Componente modular
+import NotificacaoBell from "../../components/NotificacaoBell";
 import "../../components/css/PaginaInicialPaciente.css";
 
 export default function DashboardPaciente() {
@@ -68,28 +68,31 @@ export default function DashboardPaciente() {
 
   return (
     <div className="conteudo">
-<div className="dashboard-header">
-  <div className="header-left">
-    <h1 className="titulo-dashboard">
-      Olá, {user?.first_name || "Paciente"}
-    </h1>
-  </div>
-  
-  <div className="header-right">
-    <div className="header-actions">
-      <img
-        src={user?.photo_google || "/default-avatar.png"}
-        alt="Foto do usuário"
-        className="avatar-dashboard"
-      />
-        <NotificacaoBell />
-    </div>
-  </div>
+      <div className="dashboard-header">
+        <div className="header-left">
+          <h1 className="titulo-dashboard">
+            Olá, {user?.first_name || "Paciente"}
+          </h1>
+        </div>
         
-        {/* 🔹 Agora usando o componente modular */}
+        <div className="header-right">
+          <div className="header-actions">
+            <img
+              src={user?.photo_google || "/default-avatar.png"}
+              alt="Foto do usuário"
+              className="avatar-dashboard"
+            />
+            <NotificacaoBell />
+          </div>
+        </div>
       </div>
+
+      {/* 🔹 SEÇÃO: STATUS GERAL */}
+      <div className="secao-titulo">
+        <h2>Status Geral</h2>
+      </div>
+      
       <div className="dashboard-grid">
-        {/* 🔹 Card 1 - Treinos realizados */}
         <motion.div
           variants={cardVariants}
           initial="hidden"
@@ -97,14 +100,13 @@ export default function DashboardPaciente() {
           transition={{ delay: 0.1, duration: 0.4 }}
           className="card-status"
         >
-          <Card title="Treinos Realizados" size="al" >
+          <Card title="Treinos Realizados" size="al">
             <p className="valor-principal">
               {stats?.totalTreinosExecutados}
             </p>
           </Card>
         </motion.div>
 
-        {/* 🔹 Card 2 - Último treino */}
         <motion.div
           variants={cardVariants}
           initial="hidden"
@@ -112,14 +114,20 @@ export default function DashboardPaciente() {
           transition={{ delay: 0.2, duration: 0.4 }}
           className="card-status"
         >
-          <Card title="Data do Último Treino" size="al">
+          <Card title="Último Treino Realizado" size="al">
             <p className="valor-secundario">
               {stats?.ultimoTreino?.data || "-"}
             </p>
           </Card>
         </motion.div>
+      </div>
 
-        {/* 🔹 Card 3 - Atalho treino */}
+      {/* 🔹 SEÇÃO: ATALHOS */}
+      <div className="secao-titulo">
+        <h2>Atalhos</h2>
+      </div>
+      
+      <div className="dashboard-grid">
         <motion.div
           variants={cardVariants}
           initial="hidden"
@@ -136,12 +144,18 @@ export default function DashboardPaciente() {
               className="btn-atalho-treino"
             >
               <Dumbbell size={24} />
-              <span>Atalho rápido para treino</span>
+              <span>Atalho para último treino</span>
             </button>
           </Card>
         </motion.div>
+      </div>
 
-        {/* 🔹 Card 4 - Calendário */}
+      {/* 🔹 SEÇÃO: CALENDÁRIO */}
+      <div className="secao-titulo">
+        <h2>Calendário de Treino</h2>
+      </div>
+      
+      <div className="dashboard-grid">
         <motion.div
           variants={cardVariants}
           initial="hidden"
@@ -149,7 +163,7 @@ export default function DashboardPaciente() {
           transition={{ delay: 0.4, duration: 0.4 }}
           className="card-calendario"
         >
-          <Card title="Calendário de Treinos" size="md">
+          <Card size="md">
             <div className="calendario-wrapper">
               <DayPicker
                 fromDate={new Date(new Date().getFullYear(), new Date().getMonth(), 1)}
