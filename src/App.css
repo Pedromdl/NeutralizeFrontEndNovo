@@ -7,6 +7,14 @@ body {
   height: 100vh;
 }
 
+@font-face {
+  font-family: "Armstrong";
+  src: url("/fonts/Armstrong.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 #root {
   width: 100%;
   margin: 0 auto;
