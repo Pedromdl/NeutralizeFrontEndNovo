@@ -68,18 +68,25 @@ export default function DashboardPaciente() {
 
   return (
     <div className="conteudo">
-      <div className="titulo-dashboard-wrapper">
-        <img
-          src={user?.photo_google || "/default-avatar.png"}
-          alt="Foto do usuário"
-          className="avatar-dashboard"
-        />
-        <h1 className="titulo-dashboard">
-          Olá, {user?.first_name || "Paciente"} 👋
-        </h1>
+<div className="dashboard-header">
+  <div className="header-left">
+    <h1 className="titulo-dashboard">
+      Olá, {user?.first_name || "Paciente"}
+    </h1>
+  </div>
+  
+  <div className="header-right">
+    <div className="header-actions">
+      <img
+        src={user?.photo_google || "/default-avatar.png"}
+        alt="Foto do usuário"
+        className="avatar-dashboard"
+      />
+        <NotificacaoBell />
+    </div>
+  </div>
         
         {/* 🔹 Agora usando o componente modular */}
-        <NotificacaoBell />
       </div>
       <div className="dashboard-grid">
         {/* 🔹 Card 1 - Treinos realizados */}

@@ -192,7 +192,6 @@
 @media (max-width: 768px) {
   .notificacao-dropdown {
     width: 280px;
-    right: -50px;
   }
 }
 
