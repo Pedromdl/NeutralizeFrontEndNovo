@@ -491,6 +491,19 @@
   object-fit: contain;
 }
 
+/* Se a logo for preta e você quiser branca, use: */
+.logo {
+  max-width: 24rem;
+  height: auto;
+}
+
+/* Para telas menores */
+@media (max-width: 768px) {
+  .logo {
+    max-width: 12rem;
+    margin-bottom: 0.1rem;
+  }
+}
 
 .footer {
   background-color: #fff;
@@ -650,7 +663,7 @@
 }
 
 .socialLink:hover {
-  background-color: #3498db;
+  background-color: #282829;
   color: white;
   transform: translateY(-3px);
 }
@@ -1078,6 +1091,8 @@
 /* 6. Corrigir container principal para mobile */
 @media (max-width: 768px) {
   .container {
+    display: flex;
+    flex-direction: column;
     padding: 4rem 16px !important;
     overflow: hidden;
   }

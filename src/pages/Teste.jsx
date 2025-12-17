@@ -1,9 +1,13 @@
 import { useState, useEffect, useRef } from "react";
-import { Calendar, Clock, Phone, MapPin, Mail, ExternalLink, MessageCircle, Star } from "lucide-react";
+import { MessageCircle } from 'lucide-react';
+import { FaFacebook, FaInstagram, FaWhatsapp } from 'react-icons/fa';
 import { motion, useAnimation, useInView, AnimatePresence } from "framer-motion";
+
 import InstagramFeed from "../../components/InstaFeed";
 import styles from "./Teste.module.css";
 import Logo from "../../src/images/logoletrapreta.png";
+import LogoHero from "../../src/images/logobranca.png";
+
 
 
 
@@ -11,6 +15,7 @@ export default function HeroSection() {
   const [page, setPage] = useState(0);
   const [openIndex, setOpenIndex] = useState(null); // Estado para controlar qual FAQ está aberto
   const perPage = 4;
+
 
   const testimonials = [
     {
@@ -147,31 +152,30 @@ export default function HeroSection() {
     {
       icon: 'fas fa-map-marker-alt',
       label: 'Endereço:',
-      text: 'Av. Paulista, 1000\nSão Paulo - SP, 01310-100\nBrasil'
+      text: 'Av. Ângelo Crema, 372\nFlorianópolis - SC, 88037-270\nBrasil'
     },
     {
       icon: 'fas fa-phone',
       label: 'Telefone:',
-      text: '(11) 9999-9999'
+      text: '(48) 3197-4163'
     },
     {
       icon: 'fas fa-envelope',
       label: 'E-mail:',
-      text: 'contato@clinica.com.br'
+      text: 'neutralizeft@gmail.com'
     },
     {
       icon: 'fas fa-clock',
       label: 'Horário de Funcionamento:',
-      text: 'Segunda a Sexta: 8h às 20h\nSábado: 8h às 13h'
+      text: 'Segunda a Quinta: 8h às 20h\nSexta: 8h às 18h'
     }
   ];
 
   // Redes sociais para o rodapé
   const socialLinks = [
-    { icon: 'fab fa-facebook-f', label: 'Facebook', url: '#' },
-    { icon: 'fab fa-instagram', label: 'Instagram', url: '#' },
-    { icon: 'fab fa-whatsapp', label: 'WhatsApp', url: '#' },
-    { icon: 'fab fa-youtube', label: 'YouTube', url: '#' }
+    { icon: FaFacebook, label: 'Facebook', url: '#' },
+    { icon: FaInstagram, label: 'Instagram', url: 'https://www.instagram.com/neutralize.ft' },
+    { icon: FaWhatsapp, label: 'WhatsApp', url: 'https://wa.me/554831974163' },
   ];
 
   // Função para alternar FAQ
@@ -181,50 +185,64 @@ export default function HeroSection() {
 
   return (
     <>
-      {/* HERO SECTION */}
-      <section className={styles.hero}>
-        {/* Background Image */}
-        <motion.img
-          className={styles.imgHero}
-          onLoad={(e) => e.target.classList.add(styles.loaded)}
-          src="/images/liberacao.png"
-          alt="liberacao"
+{/* HERO SECTION */}
+<section className={styles.hero}>
+  {/* Background Image */}
+  <motion.img
+    className={styles.imgHero}
+    onLoad={(e) => e.target.classList.add(styles.loaded)}
+    src="/images/liberacao.png"
+    alt="liberacao"
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    transition={{ duration: 1.2 }}
+  />
+
+  {/* Overlay */}
+  <motion.div
+    className={styles.overlay}
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    transition={{ duration: 0.8 }}
+  />
+
+  {/* Content */}
+  <div className={styles.container}>
+    {/* Left */}
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, delay: 0.2 }}
+      className={styles.left}
+    >
+      {/* Logo da empresa */}
+      <motion.div
+        className={styles.logoContainer}
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+      >
+        <img 
+          src= {LogoHero}
+          alt="Logo da empresa" 
+          className={styles.logo}
+        />
+      </motion.div>
+
+      <motion.h1
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+      >
+        Encontre seu <br />
+        <motion.span
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 1.2 }}
-        />
-
-        {/* Overlay */}
-        <motion.div
-          className={styles.overlay}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
-        />
-
-        {/* Content */}
-        <div className={styles.container}>
-          {/* Left */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className={styles.left}
-          >
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-            >
-              Encontre seu <br />
-              <motion.span
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.6 }}
-              >
-                equilíbrio interno
-              </motion.span>
-            </motion.h1>
+          transition={{ delay: 0.6 }}
+        >
+          equilíbrio interno
+        </motion.span>
+      </motion.h1>
 
             <motion.p
               initial={{ opacity: 0 }}
@@ -258,148 +276,148 @@ export default function HeroSection() {
             </motion.div>
           </motion.div>
 
-{/* Right Card - Formulário de Agendamento */}
-<motion.div
-  initial={{ opacity: 0, scale: 0.9 }}
-  animate={{ opacity: 1, scale: 1 }}
-  transition={{ duration: 0.6, delay: 0.4 }}
-  className={styles.right}
->
-  <motion.div
-    className={styles.glassCard}
-    whileHover={{ y: -5 }}
-  >
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ delay: 0.6 }}
-      style={{ color: "white" }}
-    >
-      <h3 style={{ color: "white", margin: "0 0 8px 0" }}>Agende uma avaliação</h3>
-      <p style={{ color: "rgba(255, 255, 255, 0.8)", fontSize: "14px", margin: 0 }}>
-        Preencha os dados e entraremos em contato.
-      </p>
-    </motion.div>
+          {/* Right Card - Formulário de Agendamento */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className={styles.right}
+          >
+            <motion.div
+              className={styles.glassCard}
+              whileHover={{ y: -5 }}
+            >
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.6 }}
+                style={{ color: "white" }}
+              >
+                <h3 style={{ color: "white", margin: "0 0 8px 0" }}>Agende uma avaliação</h3>
+                <p style={{ color: "rgba(255, 255, 255, 0.8)", fontSize: "14px", margin: 0 }}>
+                  Preencha os dados e entraremos em contato.
+                </p>
+              </motion.div>
 
-    <form
-      className={styles.inputs}
-      onSubmit={(e) => {
-        e.preventDefault();
+              <form
+                className={styles.inputs}
+                onSubmit={(e) => {
+                  e.preventDefault();
 
-        const nome = e.target.nome.value;
-        const contato = e.target.contato.value;
-        const motivo = e.target.motivo.value || "Não informado";
-        const preferencia = e.target.preferencia.value;
+                  const nome = e.target.nome.value;
+                  const contato = e.target.contato.value;
+                  const motivo = e.target.motivo.value || "Não informado";
+                  const preferencia = e.target.preferencia.value;
 
-        const mensagem = `Olá, meu nome é ${nome}.\nTelefone/WhatsApp: ${contato}\nMotivo: ${motivo}\nPreferência de horário: ${preferencia}`;
+                  const mensagem = `Olá, meu nome é ${nome}.\nTelefone/WhatsApp: ${contato}\nMotivo: ${motivo}\nPreferência de horário: ${preferencia}`;
 
-        const url = `https://wa.me/554831974163?text=${encodeURIComponent(
-          mensagem
-        )}`;
-        window.open(url, "_blank");
-      }}
-    >
-      <motion.div
-        className={styles.input}
-        initial={{ opacity: 0, x: -10 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.7 }}
-      >
-        <input 
-          id="nome" 
-          type="text" 
-          required 
-          style={{ 
-            border: 'none', 
-            background: 'transparent', 
-            width: '100%', 
-            outline: 'none',
-            color: 'white'
-          }}
-          placeholder="Nome completo"
-        />
-      </motion.div>
+                  const url = `https://wa.me/554831974163?text=${encodeURIComponent(
+                    mensagem
+                  )}`;
+                  window.open(url, "_blank");
+                }}
+              >
+                <motion.div
+                  className={styles.input}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.7 }}
+                >
+                  <input
+                    id="nome"
+                    type="text"
+                    required
+                    style={{
+                      border: 'none',
+                      background: 'transparent',
+                      width: '100%',
+                      outline: 'none',
+                      color: 'white'
+                    }}
+                    placeholder="Nome completo"
+                  />
+                </motion.div>
 
-      <motion.div
-        className={styles.input}
-        initial={{ opacity: 0, x: -10 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.75 }}
-      >
-        <input 
-          id="contato" 
-          type="tel" 
-          required 
-          style={{ 
-            border: 'none', 
-            background: 'transparent', 
-            width: '100%', 
-            outline: 'none',
-            color: 'white'
-          }}
-          placeholder="Telefone/WhatsApp"
-        />
-      </motion.div>
+                <motion.div
+                  className={styles.input}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.75 }}
+                >
+                  <input
+                    id="contato"
+                    type="tel"
+                    required
+                    style={{
+                      border: 'none',
+                      background: 'transparent',
+                      width: '100%',
+                      outline: 'none',
+                      color: 'white'
+                    }}
+                    placeholder="Telefone/WhatsApp"
+                  />
+                </motion.div>
 
-      <motion.div
-        className={styles.input}
-        initial={{ opacity: 0, x: -10 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.8 }}
-      >
-        <input 
-          id="motivo" 
-          type="text" 
-          style={{ 
-            border: 'none', 
-            background: 'transparent', 
-            width: '100%', 
-            outline: 'none',
-            color: 'white'
-          }}
-          placeholder="Motivo principal (opcional)"
-        />
-      </motion.div>
+                <motion.div
+                  className={styles.input}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.8 }}
+                >
+                  <input
+                    id="motivo"
+                    type="text"
+                    style={{
+                      border: 'none',
+                      background: 'transparent',
+                      width: '100%',
+                      outline: 'none',
+                      color: 'white'
+                    }}
+                    placeholder="Motivo principal (opcional)"
+                  />
+                </motion.div>
 
-      <motion.div
-        className={styles.input}
-        initial={{ opacity: 0, x: -10 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.85 }}
-      >
-        <select 
-          id="preferencia"
-          style={{ 
-            border: 'none', 
-            background: 'transparent', 
-            width: '100%', 
-            outline: 'none', 
-            color: 'white'
-          }}
-        >
-          <option style={{ color: '#333' }}>Qualquer horário</option>
-          <option style={{ color: '#333' }}>Manhã</option>
-          <option style={{ color: '#333' }}>Tarde</option>
-          <option style={{ color: '#333' }}>Noite</option>
-        </select>
-      </motion.div>
+                <motion.div
+                  className={styles.input}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.85 }}
+                >
+                  <select
+                    id="preferencia"
+                    style={{
+                      border: 'none',
+                      background: 'transparent',
+                      width: '100%',
+                      outline: 'none',
+                      color: 'white'
+                    }}
+                  >
+                    <option style={{ color: '#333' }}>Qualquer horário</option>
+                    <option style={{ color: '#333' }}>Manhã</option>
+                    <option style={{ color: '#333' }}>Tarde</option>
+                    <option style={{ color: '#333' }}>Noite</option>
+                  </select>
+                </motion.div>
 
-      <motion.button
-        className={styles.confirm}
-        type="submit"
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.9 }}
-        style={{ color: 'white' }}
-      >
-        Solicitar contato
-      </motion.button>
-    </form>
-  </motion.div>
-</motion.div>
-  </div>
+                <motion.button
+                  className={styles.confirm}
+                  type="submit"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.9 }}
+                  style={{ color: 'white' }}
+                >
+                  Solicitar contato
+                </motion.button>
+              </form>
+            </motion.div>
+          </motion.div>
+        </div>
       </section>
 
       {/* BENEFÍCIOS COM ANIMAÇÃO */}
@@ -748,20 +766,24 @@ export default function HeroSection() {
           <div className={styles.footerBottom}>
             {/* Redes sociais */}
             <div className={styles.footerSocial}>
-              {socialLinks.map((social, index) => (
-                <motion.a
-                  key={index}
-                  href={social.url}
-                  className={styles.socialLink}
-                  aria-label={social.label}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  <i className={social.icon}></i>
-                </motion.a>
-              ))}
+              {socialLinks.map((social, index) => {
+                const Icon = social.icon;
+
+                return (
+                  <motion.a
+                    key={index}
+                    href={social.url}
+                    className={styles.socialLink}
+                    aria-label={social.label}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    <Icon size={20} /> {/* Componente React, não classe CSS */}
+                  </motion.a>
+                );
+              })}
             </div>
 
             {/* Copyright e links legais */}

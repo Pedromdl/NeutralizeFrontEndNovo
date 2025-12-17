@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import logoNeutralize from '../images/logohletrabanca.png';
+import logoNeutralize from '../images/logobranca.png';
 import styles from "./LiberacaoMiofascial.module.css";
 import { enviarEventoGA } from "../useGA";
 import "../assets/page_animations/LiberacaoMiofascialAnimation.css"
