@@ -62,18 +62,19 @@ function BottomMenu() {
       icon: <Link size={20} color="#282829" />,
       path: '/integracoes',
     },
+        {
+      title: "Usuários",
+      description: "Gerencie usuários da clínica",
+      icon: <Users size={20} color="#282829" />,
+      path: '/banco-usuarios',
+    },
     {
       title: "Dados da Conta",
       description: "Informações pessoais",
       icon: <User size={20} color="#282829" />,
       path: '/perfil',
     },
-    {
-      title: "Usuários",
-      description: "Gerencie usuários da clínica",
-      icon: <Users size={20} color="#282829" />,
-      path: '/banco-usuarios',
-    }
+
   ];
 
   return (

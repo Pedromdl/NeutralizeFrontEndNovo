@@ -3,6 +3,9 @@ import { Calendar, Clock, Phone, MapPin, Mail, ExternalLink, MessageCircle, Star
 import { motion, useAnimation, useInView, AnimatePresence } from "framer-motion";
 import InstagramFeed from "../../components/InstaFeed";
 import styles from "./Teste.module.css";
+import Logo from "../../src/images/logoletrapreta.png";
+
+
 
 export default function HeroSection() {
   const [page, setPage] = useState(0);
@@ -135,7 +138,7 @@ export default function HeroSection() {
     name: "Neutralize - Fisioterapia Ortopédica e Esportiva",
     tagline: "Movimento e Performance",
     description: "Especializada em liberação miofascial, reabilitação e treinamento personalizado para atletas e pessoas que buscam qualidade de vida através do movimento consciente.",
-    logo: "src/images/logoletrapreta.png", // Caminho para sua imagem
+    logo: Logo, // Caminho para sua imagem
     logoAlt: "Logo Neutralize" // Texto alternativo para acessibilidade
   };
 

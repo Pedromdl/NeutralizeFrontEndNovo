@@ -18,7 +18,6 @@ import Sessoes from './Sessoes';
 import GerarRelatorio from '../../components/GerarRelatorio';
 import VisualizarRelatorioInterativo from '../../components/RelatorioInterativo/VisualizarRelatorioInterativo';
 
-
 // 🌈 Animações padrão
 const containerAnimacao = {
   initial: { opacity: 0, y: 40 },
@@ -27,46 +26,166 @@ const containerAnimacao = {
   transition: { duration: 0.4, ease: 'easeOut' },
 };
 
+// Função para buscar com autenticação
+const fetchComAuth = async (url, options = {}) => {
+  const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+  
+  const headers = {
+    'Content-Type': 'application/json',
+    ...options.headers,
+  };
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const resposta = await fetch(url, {
+    ...options,
+    headers,
+  });
+
+  if (resposta.status === 401) {
+    // Token expirado ou inválido
+    localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
+    localStorage.removeItem('usuarioSelecionadoId');
+    localStorage.removeItem('abaAtiva');
+    
+    // Redirecionar para login se estiver em uma página protegida
+    if (window.location.pathname !== '/login') {
+      window.location.href = '/login';
+    }
+    throw new Error('Não autorizado');
+  }
+
+  if (!resposta.ok) {
+    throw new Error(`Erro ${resposta.status}: ${resposta.statusText}`);
+  }
+
+  return resposta;
+};
+
 function Usuarios() {
   const location = useLocation();
   const [usuarioSelecionado, setUsuarioSelecionado] = useState(null);
   const [dataSelecionada, setDataSelecionada] = useState(null);
   const [abaAtiva, setAbaAtiva] = useState('');
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState(null);
 
-  // 🔁 Carrega usuário e aba salvos
+  // 🔁 Carrega usuário e aba do localStorage primeiro
   useEffect(() => {
-    const salvoId = localStorage.getItem('usuarioSelecionadoId');
-    if (salvoId) {
-      fetch(`${import.meta.env.VITE_API_URL}/api/usuarios/${JSON.parse(salvoId)}/`)
-        .then(res => res.json())
-        .then(data => setUsuarioSelecionado(data));
-    }
-
-    if (location.state?.pacienteId) {
-      const id = location.state.pacienteId;
-      fetch(`${import.meta.env.VITE_API_URL}/api/usuarios/${id}/`)
-        .then(res => res.json())
-        .then(data => {
+    const carregarUsuarioSalvo = async () => {
+      try {
+        setCarregando(true);
+        setErro(null);
+        
+        // Verificar se usuário está autenticado
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+        if (!token) {
+          setErro('Usuário não autenticado');
+          setCarregando(false);
+          return;
+        }
+        
+        // 1. Verificar se há um ID na navegação (prioridade mais alta)
+        if (location.state?.pacienteId) {
+          const id = location.state.pacienteId;
+          const response = await fetchComAuth(`${import.meta.env.VITE_API_URL}/api/usuarios/${id}/`);
+          const data = await response.json();
           setUsuarioSelecionado(data);
           localStorage.setItem('usuarioSelecionadoId', JSON.stringify(id));
-        });
-    }
+          
+          // Definir aba se veio da navegação
+          if (location.state?.aba) {
+            setAbaAtiva(location.state.aba);
+            localStorage.setItem('abaAtiva', location.state.aba);
+          } else {
+            // Se não tem aba na navegação, tenta carregar do localStorage
+            const abaSalva = localStorage.getItem('abaAtiva');
+            if (abaSalva) {
+              setAbaAtiva(abaSalva);
+            } else {
+              setAbaAtiva('Dashboard');
+              localStorage.setItem('abaAtiva', 'Dashboard');
+            }
+          }
+          setCarregando(false);
+          return;
+        }
+        
+        // 2. Se não, verificar localStorage
+        const salvoId = localStorage.getItem('usuarioSelecionadoId');
+        if (salvoId) {
+          try {
+            const id = JSON.parse(salvoId);
+            const response = await fetchComAuth(`${import.meta.env.VITE_API_URL}/api/usuarios/${id}/`);
+            
+            if (response.ok) {
+              const data = await response.json();
+              setUsuarioSelecionado(data);
+              
+              // Carregar aba salva
+              const abaSalva = localStorage.getItem('abaAtiva');
+              if (abaSalva) {
+                setAbaAtiva(abaSalva);
+              } else {
+                setAbaAtiva('Dashboard');
+                localStorage.setItem('abaAtiva', 'Dashboard');
+              }
+            }
+          } catch (error) {
+            console.error('Erro ao carregar usuário:', error);
+            if (error.message === 'Não autorizado') {
+              setErro('Sessão expirada. Faça login novamente.');
+            } else {
+              setErro('Erro ao carregar usuário salvo');
+            }
+            localStorage.removeItem('usuarioSelecionadoId');
+          }
+        } else {
+          // Se não tem usuário salvo, define aba padrão se existir
+          const abaSalva = localStorage.getItem('abaAtiva');
+          if (abaSalva) {
+            setAbaAtiva(abaSalva);
+          }
+        }
+      } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+        setErro('Erro ao carregar dados do servidor');
+      } finally {
+        setCarregando(false);
+      }
+    };
 
-    if (location.state?.aba) {
-      setAbaAtiva(location.state.aba);
-    } else {
-      const abaSalva = localStorage.getItem('abaAtiva');
-      if (abaSalva) setAbaAtiva(abaSalva);
-    }
+    carregarUsuarioSalvo();
   }, [location.state]);
 
+  // Salvar aba quando mudar
   useEffect(() => {
-    localStorage.setItem('abaAtiva', abaAtiva);
+    if (abaAtiva) {
+      localStorage.setItem('abaAtiva', abaAtiva);
+    }
   }, [abaAtiva]);
 
-  const handleSelecionaUsuario = (usuario) => {
-    setUsuarioSelecionado(usuario);
-    localStorage.setItem('usuarioSelecionadoId', JSON.stringify(usuario.id));
+  const handleSelecionaUsuario = async (usuario) => {
+    try {
+      // Buscar dados completos do usuário
+      const response = await fetchComAuth(`${import.meta.env.VITE_API_URL}/api/usuarios/${usuario.id}/`);
+      const dataCompleta = await response.json();
+      
+      setUsuarioSelecionado(dataCompleta);
+      localStorage.setItem('usuarioSelecionadoId', JSON.stringify(usuario.id));
+      
+      // Se for a primeira vez selecionando um usuário, define Dashboard como aba ativa
+      if (!abaAtiva || abaAtiva === '') {
+        setAbaAtiva('Dashboard');
+        localStorage.setItem('abaAtiva', 'Dashboard');
+      }
+    } catch (error) {
+      console.error('Erro ao selecionar usuário:', error);
+      setErro('Erro ao carregar dados do usuário');
+    }
   };
 
   const atualizarUsuario = (novoUsuario) => {
@@ -74,15 +193,22 @@ function Usuarios() {
     localStorage.setItem('usuarioSelecionadoId', JSON.stringify(novoUsuario.id));
   };
 
+  const limparUsuarioSelecionado = () => {
+    setUsuarioSelecionado(null);
+    localStorage.removeItem('usuarioSelecionadoId');
+    setAbaAtiva('');
+    localStorage.removeItem('abaAtiva');
+  };
+
   // 🧠 Renderiza conteúdo das abas
   const renderConteudoAba = () => {
+    if (!usuarioSelecionado) return null;
+
     switch (abaAtiva) {
       case 'Dashboard':
         return (
           <>
-          
-          {/* Botão de gerar relatório PDF */}
-            {usuarioSelecionado && (
+            {/* Botão de gerar relatório PDF */}
             <Card size="usuario">
               <FiltroData
                 usuarioId={usuarioSelecionado.id}
@@ -90,18 +216,16 @@ function Usuarios() {
                 onChange={setDataSelecionada}
               />
               <div className="pdf-button" style={{ marginTop: '12px', fontSize: '12px' }}>
-              <GerarRelatorio
-                usuarioId={usuarioSelecionado.id}
-                dataSelecionada={dataSelecionada}
-              />
-              <VisualizarRelatorioInterativo
-                usuarioId={usuarioSelecionado.id}
-                dataSelecionada={dataSelecionada}
-              />
+                <GerarRelatorio
+                  usuarioId={usuarioSelecionado.id}
+                  dataSelecionada={dataSelecionada}
+                />
+                <VisualizarRelatorioInterativo
+                  usuarioId={usuarioSelecionado.id}
+                  dataSelecionada={dataSelecionada}
+                />
               </div>
             </Card>
-
-            )}
 
             <div className="dashboard-grid">
               {[
@@ -109,7 +233,7 @@ function Usuarios() {
                   title: "Força Muscular",
                   comp: <GraficoForca usuarioId={usuarioSelecionado.id} dataSelecionada={dataSelecionada} />,
                   size: "md",
-                  gridColumn: "span 12", // exemplo — ajuste conforme seu layout
+                  gridColumn: "span 12",
                 },
                 {
                   title: "Mobilidade",
@@ -138,7 +262,7 @@ function Usuarios() {
               ].map((item, i) => (
                 <motion.div
                   key={item.title}
-                  style={{ display: 'contents' }} // 👈 mantém o comportamento do grid intacto
+                  style={{ display: 'contents' }}
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 * i, duration: 0.4 }}
@@ -159,12 +283,10 @@ function Usuarios() {
       case 'Dados':
         return (
           <motion.div {...containerAnimacao}>
-            {usuarioSelecionado && (
-              <DadosUsuario
-                usuarioId={usuarioSelecionado.id}  // APENAS O ID
-                atualizarUsuario={atualizarUsuario}
-              />
-            )}
+            <DadosUsuario
+              usuarioId={usuarioSelecionado.id}
+              atualizarUsuario={atualizarUsuario}
+            />
           </motion.div>
         );
 
@@ -190,9 +312,52 @@ function Usuarios() {
         );
 
       default:
+        // Se não tem aba ativa mas tem usuário, mostra Dashboard
+        if (usuarioSelecionado && !abaAtiva) {
+          setAbaAtiva('Dashboard');
+          return null;
+        }
         return null;
     }
   };
+
+  if (carregando) {
+    return (
+      <div className="conteudo">
+        <div className="info-cards">
+          <Card title="Carregando..." size="md">
+            <p>Carregando dados do usuário...</p>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  if (erro) {
+    return (
+      <div className="conteudo">
+        <div className="info-cards">
+          <Card title="Erro" size="md">
+            <p style={{ color: 'red' }}>{erro}</p>
+            <button 
+              onClick={() => window.location.href = '/login'}
+              style={{
+                marginTop: '10px',
+                padding: '8px 16px',
+                backgroundColor: '#007bff',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer'
+              }}
+            >
+              Ir para Login
+            </button>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="conteudo">
@@ -200,6 +365,24 @@ function Usuarios() {
         <Card title="Busca de Usuários" size="md">
           <p>Selecione para ver os gráficos de desempenho.</p>
           <UserSearch onSelect={handleSelecionaUsuario} />
+          
+          {usuarioSelecionado && (
+            <div style={{ 
+              marginTop: '15px', 
+              padding: '10px', 
+              background: '#f5f5f5', 
+              borderRadius: '5px',
+              border: '1px solid #ddd'
+            }}>
+              <div style={{ alignItems: 'center' }}>
+                <div>
+                  <p style={{ margin: 0, fontWeight: 'bold', fontSize: '14px' }}>Usuário atual:</p>
+                  <p style={{ margin: '5px 0 0 0', fontSize: '16px' }}>{usuarioSelecionado.nome}</p>
+                </div>
+
+              </div>
+            </div>
+          )}
         </Card>
 
         {usuarioSelecionado && (

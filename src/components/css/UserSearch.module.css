@@ -12,7 +12,6 @@
   position: relative;
   display: flex;
   align-items: center;
-  margin-bottom: 0;
 }
 
 .searchIcon {
@@ -67,6 +66,7 @@
   top: 100%;
   left: 0;
   right: 0;
+  width: 100%;
   background: white;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
@@ -77,6 +77,7 @@
   margin-top: 4px;
   padding: 4px 0;
 }
+
 
 .dropdownItem {
   padding: 12px 16px;
@@ -133,8 +134,8 @@
   .dropdown {
     position: fixed;
     top: auto;
-    left: 16px;
-    right: 16px;
+    left: 0;
+    right: 0;
     max-height: 160px;
     z-index: 1001;
   }
@@ -166,3 +167,6 @@
 .dropdown::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
 }
+
+
+

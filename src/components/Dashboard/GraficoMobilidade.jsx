@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Line
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Line
 } from 'recharts';
 import { AuthContext } from '../../context/AuthContext';
 
@@ -82,20 +82,39 @@ function GraficoMobilidade({ usuarioId, dataSelecionada, token }) {
     );
   };
 
+  const LegendaGlobal = () => (
+    <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', marginBottom: '1rem' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+        <div style={{ width: 15, height: 15, background: '#282829' }}></div>
+        <span>Esquerdo</span>
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+        <div style={{ width: 15, height: 15, background: '#b7de42' }}></div>
+        <span>Direito</span>
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+        <div style={{ width: 15, height: 3, background: '#ff7300' }}></div>
+        <span>Assimetria</span>
+      </div>
+    </div>
+  );
+
   return (
-    <ResponsiveContainer width="100%" height={350}>
-      <BarChart data={dados} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="Movimento" />
-        <YAxis yAxisId="left" label={{ value: "Mobilidade (º)", angle: -90, position: "insideLeft" }} />
-        <YAxis yAxisId="right" orientation="right" label={{ value: "Assimetria (%)", angle: 90, position: "insideRight" }} />
-        <Tooltip content={<CustomTooltip />} />
-        <Legend />
-        <Bar yAxisId="left" dataKey="Esquerdo" fill="#282829" />
-        <Bar yAxisId="left" dataKey="Direito" fill="#b7de42" />
-        <Line yAxisId="right" type="monotone" dataKey="Assimetria" stroke="#ff7300" strokeWidth={2} dot={{ r: 4 }} activeDot={{ r: 6 }} />
-      </BarChart>
-    </ResponsiveContainer>
+    <>
+      <LegendaGlobal />
+      <ResponsiveContainer width="100%" height={350}>
+        <BarChart data={dados} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="Movimento" />
+          <YAxis yAxisId="left" label={{ value: "Mobilidade (º)", angle: -90, position: "insideLeft" }} />
+          <YAxis yAxisId="right" orientation="right" label={{ value: "Assimetria (%)", angle: 90, position: "insideRight" }} />
+          <Tooltip content={<CustomTooltip />} />
+          <Bar yAxisId="left" dataKey="Esquerdo" fill="#282829" />
+          <Bar yAxisId="left" dataKey="Direito" fill="#b7de42" />
+          <Line yAxisId="right" type="monotone" dataKey="Assimetria" stroke="#ff7300" strokeWidth={2} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+        </BarChart>
+      </ResponsiveContainer>
+    </>
   );
 }
 

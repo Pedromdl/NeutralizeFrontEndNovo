@@ -99,7 +99,7 @@ function GraficoEstabilidade({ usuarioId, dataSelecionada, token }) {
   };
 
   const LegendaGlobal = () => (
-    <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', marginBottom: '1rem' }}>
+    <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', marginBottom: '1rem' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
         <div style={{ width: 15, height: 15, background: '#282829' }}></div>
         <span>Esquerdo</span>
