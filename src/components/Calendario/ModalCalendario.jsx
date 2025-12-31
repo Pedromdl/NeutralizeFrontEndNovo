@@ -79,9 +79,13 @@ export default function EventoModal({
         ) : (
 
           <>
-            {/* 🔹 EDIÇÃO / CRIAÇÃO */}
-            <h3>{eventoSelecionado ? 'Editar Evento' : 'Criar Evento'}</h3>
-
+            {/* 🔹 HEADER DO MODAL */}
+            <div className="modal-header">
+              <button className="modal-close-btn" onClick={onClose}>
+                ✕
+              </button>
+            </div>
+            
             <div className="form-row">
               <label>Paciente</label>
               <UserSearch
@@ -174,7 +178,7 @@ export default function EventoModal({
               />
             </div>
 
-            <div className="form-row" style={{ marginBottom: '0px' }}> 
+            <div className="form-row" style={{ marginBottom: '0px' }}>
               <label>
                 <input
                   type="checkbox"
@@ -223,7 +227,7 @@ export default function EventoModal({
               </>
             )}
 
-            <div style={{ display: 'flex', justifyContent: 'right'}}>
+            <div style={{ display: 'flex', justifyContent: 'right' }}>
               <button className="btn btn-save" onClick={onSave}>
                 Salvar
               </button>

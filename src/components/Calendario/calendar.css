@@ -343,11 +343,9 @@
 
 }
 
-
 .form-row {
   display: flex;
   flex-direction: column;
-  margin-bottom: 15px;
 }
 
 .form-row label {
@@ -357,4 +355,25 @@
 .form-row.form-row-inline {
   flex-direction: row;
   gap: 15px;
+}
+
+.modal-header {
+  justify-content: right;
+  margin-bottom: 0px;
+  padding: 0.5rem;
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  color: #475569;
+  padding: 4px;
+  line-height: 1;
+}
+
+.modal-close-btn:hover {
+  color: #0f172a;
 }

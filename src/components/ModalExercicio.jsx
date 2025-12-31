@@ -222,6 +222,7 @@ function ModalExercicio({
 
     <button
       className="btn-remover"
+      style={{alignSelf: 'center', marginTop: '0', padding: '0.5 1'}}
       onClick={() => handleRemoverDaLista(index)}
       title="Remover exercício"
     >
