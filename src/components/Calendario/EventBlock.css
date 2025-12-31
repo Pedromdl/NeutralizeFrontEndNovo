@@ -1,0 +1,10 @@
+.event {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  background: #3b82f6;
+  color: white;
+  border-radius: 6px;
+  padding: 6px;
+  font-size: 12px;
+}

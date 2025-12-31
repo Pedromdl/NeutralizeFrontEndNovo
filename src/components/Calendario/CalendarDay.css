@@ -1,0 +1,22 @@
+.calendar {
+  display: flex;
+  height: 100vh;
+  font-family: system-ui, sans-serif;
+}
+
+.time-axis {
+  width: 60px;
+  border-right: 1px solid #eee;
+}
+
+.hour {
+  height: 60px; /* 1h = 60px */
+  font-size: 12px;
+  padding: 4px;
+  color: #666;
+}
+
+.day-column {
+  position: relative;
+  flex: 1;
+}

@@ -1,485 +1,314 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import Card from '../../components/Card';
-import LoadingSpinner from '../../components/LoadingSpinner'; // Importar o componente
-import "../../components/css/TreinoDetalhe.css";
-import { Edit, X, Check } from 'lucide-react';
-
-// 🔹 Modal para adicionar/editar exercício
-function ModalExercicio({ isOpen, onClose, exerciciosDisponiveis, onSalvar, exercicioAtual }) {
-  const [exercicioSelecionado, setExercicioSelecionado] = useState(exercicioAtual?.orientacao_detalhes || null);
-  const [observacao, setObservacao] = useState(exercicioAtual?.observacao || '');
-  const [series, setSeries] = useState(exercicioAtual?.series_planejadas || 1);
-  const [repeticoes, setRepeticoes] = useState(exercicioAtual?.repeticoes_planejadas || 10);
-  const [carga, setCarga] = useState(exercicioAtual?.carga_planejada || 0);
-
-  useEffect(() => {
-    if (exercicioAtual) {
-      setExercicioSelecionado(exercicioAtual.orientacao_detalhes);
-      setObservacao(exercicioAtual.observacao);
-      setSeries(exercicioAtual.series_planejadas);
-      setRepeticoes(exercicioAtual.repeticoes_planejadas);
-      setCarga(exercicioAtual.carga_planejada);
-    } else {
-      setExercicioSelecionado(null);
-      setObservacao('');
-      setSeries(1);
-      setRepeticoes(10);
-      setCarga(0);
-    }
-  }, [exercicioAtual]);
-
-  if (!isOpen) return null;
-
-  const handleSalvar = () => {
-    if (!exercicioSelecionado) return;
-
-    onSalvar({
-      id: exercicioAtual?.id,
-      orientacao: exercicioSelecionado.id,
-      series_planejadas: series,
-      repeticoes_planejadas: repeticoes,
-      carga_planejada: carga,
-      observacao,
-    });
-
-    onClose();
-  };
-
-  return (
-    <div className="modal-backdrop">
-      <div className="modal-conteudo">
-        <h2>{exercicioAtual ? 'Editar Exercício' : 'Adicionar Exercício'}</h2>
-        <div className="modal-form">
-          <label>
-            Exercício
-            <select
-              value={exercicioSelecionado?.id || ''}
-              onChange={(e) => {
-                const ex = exerciciosDisponiveis.find(ex => ex.id === Number(e.target.value));
-                setExercicioSelecionado(ex);
-              }}
-            >
-              <option value="">Selecione um exercício</option>
-              {exerciciosDisponiveis.map(ex => (
-                <option key={ex.id} value={ex.id}>{ex.titulo}</option>
-              ))}
-            </select>
-          </label>
-          <div className="modal-inputs">
-            <label>
-              Séries
-              <input type="number" value={series} onChange={e => setSeries(Number(e.target.value))} />
-            </label>
-            <label>
-              Repetições
-              <input type="number" value={repeticoes} onChange={e => setRepeticoes(Number(e.target.value))} />
-            </label>
-            <label>
-              Carga
-              <input type="number" value={carga} onChange={e => setCarga(Number(e.target.value))} />
-            </label>
-            <label>
-              Observação
-              <input type="text" value={observacao} onChange={e => setObservacao(e.target.value)} />
-            </label>
-          </div>
-        </div>
-        <div className="modal-botoes">
-          <button className="btn-salvar" onClick={handleSalvar}>Salvar</button>
-          <button className="btn-resetar" onClick={onClose}>Cancelar</button>
-        </div>
-      </div>
-    </div>
-  );
-}
+import { useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
+import axios from 'axios'
+import Card from '../../components/Card'
+import LoadingSpinner from '../../components/LoadingSpinner'
+import "../../components/css/TreinoDetalhe.css"
+import { Edit, X } from 'lucide-react'
+import ModalExercicio from '../../components/ModalExercicio'
 
 export default function TreinoDetalhe() {
-  const { id } = useParams();
-  const navigate = useNavigate();
+  const { id } = useParams()
 
-  const [secao, setSecao] = useState(null);
-  const [treinosSecao, setTreinosSecao] = useState([]);
-  const [treinoNome, setTreinoNome] = useState('');
-  const [exerciciosDisponiveis, setExerciciosDisponiveis] = useState([]);
-  const [modalAberto, setModalAberto] = useState(false);
-  const [treinoSelecionadoParaAdicionar, setTreinoSelecionadoParaAdicionar] = useState(null);
-  const [exercicioSelecionadoParaEditar, setExercicioSelecionadoParaEditar] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [secao, setSecao] = useState(null)
+  const [treinosSecao, setTreinosSecao] = useState([])
+  const [treinoNome, setTreinoNome] = useState('')
+  const [exerciciosDisponiveis, setExerciciosDisponiveis] = useState([])
 
-  // 🔹 Carrega dados iniciais
+  const [modalAberto, setModalAberto] = useState(false)
+  const [treinoSelecionado, setTreinoSelecionado] = useState(null)
+  const [exercicioSelecionadoParaEditar, setExercicioSelecionadoParaEditar] = useState(null)
+
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  // =======================
+  // 🔹 CARREGAR DADOS
+  // =======================
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setLoading(true);
-        setError(null);
+        setLoading(true)
 
-        // Carrega treinos da seção
         const resTreinos = await axios.get(
           `${import.meta.env.VITE_API_URL}/api/treinos/?secao=${id}`
-        );
-        const tituloSecao = resTreinos.data[0]?.secao_titulo || 'Seção';
+        )
 
-        const treinosComExpandido = resTreinos.data.map(t => ({
-          ...t,
-          expandido: false,
-          exerciciosDoTreino: t.exercicios || []
-        }));
+        const tituloSecao = resTreinos.data[0]?.secao_titulo || 'Seção'
 
-        setSecao({ id, titulo: tituloSecao });
-        setTreinosSecao(treinosComExpandido);
+        setTreinosSecao(
+          resTreinos.data.map(t => ({
+            ...t,
+            expandido: false,
+            exerciciosDoTreino: t.exercicios || []
+          }))
+        )
 
-        // Carrega exercícios disponíveis
-        const resExercicios = await axios.get(`${import.meta.env.VITE_API_URL}/api/bancoexercicios/`);
-        setExerciciosDisponiveis(resExercicios.data);
+        setSecao({ id, titulo: tituloSecao })
 
-        setLoading(false);
+        const resExercicios = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/bancoexercicios/`
+        )
+        setExerciciosDisponiveis(resExercicios.data)
+
+        setLoading(false)
       } catch (err) {
-        console.error('Erro ao carregar dados:', err);
-        setError('Erro ao carregar treinos. Por favor, tente novamente.');
-        setLoading(false);
+        console.error(err)
+        setError('Erro ao carregar treinos')
+        setLoading(false)
       }
-    };
-
-    fetchData();
-  }, [id]);
-
-  // 🔹 Criar treino
-  const criarTreino = async () => {
-    if (!treinoNome.trim()) return;
-    try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/treinos/`, {
-        secao: id,
-        nome: treinoNome
-      });
-      setTreinosSecao([...treinosSecao, { ...response.data, expandido: false, exerciciosDoTreino: [] }]);
-      setTreinoNome('');
-    } catch (err) {
-      console.error(err);
-      alert('Erro ao criar treino');
     }
-  };
 
+    fetchData()
+  }, [id])
+
+  // =======================
+  // 🔹 CRIAR TREINO
+  // =======================
+  const criarTreino = async () => {
+    if (!treinoNome.trim()) return
+
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/treinos/`,
+        { secao: id, nome: treinoNome }
+      )
+
+      setTreinosSecao(prev => [
+        ...prev,
+        { ...res.data, expandido: false, exerciciosDoTreino: [] }
+      ])
+
+      setTreinoNome('')
+    } catch (err) {
+      console.error(err)
+      alert('Erro ao criar treino')
+    }
+  }
+
+  // =======================
+  // 🔹 DUPLICAR TREINO
+  // =======================
   const duplicarTreino = async (treino) => {
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/treinos/${treino.id}/duplicar/`
-      );
+      )
 
-      const novoTreino = {
-        ...res.data,
-        expandido: false,
-        exerciciosDoTreino: res.data.exercicios || []
-      };
-
-      setTreinosSecao(prev => [...prev, novoTreino]);
-    } catch (err) {
-      console.error("Erro ao duplicar treino:", err);
-      alert('Erro ao duplicar treino');
-    }
-  };
-
-  // 🔹 Abrir modal adicionar
-  const abrirModalAdicionar = (treino) => {
-    setTreinoSelecionadoParaAdicionar(treino);
-    setExercicioSelecionadoParaEditar(null);
-    setModalAberto(true);
-  };
-
-  // 🔹 Abrir modal editar
-  const abrirModalEditar = (exercicio, treino) => {
-    setTreinoSelecionadoParaAdicionar(treino);
-    setExercicioSelecionadoParaEditar(exercicio);
-    setModalAberto(true);
-  };
-
-  // 🔹 Salvar exercício
-  const salvarExercicio = async (ex) => {
-    try {
-      if (ex.id) {
-        const res = await axios.put(
-          `${import.meta.env.VITE_API_URL}/api/exerciciosprescritos/${ex.id}/`,
-          {
-            treino: treinoSelecionadoParaAdicionar.id,
-            orientacao: ex.orientacao,
-            series_planejadas: ex.series_planejadas,
-            repeticoes_planejadas: ex.repeticoes_planejadas,
-            carga_planejada: ex.carga_planejada,
-            observacao: ex.observacao,
-          }
-        );
-
-        setTreinosSecao(treinosSecao.map(t => {
-          if (t.id === treinoSelecionadoParaAdicionar.id) {
-            return {
-              ...t,
-              exerciciosDoTreino: t.exerciciosDoTreino.map(e =>
-                e.id === ex.id ? res.data : e
-              ),
-            };
-          }
-          return t;
-        }));
-      } else {
-        const res = await axios.post(
-          `${import.meta.env.VITE_API_URL}/api/exerciciosprescritos/`,
-          { treino: treinoSelecionadoParaAdicionar.id, ...ex }
-        );
-
-        setTreinosSecao(treinosSecao.map(t => {
-          if (t.id === treinoSelecionadoParaAdicionar.id) {
-            return {
-              ...t,
-              exerciciosDoTreino: [...t.exerciciosDoTreino, res.data],
-            };
-          }
-          return t;
-        }));
-      }
-    } catch (err) {
-      console.error(err);
-      alert('Erro ao salvar exercício');
-    }
-  };
-
-  // 🔹 Excluir exercício
-  const excluirExercicio = async (exercicioId, treinoId) => {
-    if (!window.confirm('Tem certeza que deseja excluir este exercício?')) return;
-    
-    try {
-      await axios.delete(`${import.meta.env.VITE_API_URL}/api/exerciciosprescritos/${exercicioId}/`);
-      setTreinosSecao(treinosSecao.map(t => {
-        if (t.id === treinoId) {
-          return {
-            ...t,
-            exerciciosDoTreino: t.exerciciosDoTreino.filter(e => e.id !== exercicioId),
-          };
+      setTreinosSecao(prev => [
+        ...prev,
+        {
+          ...res.data,
+          expandido: false,
+          exerciciosDoTreino: res.data.exercicios || []
         }
-        return t;
-      }));
+      ])
     } catch (err) {
-      console.error(err);
-      alert('Erro ao excluir exercício');
+      console.error(err)
+      alert('Erro ao duplicar treino')
     }
-  };
-
-  const handleRetry = () => {
-    window.location.reload();
-  };
-
-  const handleBack = () => {
-    navigate(-1);
-  };
-
-  // Estado de loading
-  if (loading) {
-    return (
-      <LoadingSpinner
-        message="Carregando treinos..."
-        size="medium"
-      />
-    );
   }
 
-  // Estado de erro
+  // =======================
+  // 🔹 MODAL
+  // =======================
+  const abrirModalAdicionar = (treino) => {
+    setTreinoSelecionado(treino)
+    setExercicioSelecionadoParaEditar(null)
+    setModalAberto(true)
+  }
+
+  const abrirModalEditar = (exercicio, treino) => {
+    setTreinoSelecionado(treino)
+    setExercicioSelecionadoParaEditar(exercicio)
+    setModalAberto(true)
+  }
+
+  // =======================
+  // 🔹 ATUALIZAR ESTADO APÓS SALVAR
+  // ✔️ suporta edição OU batch
+  // =======================
+  const atualizarEstadoAposSalvar = (resultado) => {
+    const exerciciosSalvos = Array.isArray(resultado)
+      ? resultado
+      : [resultado]
+
+    setTreinosSecao(prev =>
+      prev.map(t => {
+        if (t.id !== treinoSelecionado.id) return t
+
+        // edição individual
+        if (exercicioSelecionadoParaEditar) {
+          return {
+            ...t,
+            exerciciosDoTreino: t.exerciciosDoTreino.map(e =>
+              e.id === exerciciosSalvos[0].id ? exerciciosSalvos[0] : e
+            )
+          }
+        }
+
+        // adição em lote
+        return {
+          ...t,
+          exerciciosDoTreino: [
+            ...t.exerciciosDoTreino,
+            ...exerciciosSalvos
+          ]
+        }
+      })
+    )
+  }
+
+  // =======================
+  // 🔹 EXCLUIR EXERCÍCIO
+  // =======================
+  const excluirExercicio = async (exercicioId, treinoId) => {
+    if (!window.confirm('Deseja excluir este exercício?')) return
+
+    try {
+      await axios.delete(
+        `${import.meta.env.VITE_API_URL}/api/exerciciosprescritos/${exercicioId}/`
+      )
+
+      setTreinosSecao(prev =>
+        prev.map(t =>
+          t.id === treinoId
+            ? {
+              ...t,
+              exerciciosDoTreino: t.exerciciosDoTreino.filter(
+                e => e.id !== exercicioId
+              )
+            }
+            : t
+        )
+      )
+    } catch (err) {
+      console.error(err)
+      alert('Erro ao excluir exercício')
+    }
+  }
+
+  // =======================
+  // 🔹 ESTADOS
+  // =======================
+  if (loading) {
+    return <LoadingSpinner message="Carregando treinos..." />
+  }
+
   if (error) {
     return (
       <LoadingSpinner
         message={error}
-        showTimeout={true}
-        timeoutMessage={error}
-        onRetry={handleRetry}
-        size="medium"
+        showTimeout
+        onRetry={() => window.location.reload()}
       />
-    );
+    )
   }
 
-  // Seção não encontrada
   if (!secao) {
-    return (
-      <div style={{ 
-        display: 'flex', 
-        flexDirection: 'column',
-        alignItems: 'center', 
-        justifyContent: 'center',
-        height: '100vh',
-        backgroundColor: '#f5f5f5',
-        padding: '20px'
-      }}>
-        <div style={{ 
-          textAlign: 'center', 
-          backgroundColor: 'white',
-          padding: '40px',
-          borderRadius: '12px',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-          maxWidth: '400px',
-          width: '100%'
-        }}>
-          <div style={{ fontSize: '48px', marginBottom: '16px' }}>📂</div>
-          <h3 style={{ margin: '0 0 12px 0', color: '#333' }}>
-            Seção não encontrada
-          </h3>
-          <p style={{ color: '#666', marginBottom: '24px' }}>
-            A seção que você está procurando não existe ou foi removida.
-          </p>
-          <button
-            onClick={handleBack}
-            style={{
-              padding: '12px 24px',
-              backgroundColor: '#333',
-              color: 'white',
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: '500',
-              width: '100%'
-            }}
-          >
-            ← Voltar
-          </button>
-        </div>
-      </div>
-    );
+    return <p>Seção não encontrada</p>
   }
 
+  // =======================
+  // 🔹 RENDER
+  // =======================
   return (
     <div className="conteudo" style={{ gap: '20px' }}>
       <Card title={secao.titulo} size="al">
-        <div className="user-search">
-          <input
-            className="input"
-            type="text"
-            value={treinoNome}
-            onChange={(e) => setTreinoNome(e.target.value)}
-            placeholder="Nome do treino"
-          />
-        </div>
+        <input
+          className="input"
+          value={treinoNome}
+          onChange={e => setTreinoNome(e.target.value)}
+          placeholder="Nome do treino"
+        />
         <button onClick={criarTreino}>Salvar Treino</button>
       </Card>
 
       {treinosSecao.map(t => (
-        <Card 
-          key={t.id} 
-          title={
-            <div className="treino-titulo-container">
-              {t.editandoNome ? (
-                <input
-                  type="text"
-                  value={t.nome}
-                  autoFocus
-                  className="treino-titulo-input"
-                  onChange={e => setTreinosSecao(
-                    treinosSecao.map(tr => tr.id === t.id ? { ...tr, nome: e.target.value } : tr)
-                  )}
-                  onBlur={async () => {
-                    try {
-                      const res = await axios.patch(
-                        `${import.meta.env.VITE_API_URL}/api/treinos/${t.id}/`,
-                        { nome: t.nome }
-                      );
-                      setTreinosSecao(treinosSecao.map(tr => tr.id === t.id ? { ...tr, nome: res.data.nome, editandoNome: false } : tr));
-                    } catch (err) {
-                      console.error(err);
-                    }
-                  }}
-                  onKeyDown={e => { if (e.key === 'Enter') e.target.blur(); }}
-                />
-              ) : (
-                <>
-                  <span className="treino-titulo-texto">{t.nome || 'Treino sem nome'}</span>
-                  <Edit 
-                    size={18} 
-                    className="treino-titulo-icone"
-                    onClick={() => setTreinosSecao(
-                      treinosSecao.map(tr => tr.id === t.id ? { ...tr, editandoNome: true } : tr)
-                    )}
-                  />
-                </>
-              )}
-            </div>
-          } 
-          size="al"
-        >
-          {/* =================== AQUI MANTÉM O CONTEÚDO ORIGINAL =================== */}
+        <Card key={t.id} title={t.nome || 'Treino sem nome'} size="al">
           <div className="treino-header-botoes">
-            <button onClick={() =>
-              setTreinosSecao(
-                treinosSecao.map(tr => tr.id === t.id ? { ...tr, expandido: !tr.expandido } : tr)
-              )
-            }>
+            <button
+              onClick={() =>
+                setTreinosSecao(prev =>
+                  prev.map(tr =>
+                    tr.id === t.id
+                      ? { ...tr, expandido: !tr.expandido }
+                      : tr
+                  )
+                )
+              }
+            >
               {t.expandido ? '▼' : '►'}
             </button>
+
             <button onClick={() => duplicarTreino(t)}>Duplicar</button>
           </div>
+{t.expandido && (
+  <>
+    {t.exerciciosDoTreino.length > 0 ? (
+        <div class="tabela-exercicios-wrapper">
 
-          {t.expandido && (
-            <div>
-              {t.exerciciosDoTreino.length > 0 ? (
-                <div className="tabela-exercicios-wrapper">
-                  <table className="tabela-exercicios">
-                    <thead>
-                      <tr>
-                        <th>Exercício</th>
-                        <th>Séries</th>
-                        <th>Repetições</th>
-                        <th>Carga</th>
-                        <th>Observação</th>
-                        <th>Ações</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {t.exerciciosDoTreino.map(ex => (
-                        <tr key={ex.id}>
-                          <td>{ex.orientacao_detalhes?.titulo}</td>
-                          <td>{ex.series_planejadas}</td>
-                          <td>{ex.repeticoes_planejadas}</td>
-                          <td>{ex.carga_planejada}</td>
-                          <td>{ex.observacao || '-'}</td>
-                          <td>
-                            <button 
-                              onClick={() => abrirModalEditar(ex, t)} 
-                              style={{ background: 'none', border: 'none', cursor: 'pointer', marginRight: '0.5rem' }}
-                            >
-                              <Edit size={18} />
-                            </button>
-                            <button 
-                              onClick={() => excluirExercicio(ex.id, t.id)} 
-                              style={{ background: 'none', border: 'none', cursor: 'pointer' }}
-                            >
-                              <X size={18} />
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              ) : (
-                <p>Nenhum exercício adicionado ainda.</p>
-              )}
+      <div className="tabela-exercicios">
 
-              <button 
-                className="btn-adicionar-exercicio"
-                onClick={() => abrirModalAdicionar(t)}
-              >
-                Adicionar Exercício
+        {/* Cabeçalho */}
+        <div className="tabela-header">
+          <div>Exercício</div>
+          <div>Séries</div>
+          <div>Reps</div>
+          <div>Carga</div>
+          <div>Obs.</div>
+          <div>Ações</div>
+        </div>
+
+        {/* Linhas */}
+        {t.exerciciosDoTreino.map(ex => (
+          <div key={ex.id} className="tabela-linha">
+            <div>{ex.orientacao_detalhes?.titulo}</div>
+            <div>{ex.series_planejadas}</div>
+            <div>{ex.repeticoes_planejadas}</div>
+            <div>{ex.carga_planejada}</div>
+            <div style={{padding: '15px', boxSizing: 'border-box'}}>{ex.observacao || '-'}</div>
+
+            <div className="tabela-acoes">
+              <button onClick={() => abrirModalEditar(ex, t)}>
+                <Edit size={18} />
+              </button>
+
+              <button onClick={() => excluirExercicio(ex.id, t.id)}>
+                <X size={18} />
               </button>
             </div>
-          )}
-          {/* ======================================================================= */}
+          </div>
+          
+        ))}
+      </div>
+      </div>
+    ) : (
+      <p style={{ opacity: 0.6 }}>
+        Nenhum exercício adicionado.
+      </p>
+    )}
+
+    <button
+      onClick={() => abrirModalAdicionar(t)}
+      style={{ marginTop: '1rem' }}
+    >
+      Adicionar Exercício
+    </button>
+  </>
+)}
+
         </Card>
       ))}
 
       <ModalExercicio
         isOpen={modalAberto}
         onClose={() => setModalAberto(false)}
+        treinoId={treinoSelecionado?.id}
         exerciciosDisponiveis={exerciciosDisponiveis}
-        onSalvar={salvarExercicio}
         exercicioAtual={exercicioSelecionadoParaEditar}
+        onSuccess={atualizarEstadoAposSalvar}
       />
     </div>
-  );
+  )
 }

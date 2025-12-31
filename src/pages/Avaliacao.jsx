@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import UserSearch from '../components/UserSearch';
+import UserSearch from '../components/UserSearch.jsx';
 
 import FormMobilidade from '../components/Avaliacao/FormMobilidade.jsx';
 import FormForca from '../components/Avaliacao/FormForca.jsx';

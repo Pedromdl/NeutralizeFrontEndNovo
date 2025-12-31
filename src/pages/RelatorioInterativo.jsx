@@ -10,7 +10,7 @@ import GraficoMobilidade from '../components/Dashboard/GraficoMobilidade';
 import GraficoEstabilidade from '../components/Dashboard/GraficoEstabilidade';
 import GraficoTesteDor from '../components/Dashboard/GraficoTestesDor';
 import GraficoTesteFuncao from '../components/Dashboard/GraficoTestesFuncao';
-import DadosUsuario from '../pages/Usuario/DadosUsuario'
+import DadosUsuario from './Usuario/DadosUsuario'
 import logo from '../images/logo3.png';
 
 const containerAnimacao = {

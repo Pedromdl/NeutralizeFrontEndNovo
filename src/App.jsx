@@ -1,64 +1,65 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 
-import Sidebar from './components/Menus/Sidebar';
-import PacienteSidebar from './components/Menus/PacienteSidebar';
-import BottomMenu from './components/Menus/BottomMenu';
-import PacienteBottomMenu from './components/Menus/PacienteBottomMenu';
-import PrivateRoute from './components/PrivateRoute';
+import Sidebar from './components/Menus/Sidebar.jsx';
+import PacienteSidebar from './components/Menus/PacienteSidebar.jsx';
+import BottomMenu from './components/Menus/BottomMenu.jsx';
+import PacienteBottomMenu from './components/Menus/PacienteBottomMenu.jsx';
+import PrivateRoute from './components/PrivateRoute.jsx';
 import ConsentBanner from './components/ConsentBanner.jsx';
 import './App.css';
 
 // Import do Provider da Assinatura
-import { AssinaturaProvider } from './context/AssinaturaContext';
+import { AssinaturaProvider } from './context/AssinaturaContext.jsx';
 import ProtegidoPorAssinatura from './components/ProtegidoPorAssinatura.jsx';
 
 // Pages
-import Home from './pages/Home';
-import Login from './pages/Login';
-import Register from './pages/Register';
+import Home from './pages/Home.jsx';
+import Login from './pages/Login.jsx';
+import Register from './pages/Register.jsx';
 import RegistrarClinica from './pages/RegistrarClinica.jsx';
-import Profile from './pages/Profile';
-import Configuracoes from './pages/Configuracoes';
+import Profile from './pages/Profile.jsx';
+import Configuracoes from './pages/Configuracoes.jsx';
 
-import Usuarios from './pages/Usuario/Usuarios';
-import BancoUsuarios from './pages/Usuario/BancoUsuarios'
-import Avaliacao from './pages/Avaliacao';
-import PreAvaliacoes from './pages/Configuracoes/PreAvaliacoes';
-import PreTestes from './pages/Configuracoes/PreTestes';
-import Agendamentos from './pages/Calendario/Agendamentos';
-import Cadastro from './pages/Cadastro';
-import Orientacao from './pages/Usuario/Orientacao';
-import TreinoDetalhe from './pages/Usuario/TreinoDetalhe';
-import PastaDetalhe from './pages/Usuario/PastaDetalhe';
-import SecaoDetalhe from './pages/Usuario/SecaoDetalhe';
-import AvaliacaoDetalhe from './pages/Usuario/AvaliacaoDetalhe';
-import SessoesDetalhes from './pages/Usuario/SessoesDetalhes';
-import SessaoNova from './pages/Usuario/SessaoNova';
-import BancoExercicios from './pages/Usuario/BancoExercicios';
-import DemoBody from './pages/DemoBody';
-import TreinoInterativo from "./components/TreinoInterativo";
-import TreinosExecutadosAdmin from './pages/Usuario/TreinosExecutadosAdmin';
+import Usuarios from './pages/Usuario/Usuarios.jsx';
+import BancoUsuarios from './pages/Usuario/BancoUsuarios.jsx'
+import Avaliacao from './pages/Avaliacao.jsx';
+import PreAvaliacoes from './pages/Configuracoes/PreAvaliacoes.jsx';
+import PreTestes from './pages/Configuracoes/PreTestes.jsx';
+import Agendamentos from './pages/Calendario/Agendamentos.jsx';
+import Cadastro from './pages/Cadastro.jsx';
+import Orientacao from './pages/Usuario/Orientacao.jsx';
+import TreinoDetalhe from './pages/Usuario/TreinoDetalhe.jsx';
+import PastaDetalhe from './pages/Usuario/PastaDetalhe.jsx';
+import SecaoDetalhe from './pages/Usuario/SecaoDetalhe.jsx';
+import AvaliacaoDetalhe from './pages/Usuario/AvaliacaoDetalhe.jsx';
+import SessoesDetalhes from './pages/Usuario/SessoesDetalhes.jsx';
+import SessaoNova from './pages/Usuario/SessaoNova.jsx';
+import BancoExercicios from './pages/Usuario/BancoExercicios.jsx';
+import DemoBody from './pages/DemoBody.jsx';
+import TreinoInterativo from "./components/TreinoInterativo.jsx";
+import TreinosExecutadosAdmin from './pages/Usuario/TreinosExecutadosAdmin.jsx';
 
-import OrientacoesPaciente from './pages/Pacientes/OrientacoesPacientes';
-import TreinoInterativoPacientes from './pages/Pacientes/TreinoInterativoPacientes';
-import PainelInicialPaciente from "./pages/Pacientes/PainelInicialPacientes";
-import TreinosSecaoPaciente from './pages/Pacientes/TreinoSecaoPaciente';
-import HistoricodeTreinos from './pages/Pacientes/HistoricodeTreinos';
-import Financeiro from './pages/Financeiro';
-import Teste from './pages/Teste';
-import RelatorioInterativo from './pages/RelatorioInterativo';
-import Integracoes from './pages/Integracoes/Integracoes';
-import LiberacaoMiofascial from './pages/LiberacaoMiofascial';
+import OrientacoesPaciente from './pages/Pacientes/OrientacoesPacientes.jsx';
+import TreinoInterativoPacientes from './pages/Pacientes/TreinoInterativoPacientes.jsx';
+import PainelInicialPaciente from "./pages/Pacientes/PainelInicialPacientes.jsx";
+import TreinosSecaoPaciente from './pages/Pacientes/TreinoSecaoPaciente.jsx';
+import HistoricodeTreinos from './pages/Pacientes/HistoricodeTreinos.jsx';
+import Financeiro from './pages/Financeiro.jsx';
+import Teste from './pages/Teste.jsx';
+import RelatorioInterativo from './pages/RelatorioInterativo.jsx';
+import Integracoes from './pages/Integracoes/Integracoes.jsx';
+import LiberacaoMiofascial from './pages/LiberacaoMiofascial.jsx';
 
-import AssinaturaInfo from '../src/pages/AssinaturaInfo';
-import TermosUso from "./pages/TermosUso";
-import PoliticaPrivacidade from './pages/PoliticaPrivacidade';
+import AssinaturaInfo from './pages/AssinaturaInfo.jsx';
+import TermosUso from "./pages/TermosUso.jsx";
+import PoliticaPrivacidade from './pages/PoliticaPrivacidade.jsx';
 
-import ListaPlanos from '../src/components/ListaPlanos';
-import AssinaturaDetalhes from '../src/components/AssinaturaDetalhes';
+import ListaPlanos from './components/ListaPlanos.jsx';
+import AssinaturaDetalhes from './components/AssinaturaDetalhes.jsx';
 
-import StravaCallback from "./components/StravaCallback";
+import StravaCallback from "./components/StravaCallback.jsx";
+import AgendaTeste from "../src/pages/AgendaTeste.jsx"
 
 
 function LayoutComSidebar({ children }) {
@@ -171,6 +172,14 @@ function AppRoutes() {
               element={
                 <ProtegidoPorAssinatura>
                   <Agendamentos />
+                </ProtegidoPorAssinatura>
+              }
+            />
+            <Route
+              path="/calendario"
+              element={
+                <ProtegidoPorAssinatura>
+                  <AgendaTeste />
                 </ProtegidoPorAssinatura>
               }
             />

@@ -5,8 +5,8 @@ import { motion, useAnimation, useInView, AnimatePresence } from "framer-motion"
 
 import InstagramFeed from "../../components/InstaFeed";
 import styles from "./Teste.module.css";
-import Logo from "../../src/images/logoletrapreta.png";
-import LogoHero from "../../src/images/logobranca.png";
+import Logo from "../images/logoletrapreta.png";
+import LogoHero from "../images/logobranca.png";
 
 
 

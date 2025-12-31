@@ -316,41 +316,6 @@ button.black:hover {
   font-style: italic;
 }
 
-/* TABELAS */
-.tabela-exercicios-wrapper {
-  overflow-x: auto;
-  margin-bottom: 1rem;
-}
-
-.tabela-exercicios {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
-  background-color: #fff;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.tabela-exercicios th,
-.tabela-exercicios td {
-  text-align: center;
-  padding: 0.75rem;
-  border-bottom: 1px solid #eee;
-}
-
-.tabela-exercicios th {
-  background-color: #f5f5f5;
-  font-weight: 600;
-  color: #333;
-}
-
-.tabela-exercicios tr:hover {
-  background-color: #f9f9f9;
-}
-
-.tabela-exercicios td {
-  color: #444;
-}
 
 /* MODAIS */
 .modal-backdrop {

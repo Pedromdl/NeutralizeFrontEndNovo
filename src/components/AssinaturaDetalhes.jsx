@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import CheckoutModal from '../../src/components/CheckoutModal'; // Ajuste o caminho conforme sua estrutura
+import CheckoutModal from './CheckoutModal'; // Ajuste o caminho conforme sua estrutura
 import './AssinaturaDetalhes.css';
 
 const AssinaturaDetalhes = () => {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import styles from '../components/css/CheckoutModal.module.css';
+import styles from './css/CheckoutModal.module.css';
 
 const CheckoutModal = ({ assinaturaId, plano, onClose, onSuccess }) => {
   const [assinaturaAtual, setAssinaturaAtual] = useState(null);

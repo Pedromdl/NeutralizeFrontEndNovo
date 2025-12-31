@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import LoadingSpinner from '../components/LoadingSpinner'; // Importação do componente
+import LoadingSpinner from './LoadingSpinner'; // Importação do componente
 import './PrivateRoute.css'; // Mantenha se tiver estilos específicos
 
 const LOADING_TIMEOUT = 9000; // 5 segundos de timeout

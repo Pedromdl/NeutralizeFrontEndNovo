@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Plus, Trash2, Edit3, Save, X, Filter } from 'lucide-react';
-import Card from '../../../src/components/Card';
+import Card from '../../components/Card';
 import './PreTestes.css';
 
 export default function TestesPrePadronizados() {
