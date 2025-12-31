@@ -58,7 +58,6 @@
 .tabela-exercicios {
   display: flex;
   flex-direction: column;
-  gap: 6px;
   min-width: 800px; /* força scroll horizontal no mobile */
 }
 
@@ -77,8 +76,7 @@
 }
 
 .tabela-linha {
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
+  border-bottom: 0.5px solid #e5e7eb;
 }
 
 /* Conteúdo da observação */
