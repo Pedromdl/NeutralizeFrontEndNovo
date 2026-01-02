@@ -70,7 +70,7 @@ export default function CalendarWeek({ events, setEvents, date, updateEvento, on
           return (
             <div
               key={index}
-              className="day-column"
+              className={`day-column ${isToday ? 'today-column' : ''}`}
               onDragOver={e=>e.preventDefault()}
               onClick={e=>{
                 if(e.target===e.currentTarget){

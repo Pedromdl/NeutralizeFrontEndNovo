@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useAgenda } from '../hooks/useAgenda';
 
-import CalendarDay from '../../src/components/Calendario/CalendarDay';
-import CalendarWeek from '../../src/components/Calendario/CalendarWeek';
-import CalendarMonth from '../../src/components/Calendario/CalendarMonth';
+import CalendarDay from '../components/Calendario/CalendarDay';
+import CalendarWeek from '../components/Calendario/CalendarWeek';
+import CalendarMonth from '../components/Calendario/CalendarMonth';
 import ModalCalendario from '../components/Calendario/ModalCalendario';
 
 import '../components/Calendario/calendar.css';

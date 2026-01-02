@@ -15,7 +15,7 @@ export default function EventoModal({
   if (!aberto) return null;
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay" style={{boxSizing: 'border-box'}} onClick={onClose}>
       <div className="google-calendar-modal" onClick={(e) => e.stopPropagation()}>
 
         {/* 🔹 VISUALIZAÇÃO */}

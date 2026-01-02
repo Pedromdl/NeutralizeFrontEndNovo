@@ -90,6 +90,10 @@
   color: #fff;
 }
 
+.day-column.today-column {
+  background-color: #edecea; /* azul bem claro */
+}
+
 
 .day-name {
   font-size: 12px;
@@ -121,6 +125,7 @@
   margin-bottom: 4px;
 }
 
+
 .month-event {
   background: #282829;
   color: white;
@@ -128,6 +133,7 @@
   padding: 2px 4px;
   margin-bottom: 2px;
 }
+
 
 .day-header-top {
   padding: 12px;

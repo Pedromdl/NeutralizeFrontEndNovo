@@ -59,7 +59,7 @@ import ListaPlanos from './components/ListaPlanos.jsx';
 import AssinaturaDetalhes from './components/AssinaturaDetalhes.jsx';
 
 import StravaCallback from "./components/StravaCallback.jsx";
-import AgendaTeste from "../src/pages/AgendaTeste.jsx"
+import Agenda from "../src/pages/Agenda.jsx"
 
 
 function LayoutComSidebar({ children }) {
@@ -179,7 +179,7 @@ function AppRoutes() {
               path="/calendario"
               element={
                 <ProtegidoPorAssinatura>
-                  <AgendaTeste />
+                  <Agenda />
                 </ProtegidoPorAssinatura>
               }
             />
