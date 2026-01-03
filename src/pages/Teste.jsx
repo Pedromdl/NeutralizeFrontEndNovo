@@ -213,15 +213,18 @@ export default function Home() {
           </motion.p>
 
           <div className={styles.heroButtons}>
-            <button
+            <motion.button 
+              whileHover={{ scale: 1.05 }}
               className={styles.primaryButton}
               onClick={() => window.open("https://wa.me/554831974163", "_blank")}
             >
               Agendar avaliação
-            </button>
-            <button className={styles.secondaryButton} onClick={scrollToAvaliacao}>
+            </motion.button>
+            <motion.button 
+            whileHover={{ scale: 1.05 }}
+            className={styles.secondaryButton} onClick={scrollToAvaliacao}>
               Entenda se esse modelo faz sentido para você
-            </button>
+            </motion.button>
           </div>
         </div>
       </section>
