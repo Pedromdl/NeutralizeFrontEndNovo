@@ -8,6 +8,9 @@ import styles from "./Teste.module.css";
 import Logo from "../images/logoletrapreta.png";
 import LogoHero from "../images/logobranca.png";
 
+import { enviarEventoGA } from "../useGA";
+
+
 
 
 
@@ -51,15 +54,15 @@ export default function HeroSection() {
   const faqData = [
     {
       question: "Quanto tempo dura cada sessão?",
-      answer: "Cada sessão tem duração média de 45 a 60 minutos, dependendo da técnica aplicada e das necessidades individuais do paciente."
+      answer: "Cada sessão tem duração média de 50 a 60 minutos, dependendo da técnica aplicada e das necessidades individuais do paciente."
     },
     {
       question: "O tratamento é doloroso?",
-      answer: "Não, nossos métodos são não-invasivos e praticamente indolores. Alguns pacientes podem sentir leve desconforto que desaparece rapidamente."
+      answer: "Alguns pacientes podem sentir algum desconforto durante a técnica, mas que desaparece rapidamente. É normal e nunca será uma dor excruciante"
     },
     {
       question: "Quantas sessões são necessárias?",
-      answer: "O número de sessões varia conforme a condição. Em média, recomendamos entre 5 a 10 sessões para resultados significativos."
+      answer: "O número de sessões varia conforme a condição. Em média, recomendamos entre 5 a 6 sessões para resultados significativos."
     },
     {
       question: "Há alguma contraindicação?",
@@ -71,7 +74,7 @@ export default function HeroSection() {
     },
     {
       question: "Como agendar uma consulta?",
-      answer: "Entre em contato pelo WhatsApp (XX) XXXX-XXXX, pelo nosso site ou através das redes sociais."
+      answer: "Entre em contato pelo WhatsApp (48) 3197-4163, pelo nosso site ou através das redes sociais."
     }
   ];
 
@@ -175,7 +178,12 @@ export default function HeroSection() {
   const socialLinks = [
     { icon: FaFacebook, label: 'Facebook', url: '#' },
     { icon: FaInstagram, label: 'Instagram', url: 'https://www.instagram.com/neutralize.ft' },
-    { icon: FaWhatsapp, label: 'WhatsApp', url: 'https://wa.me/554831974163' },
+    {
+      icon: FaWhatsapp,
+      label: 'WhatsApp',
+      url: 'https://wa.me/554831974163',
+      isWhatsapp: true
+    },
   ];
 
   // Função para alternar FAQ
@@ -249,7 +257,7 @@ export default function HeroSection() {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.8 }}
             >
-              Atendimento individual para quem sente dor, 
+              Atendimento individual para quem sente dor,
               sobrecarga muscular ou busca recuperação esportiva com confiança.
             </motion.p>
 
@@ -263,6 +271,14 @@ export default function HeroSection() {
                 className={styles.primary}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={() => {
+                  enviarEventoGA("click_whatsapp_liberacao", {
+                    origem: "hero_agendar_agora",
+                    pagina: "home"
+                  });
+
+                  window.open("https://wa.me/554831974163", "_blank");
+                }}
               >
                 Agendar agora
               </motion.button>
@@ -768,17 +784,23 @@ export default function HeroSection() {
 
                 return (
                   <motion.a
-                    key={index}
                     href={social.url}
                     className={styles.socialLink}
                     aria-label={social.label}
                     target="_blank"
                     rel="noopener noreferrer"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
+                    onClick={() => {
+                      if (social.isWhatsapp) {
+                        enviarEventoGA("click_whatsapp_liberacao", {
+                          origem: "footer",
+                          pagina: "home"
+                        });
+                      }
+                    }}
                   >
-                    <Icon size={20} /> {/* Componente React, não classe CSS */}
+                    <Icon size={20} />
                   </motion.a>
+
                 );
               })}
             </div>

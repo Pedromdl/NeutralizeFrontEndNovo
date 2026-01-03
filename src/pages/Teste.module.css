@@ -574,7 +574,6 @@ body {
 .companyInfo h3 {
   font-size: 1.2rem;
   font-weight: 700;
-  color: #2c3e50;
 }
 
 .companyInfo p {
@@ -594,7 +593,6 @@ body {
 .footerColumn h4 {
   font-size: 1.2rem;
   font-weight: 600;
-  color: #2c3e50;
   margin-bottom: 20px;
   padding-bottom: 10px;
   border-bottom: 1px solid #eee;
@@ -612,7 +610,7 @@ body {
 }
 
 .contactItem i {
-  color: #3498db;
+  color: #282829;
   margin-top: 3px;
   font-size: 1.1rem;
   min-width: 20px;
@@ -759,7 +757,6 @@ body {
   font-weight: 300;
   text-align: center;
   margin-bottom: 1rem;
-  color: #2c3e50;
 }
 
 .faqSubtitle {
@@ -797,7 +794,6 @@ body {
 .faqQuestion h3 {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #2c3e50;
   margin: 0;
   flex: 1;
 }
@@ -806,11 +802,11 @@ body {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #f0f7ff;
+  background: #f9f9f9;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #3498db;
+  color: #b7de42;
   font-size: 1.5rem;
   font-weight: 300;
   flex-shrink: 0;
@@ -833,8 +829,8 @@ body {
 /* Estado ativo/expandido */
 .faqCard.active .faqIcon {
   transform: rotate(45deg);
-  background: #3498db;
-  color: white;
+  background: #b7de42;
+  color: #f9f9f9;
 }
 
 .faqCard.active .faqAnswer {
@@ -864,7 +860,7 @@ body {
 }
 
 .faqCard:hover {
-  border-color: #3498db;
+  border-color: #b7de42;
 }
 
 .input input::placeholder {
