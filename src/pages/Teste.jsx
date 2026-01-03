@@ -18,6 +18,8 @@ export default function HeroSection() {
   const [page, setPage] = useState(0);
   const [openIndex, setOpenIndex] = useState(null); // Estado para controlar qual FAQ está aberto
   const perPage = 4;
+  const aboutRef = useRef(null);
+
 
 
   const testimonials = [
@@ -191,6 +193,13 @@ export default function HeroSection() {
     setOpenIndex(openIndex === index ? null : index);
   };
 
+  useEffect(() => {
+    enviarEventoGA("pageview_liberacao", {
+      pagina: "home",
+      origem: "liberacao_miofascial"
+    });
+  }, []);
+
   return (
     <>
       {/* HERO SECTION */}
@@ -286,6 +295,17 @@ export default function HeroSection() {
                 className={styles.secondary}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={() => {
+                  enviarEventoGA("click_conhecer_metodo_liberacao", {
+                    origem: "hero",
+                    pagina: "home"
+                  });
+
+                  aboutRef.current?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                  });
+                }}
               >
                 Conhecer método
               </motion.button>
@@ -468,7 +488,7 @@ export default function HeroSection() {
       </section>
 
       {/* SOBRE COM ANIMAÇÃO */}
-      <section className={styles.about}>
+      <section ref={aboutRef} className={styles.about}>
         <div className={styles.aboutContainer}>
           {/* Left – Images */}
           <div className={styles.images}>
