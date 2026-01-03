@@ -1,537 +1,1008 @@
-/* VARIÁVEIS LOCAIS */
-:root {
-    --bg: #0b0b0c;
-    --card: #161718;
-    --muted: #9ca3af;
-    --text: #f4f4f5;
-    --accent: #b7de42;
-    --accent-weak: rgba(45, 212, 191, 0.1);
-    --radius: 16px;
-    --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-    --maxwidth: 1200px;
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Armstrong', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  box-sizing: border-box;
+  background-color: #edecea;
+  height: 100vh;
 }
 
-/* CONTAINER PRINCIPAL */
-.container {
-    margin: 0 auto;
-    color: var(--text);
-    background: var(--bg);
-    font-family: system-ui, sans-serif;
-    line-height: 1.5;
-    padding: 20px;
-}
-
-/* HEADER */
-.header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-}
-
-.brand {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.logoLiberacao {
-    width: 200px;
-    height: auto;
-    object-fit: contain;
-}
-
-.nav {
-    display: flex;
-    gap: 20px;
-}
-
-.nav a {
-    color: var(--accent);
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 15px;
-    transition: opacity 0.3s;
-}
-
-.nav a:hover {
-    opacity: 0.8;
-}
-
-/* HERO */
 .hero {
-    background: var(--card);
-    border-radius: var(--radius);
-    padding: 28px;
-    box-sizing: border-box;
-    box-shadow: var(--shadow);
-    display: grid;
-    grid-template-columns: 1fr 380px;
-    gap: 24px;
-    align-items: center;
-    width: 100%;
-    text-align: left;
-
+  position: relative;
+  min-height: 90vh;
+  width: 100%;
+  overflow: hidden;
+  border-bottom-left-radius: 32px;
+  border-bottom-right-radius: 32px;
 }
 
-.badges {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-bottom: 18px;
+.background {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
 }
 
-.badge {
-    background: var(--accent-weak);
-    color: var(--accent);
-    padding: 8px 10px;
-    border-radius: 999px;
-    font-weight: 600;
-    font-size: 13px;
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
 }
 
-.hero h1 {
-    margin: 0 0 8px 0;
-    font-size: 48px;
-    letter-spacing: -0.2px;
-    line-height: 1.12;
+.container {
+  position: relative;
+  z-index: 2;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 6rem 1.5rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
 }
 
-.lead {
-    margin: 0 0 20px 0;
-    color: var(--muted);
-    font-size: 15px;
+.left {
+  color: #ffffff;
 }
 
-.ctaRow {
-    display: flex;
-    justify-content: left;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin: 75px 0 75px 0;
-
+.left h1 {
+  font-size: 3.5rem;
+  font-weight: 300;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
 }
 
-.muted {
-    list-style: none;
-    /* remove a bolinha */
-    padding-left: 0;
-    /* remove o recuo padrão do ul */
-    margin-left: 0;
-    /* remove margem esquerda */
+.left h1 span {
+  font-weight: 600;
 }
 
-.muted li {
-    padding-left: 0;
-    /* garante alinhamento do texto */
-    margin-bottom: 8px;
-    /* opcional: espaço entre itens */
+.left p {
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 2rem;
+  font-size: 0.9rem;
 }
 
-.btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    border: 0;
-    cursor: pointer;
-    padding: 12px 16px;
-    border-radius: 10px;
-    font-weight: 600;
-    text-decoration: none;
-    transition: all 0.25s ease;
+.actions {
+  gap: 1rem;
 }
 
-.btnPrimaryLiberacao {
-    background: var(--accent);
-    color: #0a0a0a;
-    box-shadow: 0 4px 12px rgba(45, 212, 191, 0.25);
+.primary {
+  background: #ffffff;
+  color: #000000;
+  border: none;
+  padding: 0.75rem 1.75rem;
+  border-radius: 999px;
+  font-weight: 500;
+  cursor: pointer;
 }
 
-.btnPrimaryLiberacao:hover {
-    background: #3ef0da;
+.secondary {
+  background: transparent;
+  color: #ffffff;
+  border: 1px solid #ffffff;
+  padding: 0.75rem 1.75rem;
+  border-radius: 999px;
+  cursor: pointer;
 }
 
-.btnGhost {
-    background: transparent;
-    color: var(--accent);
-    border: 1px solid rgba(45, 212, 191, 0.3);
+.secondary:hover {
+  background: #ffffff;
+  color: #000000;
 }
 
-.btnGhost:hover {
-    background: rgba(45, 212, 191, 0.08);
+.right {
+  display: flex;
+  justify-content: flex-end;
 }
 
-/* FORMULÁRIO */
 .card {
-    background: linear-gradient(180deg, #1a1b1d, #121314);
-    padding: 18px;
-    border-radius: 12px;
-    box-shadow: var(--shadow);
+  width: 100%;
+  max-width: 360px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  padding: 1.75rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
 }
 
-.cardDepo {
-    background: linear-gradient(180deg, #1a1b1d, #121314);
-    padding: 18px;
-    border-radius: 12px;
-    box-shadow: var(--shadow);
-    width: 300px;
-}
-
-.formField {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 12px;
-}
-
-.formField label {
-    font-size: 14px;
-    color: var(--text);
-}
-
-.formField input,
-.formField select {
-    padding: 10px 12px;
-    border-radius: 8px;
-    border: 1px solid #333;
-    background: #0f0f0f;
-    color: var(--text);
-}
-
-/* SEÇÕES */
-.sections {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-    margin-top: 22px;
-    align-items: center;
-}
-
-.cardLight {
-    background: #121314;
-    padding: 24px;
-    border-radius: 12px;
-    box-sizing: border-box;
-    box-shadow: var(--shadow);
-    width: 100%;
-}
-
-.evidenciaWrapper {
-    display: grid;
-    grid-template-columns: 1fr 150px;
-    /* texto ocupa o restante, vídeo 300px */
-    gap: 20px;
-    align-items: start;
-}
-
-.evidenciaWrapper video {
-    width: 150px;
-    height: auto;
-    border-radius: 8px;
-}
-
-.cardLight details {
-    margin-top: 10px;
-}
-
-.cardLight summary {
-    border: 1px solid #262728;
-    border-radius: 10px;
-    padding: 12px;
-}
-
-.twoCols {
-    display: grid;
-    grid-template-columns: 1fr 360px;
-    gap: 20px;
-    align-items: start;
-}
-
-/* TABELA DE DIFERENCIAIS */
-.diffTable {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 15px;
-    margin-top: 12px;
-}
-
-.diffTable td {
-    vertical-align: top;
-    padding: 10px;
-    background: #0f0f0f;
-    border: 1px solid #262728;
-    color: var(--text);
-}
-
-.diffLeft {
-    font-weight: 700;
-    color: var(--accent);
-}
-
-.diffRight {
-    text-align: left;
-    color: var(--muted);
-}
-
-/* BENEFÍCIOS */
-.gridBenefits {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 16px;
-}
-
-.benefit {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    padding: 12px;
-    border-radius: 10px;
-    background: #121314;
-    border: 1px solid #262728;
-}
-
-.ico {
-    width: 44px;
-    height: 44px;
-    border-radius: 10px;
-    display: grid;
-    place-items: center;
-    background: var(--card);
-    color: var(--accent);
-    font-weight: 700;
-    font-size: 18px;
-}
-
-.imgBenefit {
-    width: 28px;
-    height: 28px;
-}
-
-.imgHero {
-
-    width: 0;
-}
-
-.textBenefit {
-    flex: 1;
-}
-
-.muted {
-    color: var(--muted);
-}
-
-.small {
-    font-size: 13px;
-    color: var(--muted);
-}
-
-/* DEPOIMENTOS */
-.depoimentos {
-    text-align: center;
-    padding: 40px 20px;
-}
-
-.carrossel {
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    display: flex;
-    padding-bottom: 10px;
-}
-
-.cardsWrapper {
-    display: flex;
-    gap: 16px;
+.card h3 {
+  margin: 0;
+  font-size: 1.1rem;
 }
 
 .card p {
-    color: var(--muted);
-    margin-bottom: 8px;
+  font-size: 0.85rem;
+  color: #666666;
 }
 
-.autor {
-    font-size: 14px;
-    color: var(--accent);
+.inputs {
+  margin: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
-.btnLeiaMais {
-    background: none;
-    border: none;
-    color: var(--accent);
-    cursor: pointer;
-    font-size: 14px;
-    margin-top: 4px;
-    padding: 0;
-    text-decoration: underline;
+.input {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+  font-size: 0.9rem;
+  color: #ffff;
 }
 
-.btnLeiaMais:hover {
-    opacity: 0.8;
+.confirm {
+  width: 100%;
+  background: #000000;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  padding: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
 }
 
-/* FAQ */
-.q {
-    text-align: left;
-    margin-top: 6px;
+.confirm:hover {
+  opacity: 0.9;
 }
 
-/* MAPA */
-.mapContainer {
-    margin-top: 16px;
-    overflow: hidden;
-    border-radius: 12px;
-    box-shadow: var(--shadow);
+.imgHero {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  transition: opacity 0.8s ease, transform 0.8s ease;
 }
 
-/* FOOTER */
-footer {
-    margin-top: 40px;
-    padding-top: 20px;
-    border-top: 1px solid #222;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
+/* Quando a imagem carrega */
+.loaded {
+  opacity: 1;
+  transform: translateY(0);
 }
 
-.footerCta {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
+.benefits {
+  padding: 4rem 1.5rem;
 }
 
-.pill {
-    display: inline-block;
-    padding: 6px 12px;
-    border-radius: 999px;
-    background: rgba(45, 212, 191, 0.1);
-    font-weight: 600;
-    color: var(--accent);
+.benefitsContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+}
+
+.benefit {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+}
+
+.benefit h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.benefit p {
+  font-size: 0.9rem;
+  color: #666666;
+}
+
+.glassCard {
+  background: rgba(255, 255, 255, 0.15); /* transparência */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px); /* Safari */
+
+  border: 1px solid rgba(255, 255, 255, 0.25);
+
+  border-radius: 20px;
+  padding: 24px;
+
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+
+  color: #fff;
+}
+
+/* SECTION */
+.about {
+  padding: 4px 24px;
+  background: #f7f7f7;
+}
+
+/* CONTAINER */
+.aboutContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 48px;
+}
+
+/* IMAGES */
+.images {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.imagesTop {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.images img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 20px;
+}
+
+.imagesBottom {
+  width: 100%;
+  max-width: 100%;     /* 🔒 trava o crescimento */
+  height: 200px;
+  overflow: hidden;    /* 🔒 segura o zoom */
+  position: relative;  /* base segura */
+  border-radius: 20px;
 }
 
 
+.imagesBottom img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
-/* ----------------------------- */
-/* RESPONSIVIDADE PARA MOBILE 📱 */
-/* ----------------------------- */
+
+.imageZoom {
+  transform: scale(1.8);
+  transform-origin: center;
+}
+/* TEXT */
+.text {
+  order: -1; /* texto primeiro no mobile */
+}
+
+.text h2 {
+  font-size: 1.9rem;
+  margin-bottom: 16px;
+}
+
+.text p {
+  font-size: 1rem;
+  line-height: 1.65;
+  color: #444;
+  margin-bottom: 14px;
+}
+
+.testimonials {
+  padding: 4px 24px;
+  background: #fff;
+  text-align: center;
+}
+
+.testimonials h2 {
+  font-size: 1.8rem;
+  margin-bottom: 40px;
+}
+
+/* GRID 2x2 MOBILE */
+.testimonialsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* CARD */
+.testimonialCard {
+  background: #f8f8f8;
+  padding: 20px;
+  border-radius: 16px;
+  text-align: left;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.testimonialCard p {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #333;
+}
+
+.testimonialCard span {
+  margin-top: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #666;
+}
+
+/* PAGINATION */
+.pagination {
+  margin-top: 32px;
+  margin-bottom: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+}
+
+.pagination button {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid #ccc;
+  background: transparent;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.googleCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  text-decoration: none;
+  color: inherit;
+
+  cursor: pointer;
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.googleCard:hover {
+  transform: translateY(-4px);
+}
+
+.googleIcon {
+  width: 48px;
+  height: 48px;
+  opacity: 0.9;
+}
+
+.googleCard span {
+  font-weight: 500;
+  font-size: 0.95rem;
+  opacity: 0.85;
+}
+
+/* ============================
+   SEÇÃO INSTAGRAM
+============================ */
+
+.cardLight {
+  background: #ffffff;
+  padding: 32px 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+}
+
+/* Título da seção */
+.cardLight h2 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #111;
+}
+
+/* Texto de apoio */
+.muted {
+  font-size: 0.95rem;
+  color: #6b7280;
+  margin-bottom: 24px;
+  max-width: 520px;
+}
+
+/* Ajuste do grid do Instagram dentro do card */
+.cardLight :global(.grid) {
+  margin-top: 8px;
+}
 
 @media (max-width: 768px) {
-    .header {
-        flex-direction: column;
-        gap: 12px;
-    }
+  .cardLight {
+    padding: 24px 16px;
+    margin-top: -5px;
+  }
 
-    .logoLiberacao {
-        width: 160px;
-    }
+  .cardLight h2 {
+    font-size: 1.4rem;
+  }
 
-    .nav {
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 14px;
-    }
-
-    .hero {
-        text-align: center;
-        grid-template-columns: 1fr;
-        padding: 20px;
-    }
-
-    .hero h1 {
-        font-size: 22px;
-    }
-
-    .lead {
-        font-size: 14px;
-    }
-
-    .ctaRow {
-        flex-direction: column;
-        align-items: stretch;
-        margin-top: 0;
-        margin-bottom: 0;
-    }
-
-    .twoCols {
-        grid-template-columns: 1fr;
-    }
-
-    .gridBenefits {
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    }
-
-    .cardLight {
-        padding: 16px;
-    }
-
-    .evidenciaWrapper {
-        grid-template-columns: 1fr;
-        /* mobile: vídeo abaixo do texto */
-    }
-
-    .evidenciaWrapper video {
-        justify-self: center;
-    }
-
-    .benefit {
-        flex-direction: row;
-    }
-
-    .diffTable tr {
-        margin-bottom: 10px;
-    }
-
-    .depoimentos {
-        padding: 20px 10px;
-    }
-
-    .carrossel {
-        gap: 12px;
-    }
-
-    .imgHero {
-
-    width: 90%;
-    border-radius: 20px;
-    opacity: 0.9;
+  .muted {
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+  }
 }
 
-    .card {
-        padding: 14px;
-    }
 
-    .cardDepo {
-        width: 260px;
-    }
+/* DESKTOP */
+@media (min-width: 900px) {
+  .testimonials {
+    padding: 120px 80px;
+  }
 
-    footer {
-        padding: 20px 10px;
-    }
+  .testimonialsGrid {
+    grid-template-columns: repeat(4, 1fr);
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}
 
-    .footerCta {
-        text-align: center;
-    }
+
+/* ========================= */
+/* DESKTOP / TABLET LARGE */
+/* ========================= */
+@media (min-width: 900px) {
+  .about {
+    padding: 120px 80px;
+  }
+
+  .aboutContainer {
+    grid-template-columns: 1.1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .text {
+    order: 0;
+  }
+
+  .images img {
+    height: 220px;
+  }
+
+  .imagesBottom img {
+    height: 260px;
+  }
+
+  .text h2 {
+    font-size: 2.4rem;
+  }
+}
+
+/* Responsivo */
+@media (max-width: 1024px) {
+  .benefitsContainer {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .benefitsContainer {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* 📱 Responsivo */
+@media (max-width: 768px) {
+  .container {
+    grid-template-columns: 1fr;
+    padding: 4rem 1.5rem;
+  }
+
+  .right {
+    justify-content: center;
+  }
+
+  .left h1 {
+    font-size: 1.8rem;
+  }
+}
+
+/* Footer.module.css */
+
+/* Estilos gerais do rodapé */
+
+/* No Teste.module.css */
+.logoImage {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+}
+
+/* Se a logo for preta e você quiser branca, use: */
+.logo {
+  max-width: 24rem;
+  height: auto;
+}
+
+/* Para telas menores */
+@media (max-width: 768px) {
+  .logo {
+    max-width: 12rem;
+    margin-bottom: 0.1rem;
+  }
+}
+
+.footer {
+  background-color: #edecea;
+  color: #333;
+  border-top: 1px solid #eee;
+  margin-top: 0px;
+  padding: 2rem 24px;
+}
+
+.footerContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footerGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  margin-bottom: 40px;
+}
+
+.footerColumn {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Logo e informações da empresa */
+.footerLogoContainer {
+  display: flex;
+  align-items: center;
+}
+
+.logoPlaceholder {
+  width: 100px;
+  height: 100px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+.companyInfo h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.companyInfo p {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.companyDescription {
+  color: #666;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-top: 10px;
+  justify-content: left;
+}
+
+/* Títulos das colunas */
+.footerColumn h4 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+/* Informações de contato */
+.contactInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.contactItem {
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.contactItem i {
+  color: #282829;
+  margin-top: 3px;
+  font-size: 1.1rem;
+  min-width: 20px;
+}
+
+.contactLabel {
+  font-weight: 600;
+  margin-bottom: 3px;
+  display: block;
+}
+
+.contactText {
+  color: #666;
+  font-size: 1rem;
+  line-height: 1.5;
+  white-space: pre-line;
+}
+
+/* Mapa */
+.mapContainer {
+  height: 250px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-top: 10px;
+}
+
+.map {
+  height: 100%;
+  width: 100%;
+}
+
+.locationNotes {
+  margin-top: 15px;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.locationNotes p {
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Redes sociais e copyright */
+.footerBottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 30px;
+  border-top: 1px solid #eee;
+}
+
+.footerSocial {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.socialLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: #f5f5f5;
+  border-radius: 50%;
+  color: #666;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.socialLink:hover {
+  background-color: #282829;
+  color: white;
+  transform: translateY(-3px);
+}
+
+.copyright {
+  color: #888;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.copyrightLink {
+  color: inherit;
+  text-decoration: underline;
+  margin: 0 5px;
+}
+
+.copyrightLink:hover {
+  text-decoration: none;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .footerGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .mapContainer {
+    height: 200px;
+  }
+  
+  .companyInfo h3 {
+    font-size: 1.2rem;
+  }
+  
+  .logoPlaceholder {
+    width: 100px;
+    height: 100px;
+    font-size: 1.5rem;
+  }
 }
 
 @media (max-width: 480px) {
-    .hero h1 {
-        font-size: 20px;
-    }
-
-    .btn {
-        justify-content: center;
-    }
-
-    .badge {
-        font-size: 12px;
-    }
-
-    .lead {
-        font-size: 13px;
-    }
-
-    .logoLiberacao {
-        width: 140px;
-    }
+  
+  .footerSocial {
+    gap: 10px;
+  }
+  
+  .socialLink {
+    width: 36px;
+    height: 36px;
+  }
 }
 
+/* ============================
+   SEÇÃO FAQ (Perguntas Frequentes)
+============================ */
+.faq {
+  padding: 4rem 1.5rem;
+  background: #f9f9f9;
+}
+
+.faqContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.faqTitle {
+  font-size: 2.5rem;
+  font-weight: 300;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.faqSubtitle {
+  text-align: center;
+  color: #666;
+  max-width: 600px;
+  margin: 0 auto 3rem;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.faqGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+.faqCard {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  border: 1px solid #eef2f7;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.faqQuestion {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.faqQuestion h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+  flex: 1;
+}
+
+.faqIcon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #f9f9f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #b7de42;
+  font-size: 1.5rem;
+  font-weight: 300;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.faqAnswer {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+.faqAnswer p {
+  color: #555;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Estado ativo/expandido */
+.faqCard.active .faqIcon {
+  transform: rotate(45deg);
+  background: #b7de42;
+  color: #f9f9f9;
+}
+
+.faqCard.active .faqAnswer {
+  display: block;
+}
+
+/* Responsividade */
+@media (min-width: 768px) {
+  .faqGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .faqTitle {
+    font-size: 3rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .faqGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Animações específicas para FAQ */
+.faqCard {
+  transition: all 0.3s ease;
+}
+
+.faqCard:hover {
+  border-color: #b7de42;
+}
+
+.input input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.input select::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Para compatibilidade com navegadores mais antigos */
+.input input::-webkit-input-placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.input input::-moz-placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.input input:-ms-input-placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.input input::-ms-input-placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* ADICIONE ESTAS REGRAS NO FINAL DO SEU CSS */
+
+/* 1. Corrigir seção .about para mobile */
+@media (max-width: 768px) {
+  .about {
+    padding: 2rem 16px; /* Reduzir padding */
+    overflow: hidden; /* Prevenir overflow */
+  }
+  
+  .aboutContainer {
+    padding: 0 8px; /* Padding interno adicional */
+  }
+}
+
+/* 2. Corrigir grid do rodapé para mobile */
+@media (max-width: 768px) {
+  .footerGrid {
+    grid-template-columns: 1fr !important;
+    min-width: 0 !important; /* Remover min-width fixo */
+  }
+  
+  .footerContainer {
+    overflow: hidden; /* Prevenir overflow */
+  }
+}
+
+/* 3. Garantir que o mapa não ultrapasse os limites */
+.mapContainer {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.mapContainer iframe {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* 4. Corrigir seção de testemunhos para mobile */
+@media (max-width: 768px) {
+  .testimonials {
+    padding: 2rem 16px !important; /* Reduzir padding */
+    overflow: hidden;
+  }
+  
+  .testimonialsGrid {
+    grid-template-columns: 1fr !important; /* Uma coluna no mobile */
+    gap: 1rem;
+  }
+}
+
+/* 5. Corrigir seção de benefícios para mobile */
+@media (max-width: 768px) {
+  .benefits {
+    padding: 4rem 16px !important; /* Reduzir padding */
+    overflow: hidden;
+  }
+  
+  .benefitsContainer {
+    padding: 0 8px;
+  }
+}
+
+/* 6. Corrigir container principal para mobile */
+@media (max-width: 768px) {
+  .container {
+    display: flex;
+    flex-direction: column;
+    padding: 4rem 16px !important;
+    overflow: hidden;
+  }
+}
+
+/* 7. Adicionar regra geral para prevenir overflow horizontal */
+html, body {
+  overflow-x: hidden;
+  max-width: 100%;
+  width: 100%;
+}
+
+/* 8. Garantir que todas as imagens não ultrapassem */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* 9. Corrigir seção FAQ para mobile */
+@media (max-width: 768px) {
+  .faq {
+    padding: 2rem 16px !important;
+    overflow: hidden;
+  }
+  
+  .faqCard {
+    margin: 0 8px;
+  }
+}
+
+/* 10. Corrigir cardLight para mobile */
+@media (max-width: 768px) {
+  .cardLight {
+    padding: 2rem 16px !important;
+    margin: 0 -8px; /* Compensar padding */
+    border-radius: 0;
+  }
+}
+
+/* 11. Garantir que inputs não ultrapassem */
+.input input, .input select {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* 12. Corrigir glassCard no mobile */
+@media (max-width: 768px) {
+  .glassCard {
+    margin: 0 8px;
+    max-width: calc(100% - 16px);
+  }
+}

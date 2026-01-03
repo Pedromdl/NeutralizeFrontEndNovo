@@ -1,10 +1,256 @@
 body {
-  margin: 0;
-  padding: 0;
+    margin: 0;
+    padding: 0;
+    font-family: 'Armstrong', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    box-sizing: border-box;
+    height: 100vh;
+}
+
+/* ================= RESET LOCAL ================= */
+.hero {
+  position: relative;
+  min-height: 92vh;
+  width: 100%;
+  overflow: hidden;
+  border-bottom-left-radius: 40px;
+  border-bottom-right-radius: 40px;
   font-family: 'Armstrong', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  box-sizing: border-box;
-  background-color: #edecea;
-  height: 100vh;
+  background: radial-gradient(
+    1200px 600px at 50% -20%,
+    rgba(34, 197, 94, 0.15),
+    transparent 60%
+  );
+}
+
+/* ================= REENQUADRAMENTO ================= */
+
+.sectionReframe {
+  position: relative;
+  background:
+    radial-gradient(
+      900px 400px at 50% 0%,
+      rgba(34, 197, 94, 0.08),
+      transparent 60%
+    ),
+    #fff;
+}
+
+.reframeCard {
+  max-width: 820px;
+  margin: 3.5rem auto 0;
+  background: #ffffff;
+  border-radius: 28px;
+  padding: 3rem 2.5rem;
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.12);
+}
+
+.reframeIntro {
+  font-size: 1.1rem;
+  color: #111827;
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+/* Checklist clínico */
+.reframeChecklist {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.reframeChecklist li {
+  position: relative;
+  padding-left: 2.5rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.95rem;
+  color: #1f2933;
+}
+
+.reframeChecklist li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.4rem;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 5px rgba(34, 197, 94, 0.18);
+}
+
+.reframeConclusion {
+  margin-top: 2.5rem;
+  text-align: center;
+  font-size: 1.2rem;
+  color: #374151;
+}
+
+
+/* ================= HERO ================= */
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 7rem 1.5rem;
+  text-align: center;
+  color: #fff;
+}
+
+.logo {
+  max-width: 18rem;
+  margin-bottom: 2.5rem;
+  filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.35));
+}
+
+.highlight {
+  font-weight: 900;
+  color: #edecea;
+}
+
+/* ================= CRITÉRIOS ================= */
+
+.criteriosGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+  margin: 3rem 0;
+}
+
+.criterioCard {
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 2.25rem 2rem;
+  text-align: center;
+  box-shadow:
+    0 14px 40px rgba(0, 0, 0, 0.1);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.criterioCard:hover {
+  transform: translateY(-6px);
+  box-shadow:
+    0 28px 60px rgba(0, 0, 0, 0.16);
+}
+
+.criterioIcon {
+  width: 28px;
+  height: 28px;
+  color: #374151; /* neutro elegante */
+  margin-bottom: 1rem;
+}
+
+.criterioCard h3 {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #111827;
+}
+
+.timelineCompare {
+  display: grid;
+  padding: 1rem;
+  gap: 4rem;
+  margin-top: 2rem;
+}
+
+.timelineCol {
+  position: relative;
+}
+
+.timelineHeader {
+  display: flex;
+  align-items: center;    
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.timelineHeader h3 {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.ok .icon {
+  background: rgba(34, 197, 94, 0.15);
+  color: #16a34a;
+}
+
+.nao .icon {
+  background: rgba(120, 113, 108, 0.15);
+  color: #444;
+}
+
+/* TIMELINE */
+.timeline {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  position: relative;
+}
+
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 16px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, transparent, #ddd, transparent);
+}
+
+.timelineItem {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: #fff;
+  border: 2px solid #ddd;
+}
+
+.ok .dot {
+  border-color: #22c55e;
+  color: #16a34a;
+}
+
+.nao .dot {
+  border-color: #999;
+  color: #555;
+}
+
+.timelineItem p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #333;
+  line-height: 1.5;
 }
 
 .hero {
@@ -12,141 +258,9 @@ body {
   min-height: 90vh;
   width: 100%;
   overflow: hidden;
-  border-bottom-left-radius: 32px;
-  border-bottom-right-radius: 32px;
 }
 
-.background {
-  position: absolute;
-  inset: 0;
-  background-size: cover;
-  background-position: center;
-}
-
-.overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.3);
-}
-
-.container {
-  position: relative;
-  z-index: 2;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 6rem 1.5rem;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3rem;
-  align-items: center;
-}
-
-.left {
-  color: #ffffff;
-}
-
-.left h1 {
-  font-size: 3.5rem;
-  font-weight: 300;
-  line-height: 1.1;
-  margin-bottom: 1.5rem;
-}
-
-.left h1 span {
-  font-weight: 600;
-}
-
-.left p {
-  color: rgba(255, 255, 255, 0.8);
-  margin-bottom: 2rem;
-  font-size: 0.9rem;
-}
-
-.actions {
-  gap: 1rem;
-}
-
-.primary {
-  background: #ffffff;
-  color: #000000;
-  border: none;
-  padding: 0.75rem 1.75rem;
-  border-radius: 999px;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.secondary {
-  background: transparent;
-  color: #ffffff;
-  border: 1px solid #ffffff;
-  padding: 0.75rem 1.75rem;
-  border-radius: 999px;
-  cursor: pointer;
-}
-
-.secondary:hover {
-  background: #ffffff;
-  color: #000000;
-}
-
-.right {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.card {
-  width: 100%;
-  max-width: 360px;
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(10px);
-  padding: 1.75rem;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-}
-
-.card h3 {
-  margin: 0;
-  font-size: 1.1rem;
-}
-
-.card p {
-  font-size: 0.85rem;
-  color: #666666;
-}
-
-.inputs {
-  margin: 1.5rem 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.input {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem;
-  border-radius: 12px;
-  border: 1px solid #e0e0e0;
-  font-size: 0.9rem;
-  color: #ffff;
-}
-
-.confirm {
-  width: 100%;
-  background: #000000;
-  color: #ffffff;
-  border: none;
-  border-radius: 12px;
-  padding: 0.75rem;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.confirm:hover {
-  opacity: 0.9;
-}
-
+/* Imagem de fundo */
 .imgHero {
   position: absolute;
   inset: 0;
@@ -154,376 +268,307 @@ body {
   height: 100%;
   object-fit: cover;
   z-index: 0;
-  transition: opacity 0.8s ease, transform 0.8s ease;
 }
 
-/* Quando a imagem carrega */
-.loaded {
-  opacity: 1;
-  transform: translateY(0);
+/* Overlay escuro */
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 1;
 }
 
-.benefits {
-  margin-top: -48px;
-  padding: 4rem 1.5rem;
+/* Conteúdo */
+.heroContent {
+  position: relative;
+  z-index: 2;
 }
 
-.benefitsContainer {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 2rem;
+
+/* ================= TEXTO HERO ================= */
+.heroContent h1 {
+  font-size: 3.2rem;
+  font-weight: 300;
+  line-height: 1.12;
+  margin-bottom: 1.75rem;
+  letter-spacing: -0.02em;
 }
 
-.benefit {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 2rem 1.5rem;
-  text-align: center;
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+.heroContent p {
+  font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 760px;
+  margin: 0 auto 3rem;
 }
 
-.benefit h3 {
-  font-size: 1rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
+/* ================= BOTÕES ================= */
+.heroButtons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
-.benefit p {
-  font-size: 0.9rem;
-  color: #666666;
-}
-
-.glassCard {
-  background: rgba(255, 255, 255, 0.15); /* transparência */
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px); /* Safari */
-
-  border: 1px solid rgba(255, 255, 255, 0.25);
-
-  border-radius: 20px;
-  padding: 24px;
-
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
-
+.primaryButton {
+  background: #282829;
   color: #fff;
+  border: none;
+  padding: 0.95rem 2rem;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* SECTION */
-.about {
-  padding: 4px 24px;
-  background: #f7f7f7;
+.primaryButton:hover {
+  transform: translateY(-2px);
 }
 
-/* CONTAINER */
-.aboutContainer {
+.secondaryButton {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  padding: 0.95rem 2rem;
+  border-radius: 999px;
+  backdrop-filter: blur(6px);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.secondaryButton:hover {
+  background: #fff;
+  color: #0f172a;
+}
+
+/* ================= SEÇÕES ================= */
+.section {
+  padding: 4rem 1.5rem;
+  background: #edecea;
+}
+
+.section:nth-of-type(even) {
+  background: #fff;
+}
+
+.container {
   max-width: 1200px;
   margin: 0 auto;
-
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 48px;
 }
 
-/* IMAGES */
-.images {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.imagesTop {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
-.images img {
-  width: 100%;
-  height: 160px;
-  object-fit: cover;
-  border-radius: 20px;
-}
-
-.imagesBottom {
-  width: 100%;
-  max-width: 100%;     /* 🔒 trava o crescimento */
-  height: 200px;
-  overflow: hidden;    /* 🔒 segura o zoom */
-  position: relative;  /* base segura */
-  border-radius: 20px;
-}
-
-
-.imagesBottom img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-
-.imageZoom {
-  transform: scale(1.8);
-  transform-origin: center;
-}
-/* TEXT */
-.text {
-  order: -1; /* texto primeiro no mobile */
-}
-
-.text h2 {
-  font-size: 1.9rem;
-  margin-bottom: 16px;
-}
-
-.text p {
-  font-size: 1rem;
-  line-height: 1.65;
-  color: #444;
-  margin-bottom: 14px;
-}
-
-.testimonials {
-  padding: 4px 24px;
-  background: #fff;
+/* ================= TEXTO PADRÃO ================= */
+.lead {
+  font-size: 1.05rem;
+  color: #374151;
+  max-width: 760px;
+  margin: 2rem auto;
   text-align: center;
 }
 
-.testimonials h2 {
-  font-size: 1.8rem;
-  margin-bottom: 40px;
-}
-
-/* GRID 2x2 MOBILE */
-.testimonialsGrid {
+/* ================= GRID / CARDS ================= */
+.cards {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2.5rem;
+  margin-top: 4rem;
 }
 
-/* CARD */
-.testimonialCard {
-  background: #f8f8f8;
-  padding: 20px;
-  border-radius: 16px;
-  text-align: left;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.testimonialCard p {
-  font-size: 0.95rem;
-  line-height: 1.5;
-  color: #333;
-}
-
-.testimonialCard span {
-  margin-top: 12px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #666;
-}
-
-/* PAGINATION */
-.pagination {
-  margin-top: 32px;
-  margin-bottom: 32px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 16px;
-}
-
-.pagination button {
-  padding: 8px 16px;
-  border-radius: 20px;
-  border: 1px solid #ccc;
-  background: transparent;
-  cursor: pointer;
-}
-
-.pagination button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.googleCard {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-
-  text-decoration: none;
-  color: inherit;
-
-  cursor: pointer;
-  transition: transform 0.3s ease, background 0.3s ease;
-}
-
-.googleCard:hover {
-  transform: translateY(-4px);
-}
-
-.googleIcon {
-  width: 48px;
-  height: 48px;
-  opacity: 0.9;
-}
-
-.googleCard span {
-  font-weight: 500;
-  font-size: 0.95rem;
-  opacity: 0.85;
-}
-
-/* ============================
-   SEÇÃO INSTAGRAM
-============================ */
-
-.cardLight {
+.card {
+  position: relative;
   background: #ffffff;
-  padding: 32px 24px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+  border-radius: 22px;
+  padding: 2.5rem 2rem;
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
 }
 
-/* Título da seção */
-.cardLight h2 {
-  font-size: 1.6rem;
-  font-weight: 600;
-  margin-bottom: 8px;
-  color: #111;
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 22px;
+  background: radial-gradient(
+    300px 120px at top left,
+    rgba(34, 197, 94, 0.12),
+    transparent 60%
+  );
+  pointer-events: none;
 }
 
-/* Texto de apoio */
-.muted {
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow:
+    0 25px 60px rgba(0, 0, 0, 0.14);
+}
+
+.card h3 {
+  font-size: 1.15rem;
+  margin-bottom: 0.75rem;
+  color: #111827;
+}
+
+.card p {
   font-size: 0.95rem;
-  color: #6b7280;
-  margin-bottom: 24px;
-  max-width: 520px;
+  color: #4b5563;
+  line-height: 1.6;
 }
 
-/* Ajuste do grid do Instagram dentro do card */
-.cardLight :global(.grid) {
-  margin-top: 8px;
+/* ================= CHECKLIST ================= */
+.checklist {
+  list-style: none;
+  padding: 0;
+  margin: 3rem auto;
+  max-width: 720px;
 }
 
+.checklist li {
+  padding-left: 2rem;
+  margin-bottom: 1rem;
+  position: relative;
+  color: #1f2933;
+  font-size: 0.95rem;
+}
+
+.checklist li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.35rem;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.15);
+}
+
+/* ================= AVALIAÇÃO / STEPS ================= */
+.aboutTitle {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 400;
+  margin-bottom: 4rem;
+}
+
+.stepsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.stepCard {
+  position: relative;
+  padding-left: 3rem;
+  padding-right: 3rem;
+
+}
+
+.stepNumber {
+  position: absolute;
+  left: 0;
+  top: -0.5rem;
+  font-size: 2.5rem;
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+
+.stepCard h3 {
+  font-size: 1.05rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  margin-block-start: 0em;
+
+}
+
+.stepCard p {
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+/* ================= FOOTER ================= */
+.aboutFooter {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.leadLight {
+  font-size: 1rem;
+  max-width: 680px;
+  margin: 0 auto 2rem;
+}
+
+.ctaButton {
+  color: #282829;
+  border: none;
+  padding: 0.9rem 2.2rem;
+  border-radius: 999px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.ctaSubtitle {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+}
+
+/* ================= RESPONSIVO ================= */
 @media (max-width: 768px) {
-  .cardLight {
-    padding: 24px 16px;
-    margin-top: -5px;
+  .stepsGrid {
+    padding-left: 1rem;
+    gap: 2.5rem;
   }
 
-  .cardLight h2 {
-    font-size: 1.4rem;
-  }
-
-  .muted {
-    font-size: 0.9rem;
-    margin-bottom: 20px;
+  .stepNumber {
+    font-size: 2rem;
   }
 }
 
 
-/* DESKTOP */
-@media (min-width: 900px) {
-  .testimonials {
-    padding: 120px 80px;
-  }
-
-  .testimonialsGrid {
-    grid-template-columns: repeat(4, 1fr);
-    max-width: 1200px;
-    margin: 0 auto;
-  }
+/* ================= AVALIAÇÃO ================= */
+.about {
+  padding: 7rem 1.5rem;
+  text-align: center;
 }
 
+.ctaButton {
+  background: #282829;
+  color: #ffffff;
+  border: none;
+  padding: 1.1rem 2.2rem;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.35);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
 
-/* ========================= */
-/* DESKTOP / TABLET LARGE */
-/* ========================= */
-@media (min-width: 900px) {
+.ctaButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 26px 60px rgba(15, 23, 42, 0.45);
+}
+
+/* ================= RESPONSIVO ================= */
+@media (max-width: 768px) {
+  .heroContent h1 {
+    font-size: 1.9rem;
+  }
+
+  .logo {
+    max-width: 22rem;
+  }
+
+  .section,
   .about {
-    padding: 120px 80px;
-  }
-
-  .aboutContainer {
-    grid-template-columns: 1.1fr 1fr;
-    gap: 80px;
-    align-items: center;
-  }
-
-  .text {
-    order: 0;
-  }
-
-  .images img {
-    height: 220px;
-  }
-
-  .imagesBottom img {
-    height: 260px;
-  }
-
-  .text h2 {
-    font-size: 2.4rem;
+    padding: 4rem 1.2rem;
   }
 }
 
-/* Responsivo */
-@media (max-width: 1024px) {
-  .benefitsContainer {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 600px) {
-  .benefitsContainer {
-    grid-template-columns: 1fr;
-  }
-}
-
-
-/* 📱 Responsivo */
-@media (max-width: 768px) {
-  .container {
-    grid-template-columns: 1fr;
-    padding: 4rem 1.5rem;
-  }
-
-  .right {
-    justify-content: center;
-  }
-
-  .left h1 {
-    font-size: 1.8rem;
-  }
-}
-
-/* Footer.module.css */
-
-/* Estilos gerais do rodapé */
-
-/* No Teste.module.css */
-.logoImage {
-  width: 60px;
-  height: 60px;
-  object-fit: contain;
-}
-
-/* Se a logo for preta e você quiser branca, use: */
-.logo {
-  max-width: 24rem;
-  height: auto;
-}
 
 /* Para telas menores */
 @media (max-width: 768px) {
   .logo {
-    max-width: 12rem;
+    max-width: 18rem;
     margin-bottom: 0.1rem;
   }
 }
@@ -735,275 +780,5 @@ body {
   .socialLink {
     width: 36px;
     height: 36px;
-  }
-}
-
-/* ============================
-   SEÇÃO FAQ (Perguntas Frequentes)
-============================ */
-.faq {
-  padding: 4rem 1.5rem;
-  background: #f9f9f9;
-}
-
-.faqContainer {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.faqTitle {
-  font-size: 2.5rem;
-  font-weight: 300;
-  text-align: center;
-  margin-bottom: 1rem;
-}
-
-.faqSubtitle {
-  text-align: center;
-  color: #666;
-  max-width: 600px;
-  margin: 0 auto 3rem;
-  font-size: 1.1rem;
-  line-height: 1.6;
-}
-
-.faqGrid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
-}
-
-.faqCard {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 1.5rem;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
-  border: 1px solid #eef2f7;
-  cursor: pointer;
-  overflow: hidden;
-}
-
-.faqQuestion {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-}
-
-.faqQuestion h3 {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin: 0;
-  flex: 1;
-}
-
-.faqIcon {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: #f9f9f9;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #b7de42;
-  font-size: 1.5rem;
-  font-weight: 300;
-  flex-shrink: 0;
-  transition: all 0.3s ease;
-}
-
-.faqAnswer {
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid #f0f0f0;
-}
-
-.faqAnswer p {
-  color: #555;
-  font-size: 0.95rem;
-  line-height: 1.6;
-  margin: 0;
-}
-
-/* Estado ativo/expandido */
-.faqCard.active .faqIcon {
-  transform: rotate(45deg);
-  background: #b7de42;
-  color: #f9f9f9;
-}
-
-.faqCard.active .faqAnswer {
-  display: block;
-}
-
-/* Responsividade */
-@media (min-width: 768px) {
-  .faqGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .faqTitle {
-    font-size: 3rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .faqGrid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-/* Animações específicas para FAQ */
-.faqCard {
-  transition: all 0.3s ease;
-}
-
-.faqCard:hover {
-  border-color: #b7de42;
-}
-
-.input input::placeholder {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.input select::placeholder {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-/* Para compatibilidade com navegadores mais antigos */
-.input input::-webkit-input-placeholder {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.input input::-moz-placeholder {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.input input:-ms-input-placeholder {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.input input::-ms-input-placeholder {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-/* ADICIONE ESTAS REGRAS NO FINAL DO SEU CSS */
-
-/* 1. Corrigir seção .about para mobile */
-@media (max-width: 768px) {
-  .about {
-    padding: 2rem 16px; /* Reduzir padding */
-    overflow: hidden; /* Prevenir overflow */
-  }
-  
-  .aboutContainer {
-    padding: 0 8px; /* Padding interno adicional */
-  }
-}
-
-/* 2. Corrigir grid do rodapé para mobile */
-@media (max-width: 768px) {
-  .footerGrid {
-    grid-template-columns: 1fr !important;
-    min-width: 0 !important; /* Remover min-width fixo */
-  }
-  
-  .footerContainer {
-    overflow: hidden; /* Prevenir overflow */
-  }
-}
-
-/* 3. Garantir que o mapa não ultrapasse os limites */
-.mapContainer {
-  width: 100%;
-  overflow: hidden;
-  border-radius: 8px;
-}
-
-.mapContainer iframe {
-  width: 100% !important;
-  max-width: 100% !important;
-}
-
-/* 4. Corrigir seção de testemunhos para mobile */
-@media (max-width: 768px) {
-  .testimonials {
-    padding: 2rem 16px !important; /* Reduzir padding */
-    overflow: hidden;
-  }
-  
-  .testimonialsGrid {
-    grid-template-columns: 1fr !important; /* Uma coluna no mobile */
-    gap: 1rem;
-  }
-}
-
-/* 5. Corrigir seção de benefícios para mobile */
-@media (max-width: 768px) {
-  .benefits {
-    padding: 4rem 16px !important; /* Reduzir padding */
-    overflow: hidden;
-  }
-  
-  .benefitsContainer {
-    padding: 0 8px;
-  }
-}
-
-/* 6. Corrigir container principal para mobile */
-@media (max-width: 768px) {
-  .container {
-    display: flex;
-    flex-direction: column;
-    padding: 4rem 16px !important;
-    overflow: hidden;
-  }
-}
-
-/* 7. Adicionar regra geral para prevenir overflow horizontal */
-html, body {
-  overflow-x: hidden;
-  max-width: 100%;
-  width: 100%;
-}
-
-/* 8. Garantir que todas as imagens não ultrapassem */
-img {
-  max-width: 100%;
-  height: auto;
-}
-
-/* 9. Corrigir seção FAQ para mobile */
-@media (max-width: 768px) {
-  .faq {
-    padding: 2rem 16px !important;
-    overflow: hidden;
-  }
-  
-  .faqCard {
-    margin: 0 8px;
-  }
-}
-
-/* 10. Corrigir cardLight para mobile */
-@media (max-width: 768px) {
-  .cardLight {
-    padding: 2rem 16px !important;
-    margin: 0 -8px; /* Compensar padding */
-    border-radius: 0;
-  }
-}
-
-/* 11. Garantir que inputs não ultrapassem */
-.input input, .input select {
-  max-width: 100%;
-  box-sizing: border-box;
-}
-
-/* 12. Corrigir glassCard no mobile */
-@media (max-width: 768px) {
-  .glassCard {
-    margin: 0 8px;
-    max-width: calc(100% - 16px);
   }
 }

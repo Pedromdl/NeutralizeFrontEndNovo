@@ -1,721 +1,445 @@
-import { useState, useEffect, useRef } from "react";
-import { MessageCircle } from 'lucide-react';
+import { useEffect, useRef, useState, useCallback } from "react";
 import { FaFacebook, FaInstagram, FaWhatsapp } from 'react-icons/fa';
-import { motion, useAnimation, useInView, AnimatePresence } from "framer-motion";
-
-import InstagramFeed from "../../components/InstaFeed";
+import { motion, useInView, AnimatePresence } from "framer-motion";
 import styles from "./Teste.module.css";
+
 import Logo from "../images/logoletrapreta.png";
-import LogoHero from "../images/logobranca.png";
-
+import logoNeutralize from "../images/logobranca.png";
+import InstagramFeed from "../../components/InstaFeed";
 import { enviarEventoGA } from "../useGA";
+import {
+  Activity,
+  Move,
+  Dumbbell,
+  ShieldCheck,
+  Scale,
+  Clock,
+} from "lucide-react"
 
+const currentYear = new Date().getFullYear();
 
+// Dados da empresa para o rodapé
+const companyInfo = {
+  name: "Neutralize - Fisioterapia Ortopédica e Esportiva",
+  tagline: "Movimento e Performance",
+  description: "Especializada em liberação miofascial, reabilitação e treinamento personalizado para atletas e pessoas que buscam qualidade de vida através do movimento consciente.",
+  logo: Logo, // Caminho para sua imagem
+  logoAlt: "Logo Neutralize" // Texto alternativo para acessibilidade
+};
 
+// Informações de contato para o rodapé
+const contactInfo = [
+  {
+    icon: 'fas fa-map-marker-alt',
+    label: 'Endereço:',
+    text: 'Av. Ângelo Crema, 372\nFlorianópolis - SC, 88037-270\nBrasil'
+  },
+  {
+    icon: 'fas fa-phone',
+    label: 'Telefone:',
+    text: '(48) 3197-4163'
+  },
+  {
+    icon: 'fas fa-envelope',
+    label: 'E-mail:',
+    text: 'neutralizeft@gmail.com'
+  },
+  {
+    icon: 'fas fa-clock',
+    label: 'Horário de Funcionamento:',
+    text: 'Segunda a Quinta: 8h às 20h\nSexta: 8h às 18h'
+  }
+];
 
+// Redes sociais para o rodapé
+const socialLinks = [
+  { icon: FaFacebook, label: 'Facebook', url: '#' },
+  { icon: FaInstagram, label: 'Instagram', url: 'https://www.instagram.com/neutralize.ft' },
+  {
+    icon: FaWhatsapp,
+    label: 'WhatsApp',
+    url: 'https://wa.me/554831974163',
+    isWhatsapp: true
+  },
+];
 
-export default function HeroSection() {
-  const [page, setPage] = useState(0);
-  const [openIndex, setOpenIndex] = useState(null); // Estado para controlar qual FAQ está aberto
-  const perPage = 4;
-  const aboutRef = useRef(null);
+const iconMap = {
+  pain: Activity,
+  mobility: Move,
+  strength: Dumbbell,
+  confidence: ShieldCheck,
+  load: Scale,
+  clock: Clock,
+}
 
+/* ================= ANIMAÇÕES ================= */
+const fadeUp = {
+  hidden: { opacity: 0, y: 40 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: "easeOut" },
+  },
+};
 
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.15 },
+  },
+};
 
-  const testimonials = [
-    {
-      name: "Felipe M.",
-      text: "Excelente pessoa e profissional. Comecei fazendo liberação miofascial e hoje faço fortalecimento específico para triathlon com ele. Super recomendo."
-    },
-    {
-      name: "Felipe B.",
-      text: "Excelente profissional! Competente e confiável. Recomendo fortemente, em especial para atletas amadores de corrida/triatlo."
-    },
-    {
-      name: "Marcus V.",
-      text: "Pedrão sempre foi muito atencioso comigo desde o primeiro contato. Fui para tratar uma canelite e, com exercícios e liberação, ele fez com que eu voltasse a correr sem dores. Sempre indico para amigos e familiares 🙌."
-    },
-    {
-      name: "Jaciara R.",
-      text: "Sou paciente do Pedro há um ano. Cheguei com um probleminha no joelho e ele curou em dois meses! Continuei fazendo fisioterapia preventiva pois confio totalmente no trabalho dele. Melhor profissional, recomendo demais!"
-    },
-    {
-      name: "Diego B.",
-      text: "Faço reabilitação do joelho após rompimento do LCA e não tenho dúvidas que estou com o profissional certo. O Pedro explica tudo, tem muita calma e dedicação. A clínica também é super acolhedora."
-    },
-    {
-      name: "Samuel R.",
-      text: "Excelente profissional, sempre atencioso e buscando evolução. Trabalho com ele há mais de 2 anos, focando em fortalecimento, mobilidade e liberação. Melhorou muito minha prática de ciclismo e corrida."
-    },
-    {
-      type: "google"
-    }
-  ];
+/* ================= CONTEÚDO ================= */
 
-  // Dados das perguntas frequentes
-  const faqData = [
-    {
-      question: "Quanto tempo dura cada sessão?",
-      answer: "Cada sessão tem duração média de 50 a 60 minutos, dependendo da técnica aplicada e das necessidades individuais do paciente."
-    },
-    {
-      question: "O tratamento é doloroso?",
-      answer: "Alguns pacientes podem sentir algum desconforto durante a técnica, mas que desaparece rapidamente. É normal e nunca será uma dor excruciante"
-    },
-    {
-      question: "Quantas sessões são necessárias?",
-      answer: "O número de sessões varia conforme a condição. Em média, recomendamos entre 5 a 6 sessões para resultados significativos."
-    },
-    {
-      question: "Há alguma contraindicação?",
-      answer: "Sim, algumas condições como trombose, infecções agudas ou câncer ativo requerem avaliação especial prévia."
-    },
-    {
-      question: "Preciso de encaminhamento médico?",
-      answer: "Não é obrigatório, mas recomendamos trazer exames e laudos médicos para melhor direcionamento do tratamento."
-    },
-    {
-      question: "Como agendar uma consulta?",
-      answer: "Entre em contato pelo WhatsApp (48) 3197-4163, pelo nosso site ou através das redes sociais."
-    }
-  ];
+const doresEspelhadas = [
+  "Repouso que não resolveu",
+  "Exercícios genéricos sem explicação",
+  "Tratamentos que aliviaram, mas a dor voltou",
+  "Voltar ao treino com medo de se machucar de novo",
+];
 
-  const start = page * perPage;
-  const current = testimonials.slice(start, start + perPage);
-  const totalPages = Math.ceil(testimonials.length / perPage);
+const fases = [
+  {
+    tag: "N1",
+    title: "Reabilitação Inicial",
+    text: "Aliviar a dor e restaurar função básica. Aqui a gente apaga o incêndio.",
+    color: "#22c55e",
+  },
+  {
+    tag: "N2",
+    title: "Preparação Física",
+    text: "Construir um corpo que aguenta carga e reduz o risco de nova lesão. Aqui não é personal trainer — é fisioterapia com critério.",
+    color: "#22c55e",
+  },
+  {
+    tag: "N3",
+    title: "Monitoramento Preventivo",
+    text: "Acompanhamento e ajustes para identificar problemas antes da dor aparecer. Aqui a gente monitora para você não precisar voltar ao N1.",
+    color: "#22c55e",
+  },
+];
 
-  // Controles para animações
-  const controls = useAnimation();
+const criterios = [
+  { label: "Controle de dor", icon: "pain" },
+  { label: "Mobilidade funcional", icon: "mobility" },
+  { label: "Força mínima necessária", icon: "strength" },
+  { label: "Confiança no movimento", icon: "confidence" },
+  { label: "Capacidade de carga", icon: "load" },
+  { label: "Tempo de cicatrização tecidual atingido", icon: "clock" },
 
-  // Animação para os benefícios
-  const benefitVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: (i) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay: i * 0.1,
-        duration: 0.6,
-        ease: "easeOut"
-      }
-    })
-  };
+]
 
-  // Animação para as imagens
-  const imageVariants = {
-    hidden: { opacity: 0, scale: 0.9 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: {
-        duration: 0.7,
-        ease: "easeOut"
-      }
-    }
-  };
+const paraQuem = {
+  sim: [
+    "Quer entender o que está acontecendo com seu corpo",
+    "Quer voltar ao treino ou esporte com segurança",
+    "Não quer depender de tratamento eterno",
+  ],
+  nao: [
+    "Procura apenas alívio rápido e pontual",
+    "Quer apenas “passar um choquinho”",
+    "Não pretende seguir um processo",
+  ],
+};
 
-  // Animação específica para FAQ
-  const faqVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: (i) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay: i * 0.1,
-        duration: 0.5,
-        ease: "easeOut"
-      }
-    })
-  };
+const faqs = [
+  {
+    q: "Vou precisar fazer todas as fases?",
+    a: "Não. Cada fase é indicada conforme sua condição e seus objetivos. Tudo é explicado antes do início.",
+  },
+  {
+    q: "Vocês prendem o paciente no tratamento?",
+    a: "Não. A progressão acontece por critérios clínicos, não por tempo ou pacotes.",
+  },
+  {
+    q: "Atende convênios?",
+    a: "Atendimento particular, com emissão de nota para reembolso quando aplicável.",
+  },
+];
 
-  // Animação flutuante para o botão do WhatsApp
-  const floatAnimation = {
-    y: [-5, 5, -5],
-    transition: {
-      duration: 3,
-      repeat: Infinity,
-      ease: "easeInOut"
-    }
-  };
+/* ================= COMPONENTE ================= */
 
-  // Referências para o mapa do rodapé
-  const mapRef = useRef(null);
-  const [map, setMap] = useState(null);
-  const [currentYear] = useState(new Date().getFullYear());
-
-  // Dados da empresa para o rodapé
-  const companyInfo = {
-    name: "Neutralize - Fisioterapia Ortopédica e Esportiva",
-    tagline: "Movimento e Performance",
-    description: "Especializada em liberação miofascial, reabilitação e treinamento personalizado para atletas e pessoas que buscam qualidade de vida através do movimento consciente.",
-    logo: Logo, // Caminho para sua imagem
-    logoAlt: "Logo Neutralize" // Texto alternativo para acessibilidade
-  };
-
-  // Informações de contato para o rodapé
-  const contactInfo = [
-    {
-      icon: 'fas fa-map-marker-alt',
-      label: 'Endereço:',
-      text: 'Av. Ângelo Crema, 372\nFlorianópolis - SC, 88037-270\nBrasil'
-    },
-    {
-      icon: 'fas fa-phone',
-      label: 'Telefone:',
-      text: '(48) 3197-4163'
-    },
-    {
-      icon: 'fas fa-envelope',
-      label: 'E-mail:',
-      text: 'neutralizeft@gmail.com'
-    },
-    {
-      icon: 'fas fa-clock',
-      label: 'Horário de Funcionamento:',
-      text: 'Segunda a Quinta: 8h às 20h\nSexta: 8h às 18h'
-    }
-  ];
-
-  // Redes sociais para o rodapé
-  const socialLinks = [
-    { icon: FaFacebook, label: 'Facebook', url: '#' },
-    { icon: FaInstagram, label: 'Instagram', url: 'https://www.instagram.com/neutralize.ft' },
-    {
-      icon: FaWhatsapp,
-      label: 'WhatsApp',
-      url: 'https://wa.me/554831974163',
-      isWhatsapp: true
-    },
-  ];
-
-  // Função para alternar FAQ
-  const toggleFaq = (index) => {
-    setOpenIndex(openIndex === index ? null : index);
-  };
+export default function Home() {
+  const avaliacaoRef = useRef(null);
+  const heroRef = useRef(null);
+  const [faqAberta, setFaqAberta] = useState(null);
+  const [scrolled, setScrolled] = useState(false);
+  const isHeroInView = useInView(heroRef, { once: true });
 
   useEffect(() => {
-    enviarEventoGA("pageview_liberacao", {
-      pagina: "home",
-      origem: "liberacao_miofascial"
-    });
+    enviarEventoGA("page_view", "Home - Modelo Clínico");
+
+    const handleScroll = () => setScrolled(window.scrollY > 100);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToAvaliacao = useCallback(() => {
+    avaliacaoRef.current?.scrollIntoView({ behavior: "smooth" });
+    enviarEventoGA("click", "Scroll para Avaliação");
   }, []);
 
   return (
     <>
-      {/* HERO SECTION */}
-      <section className={styles.hero}>
+
+
+      {/* ================= HERO ================= */}
+      <section className={styles.hero} ref={heroRef}>
         {/* Background Image */}
         <motion.img
           className={styles.imgHero}
-          onLoad={(e) => e.target.classList.add(styles.loaded)}
           src="/images/liberacao/5.jpeg"
           alt="liberacao"
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.9 }}
-          transition={{ duration: 1.2 }}
+          transition={{ duration: 1.2, ease: "easeOut" }}
         />
+        <div className={styles.overlay} />
+        <div className={styles.heroContent}>
+          <img src={logoNeutralize} alt="Neutralize" className={styles.logo} />
 
-        {/* Overlay */}
-        <motion.div
-          className={styles.overlay}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
-        />
+          <motion.h1 variants={fadeUp} initial="hidden" animate={isHeroInView ? "visible" : "hidden"}>
+            Fisioterapia para quem não quer apenas sair da dor —
+            <br />
+            <span className={styles.highlight}>quer voltar a confiar no próprio corpo</span>
+          </motion.h1>
 
-        {/* Content */}
-        <div className={styles.container}>
-          {/* Left */}
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className={styles.left}
-          >
-            {/* Logo da empresa */}
-            <motion.div
-              className={styles.logoContainer}
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-            >
-              <img
-                src={LogoHero}
-                alt="Logo da empresa"
-                className={styles.logo}
-              />
-            </motion.div>
-
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-            >
-              Tratamento manual <br />
-              <motion.span
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.6 }}
-              >
-                para dor muscular e recuperação esportiva
-              </motion.span>
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.8 }}
-            >
-              Atendimento individual para quem sente dor,
-              sobrecarga muscular ou busca recuperação esportiva com confiança.
-            </motion.p>
-
-            <motion.div
-              className={styles.actions}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1 }}
-            >
-              <motion.button
-                className={styles.primary}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => {
-                  enviarEventoGA("click_whatsapp_liberacao", {
-                    origem: "hero_agendar_agora",
-                    pagina: "home"
-                  });
-
-                  window.open("https://wa.me/554831974163", "_blank");
-                }}
-              >
-                Agendar agora
-              </motion.button>
-              <motion.button
-                className={styles.secondary}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => {
-                  enviarEventoGA("click_conhecer_metodo_liberacao", {
-                    origem: "hero",
-                    pagina: "home"
-                  });
-
-                  aboutRef.current?.scrollIntoView({
-                    behavior: "smooth",
-                    block: "start"
-                  });
-                }}
-              >
-                Conhecer método
-              </motion.button>
-            </motion.div>
-          </motion.div>
-
-          {/* Right Card - Formulário de Agendamento */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className={styles.right}
-          >
-            <motion.div
-              className={styles.glassCard}
-              whileHover={{ y: -5 }}
-            >
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.6 }}
-                style={{ color: "white" }}
-              >
-                <h3 style={{ color: "white", margin: "0 0 8px 0" }}>Agende uma avaliação</h3>
-                <p style={{ color: "rgba(255, 255, 255, 0.8)", fontSize: "14px", margin: 0 }}>
-                  Preencha os dados e entraremos em contato.
-                </p>
-              </motion.div>
-
-              <form
-                className={styles.inputs}
-                onSubmit={(e) => {
-                  e.preventDefault();
-
-                  const nome = e.target.nome.value;
-                  const contato = e.target.contato.value;
-                  const motivo = e.target.motivo.value || "Não informado";
-                  const preferencia = e.target.preferencia.value;
-
-                  const mensagem = `Olá, meu nome é ${nome}.\nTelefone/WhatsApp: ${contato}\nMotivo: ${motivo}\nPreferência de horário: ${preferencia}`;
-
-                  const url = `https://wa.me/554831974163?text=${encodeURIComponent(
-                    mensagem
-                  )}`;
-                  window.open(url, "_blank");
-                }}
-              >
-                <motion.div
-                  className={styles.input}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.7 }}
-                >
-                  <input
-                    id="nome"
-                    type="text"
-                    required
-                    style={{
-                      border: 'none',
-                      background: 'transparent',
-                      width: '100%',
-                      outline: 'none',
-                      color: 'white'
-                    }}
-                    placeholder="Nome completo"
-                  />
-                </motion.div>
-
-                <motion.div
-                  className={styles.input}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.75 }}
-                >
-                  <input
-                    id="contato"
-                    type="tel"
-                    required
-                    style={{
-                      border: 'none',
-                      background: 'transparent',
-                      width: '100%',
-                      outline: 'none',
-                      color: 'white'
-                    }}
-                    placeholder="Telefone/WhatsApp"
-                  />
-                </motion.div>
-
-                <motion.div
-                  className={styles.input}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.8 }}
-                >
-                  <input
-                    id="motivo"
-                    type="text"
-                    style={{
-                      border: 'none',
-                      background: 'transparent',
-                      width: '100%',
-                      outline: 'none',
-                      color: 'white'
-                    }}
-                    placeholder="Motivo principal (opcional)"
-                  />
-                </motion.div>
-
-                <motion.div
-                  className={styles.input}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.85 }}
-                >
-                  <select
-                    id="preferencia"
-                    style={{
-                      border: 'none',
-                      background: 'transparent',
-                      width: '100%',
-                      outline: 'none',
-                      color: 'white'
-                    }}
-                  >
-                    <option style={{ color: '#333' }}>Qualquer horário</option>
-                    <option style={{ color: '#333' }}>Manhã</option>
-                    <option style={{ color: '#333' }}>Tarde</option>
-                    <option style={{ color: '#333' }}>Noite</option>
-                  </select>
-                </motion.div>
-
-                <motion.button
-                  className={styles.confirm}
-                  type="submit"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.9 }}
-                  style={{ color: 'white' }}
-                >
-                  Solicitar contato
-                </motion.button>
-              </form>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* BENEFÍCIOS COM ANIMAÇÃO */}
-      <section className={styles.benefits}>
-        <div className={styles.benefitsContainer}>
-          {[0, 1, 2, 3].map((i) => (
-            <motion.div
-              key={i}
-              className={styles.benefit}
-              variants={benefitVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-50px" }}
-              custom={i}
-              whileHover={{ y: -8, transition: { duration: 0.2 } }}
-            >
-              <h3>
-                {i === 0 && "Redução imediata da dor"}
-                {i === 1 && "Melhora da mobilidade"}
-                {i === 2 && "Recuperação acelerada"}
-                {i === 3 && "Performance e bem-estar"}
-              </h3>
-              <p>
-                {i === 0 && "Alívio da tensão muscular e desconforto."}
-                {i === 1 && "Mais amplitude de movimento com segurança."}
-                {i === 2 && "Estimula circulação e regeneração tecidual."}
-                {i === 3 && "Movimento mais eficiente e sensação de leveza."}
-              </p>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* SOBRE COM ANIMAÇÃO */}
-      <section ref={aboutRef} className={styles.about}>
-        <div className={styles.aboutContainer}>
-          {/* Left – Images */}
-          <div className={styles.images}>
-            <div className={styles.imagesTop}>
-              <motion.img
-                src="/images/liberacao/1.jpeg"
-                alt="Liberação miofascial 1"
-                variants={imageVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                whileHover={{ scale: 1.03 }}
-              />
-              <motion.img
-                src="/images/liberacao/2.jpeg"
-                alt="Liberação miofascial 2"
-                variants={imageVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                transition={{ delay: 0.1 }}
-                whileHover={{ scale: 1.03 }}
-              />
-            </div>
-
-            <motion.div className={styles.imagesBottom}>
-              <img
-                src="/images/liberacao/liberacao5.jpg"
-                alt="Liberação miofascial"
-                className={styles.imageZoom}
-              />
-            </motion.div>
-          </div>
-
-          {/* Right – Text */}
-          <motion.div
-            className={styles.text}
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-          >
-            <h2>O que é a Liberação Miofascial?</h2>
-
-            <motion.p
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-            >
-              A liberação miofascial é uma técnica terapêutica que atua sobre a fáscia,
-              um tecido conjuntivo que envolve músculos, articulações e órgãos.
-            </motion.p>
-
-            <motion.p
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3 }}
-            >
-              Quando a fáscia perde mobilidade — seja por dor, sobrecarga ou estresse —
-              surgem restrições de movimento, desconforto e queda de performance.
-            </motion.p>
-
-            <motion.p
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.4 }}
-            >
-              Através de estímulos manuais precisos, buscamos restaurar a mobilidade,
-              reduzir tensão e melhorar a eficiência do movimento.
-            </motion.p>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* DEPOIMENTOS */}
-      <section className={styles.testimonials}>
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-        >
-          O que dizem nossos pacientes…
-        </motion.h2>
-
-        <div className={styles.testimonialsGrid}>
-          {current.map((item, index) => {
-            if (item.type === "google") {
-              return (
-                <motion.a
-                  key={index}
-                  href="https://maps.app.goo.gl/vyPM27jY1TtpYLqm9"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`${styles.testimonialCard} ${styles.googleCard}`}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <img
-                    src="/images/googlemaps.png"
-                    alt="Google Maps"
-                    className={styles.googleIcon}
-                  />
-                  <span>Mais avaliações aqui…</span>
-                </motion.a>
-              );
-            }
-
-            return (
-              <motion.div
-                key={index}
-                className={styles.testimonialCard}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                whileHover={{ y: -5 }}
-              >
-                <p>"{item.text}"</p>
-                <span>{item.name}</span>
-              </motion.div>
-            );
-          })}
-        </div>
-
-        <div className={styles.pagination}>
-          <motion.button
-            onClick={() => setPage((p) => Math.max(p - 1, 0))}
-            disabled={page === 0}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            Anterior
-          </motion.button>
-
-          <motion.span
-            key={page}
-            initial={{ scale: 0.8 }}
-            animate={{ scale: 1 }}
-          >
-            {page + 1} / {totalPages}
-          </motion.span>
-
-          <motion.button
-            onClick={() =>
-              setPage((p) => Math.min(p + 1, totalPages - 1))
-            }
-            disabled={page === totalPages - 1}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            Próximo
-          </motion.button>
-        </div>
-      </section>
-
-      {/* SEÇÃO DE PERGUNTAS FREQUENTES */}
-      <section className={styles.faq}>
-        <div className={styles.faqContainer}>
-          <motion.h2
-            className={styles.faqTitle}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            Perguntas Frequentes
-          </motion.h2>
-          <motion.p
-            className={styles.faqSubtitle}
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-          >
-            Tire suas dúvidas sobre nossos tratamentos e procedimentos
+          <motion.p variants={fadeUp}>
+            Tratamento organizado em fases claras, com avaliação,
+            critérios e decisões clínicas.
+            <br />
+            Sem sessões soltas. Sem achismo. Sem empurrar tratamento.
           </motion.p>
 
-          <div className={styles.faqGrid}>
-            {faqData.map((item, index) => (
-              <motion.div
-                key={index}
-                className={`${styles.faqCard} ${openIndex === index ? styles.active : ''}`}
-                onClick={() => toggleFaq(index)}
-                variants={faqVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, margin: "-50px" }}
-                custom={index}
-                whileHover={{
-                  y: -8,
-                  boxShadow: "0 16px 32px rgba(0, 0, 0, 0.12)",
-                  transition: { duration: 0.2 }
-                }}
-              >
-                <div className={styles.faqQuestion}>
-                  <h3>{item.question}</h3>
-                  <motion.div
-                    className={styles.faqIcon}
-                    animate={{ rotate: openIndex === index ? 45 : 0 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <span>+</span>
-                  </motion.div>
-                </div>
-
-                <AnimatePresence>
-                  {openIndex === index && (
-                    <motion.div
-                      className={styles.faqAnswer}
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      <p>{item.answer}</p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
-            ))}
+          <div className={styles.heroButtons}>
+            <button
+              className={styles.primaryButton}
+              onClick={() => window.open("https://wa.me/554831974163", "_blank")}
+            >
+              Agendar avaliação
+            </button>
+            <button className={styles.secondaryButton} onClick={scrollToAvaliacao}>
+              Entenda se esse modelo faz sentido para você
+            </button>
           </div>
         </div>
       </section>
+
+      {/* ================= ESPELHAMENTO ================= */}
+      <section className={styles.section}>
+        <div className={styles.container}>
+          <h2>Você não está sozinho</h2>
+          <p className={styles.lead}>A maioria das pessoas que chegam até aqui já tentou:</p>
+
+          {/* ================= ESPELHAMENTO ================= */}
+          <div className={styles.doresGrid}>
+            {doresEspelhadas.map((dor) => (
+              <div key={dor} className={styles.dorCard}>
+                <p>{dor}</p>
+              </div>
+            ))}
+          </div>
+
+
+          <p className={styles.lead}>
+            Se você sente que está sempre apagando incêndios,
+            mas nunca resolvendo a causa, essa página é pra você.
+          </p>
+        </div>
+      </section>
+
+      {/* ================= REENQUADRAMENTO ================= */}
+      <section className={`${styles.section} ${styles.sectionReframe}`}>
+        <div className={styles.container}>
+          <h2>Por que a dor volta?</h2>
+
+          <div className={styles.reframeCard}>
+            <p className={styles.reframeIntro}>
+              A dor raramente volta porque você “não se cuidou”.
+            </p>
+
+            <ul className={styles.reframeChecklist}>
+              <li>O corpo não foi preparado para carga</li>
+              <li>A alta aconteceu cedo demais</li>
+              <li>Ninguém mediu se você realmente estava pronto</li>
+            </ul>
+
+            <p className={styles.reframeConclusion}>
+              Tratar a dor é só o começo.
+              O problema é parar aí.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ================= MÉTODO ================= */}
+      <section className={`${styles.section} ${styles.methodSection}`}>
+        <div className={styles.container}>
+          <h2>Nosso cuidado funciona em fases — e cada uma tem um motivo</h2>
+
+          {/* ================= MÉTODO ================= */}
+          <div className={styles.cards}>
+            {fases.map((fase) => (
+              <div
+                key={fase.tag}
+                className={styles.card}
+                style={{ borderTop: `4px solid ${fase.color}` }}
+              >
+                <span className={styles.cardTag}>{fase.tag}</span>
+                <h3>{fase.title}</h3>
+                <p>{fase.text}</p>
+              </div>
+            ))}
+          </div>
+
+
+          <p className={styles.lead}>
+            Você não precisa fazer todas as fases.
+            Mas precisa saber que elas existem.
+          </p>
+        </div>
+      </section>
+
+      {/* ================= CRITÉRIOS ================= */}
+      <section className={styles.section}>
+        <div className={styles.container}>
+          <h2>Aqui ninguém evolui só por tempo</h2>
+          <p className={styles.lead}>A evolução acontece quando critérios objetivos são atingidos</p>
+
+          <div className={styles.criteriosGrid}>
+            {criterios.map((c) => {
+              const Icon = iconMap[c.icon]
+
+              return (
+                <div key={c.icon} className={styles.criterioCard}>
+                  <Icon className={styles.criterioIcon} />
+                  <h3>{c.label}</h3>
+                </div>
+              )
+            })}
+          </div>
+
+
+          <p className={styles.lead}>
+            Se não faz sentido avançar, a gente não avança.
+            Se faz, a decisão é explicada.
+          </p>
+        </div>
+      </section>
+
+      {/* ================= PARA QUEM ================= */}
+      <section className={`${styles.section} ${styles.targetSection}`}>
+        <div className={styles.container}>
+          <h2>Para quem esse modelo faz sentido</h2>
+
+          <div className={styles.timelineCompare}>
+
+            {/* FAZ SENTIDO */}
+            <div className={`${styles.timelineCol} ${styles.ok}`}>
+              <div className={styles.timelineHeader}>
+                <span className={styles.icon}>✓</span>
+                <h3>Faz sentido se você:</h3>
+              </div>
+
+              {/* ================= PARA QUEM ================= */}
+              <ul className={styles.timeline}>
+                {paraQuem.sim.map((item) => (
+                  <li key={item} className={styles.timelineItem}>
+                    <span className={styles.dot}>✓</span>
+                    <p>{item}</p>
+                  </li>
+                ))}
+              </ul>
+
+            </div>
+
+            {/* NÃO FAZ */}
+            <div className={`${styles.timelineCol} ${styles.nao}`}>
+              <div className={styles.timelineHeader}>
+                <span className={styles.icon}>⏸</span>
+                <h3>Talvez não faça sentido se:</h3>
+              </div>
+
+              <ul className={styles.timeline}>
+                {paraQuem.nao.map((item) => (
+                  <li key={item} className={styles.timelineItem}>
+                    <span className={styles.dot}>⏸</span>
+                    <p>{item}</p>
+                  </li>
+                ))}
+              </ul>
+
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+
+      {/* ================= AVALIAÇÃO ================= */}
+      <section className={styles.about} ref={avaliacaoRef}>
+        <div className={styles.container}>
+          <h2 className={styles.aboutTitle}>O que acontece na avaliação</h2>
+
+          <div className={styles.stepsGrid}>
+            <div className={styles.stepCard}>
+              <span className={styles.stepNumber}>01</span>
+              <h3>Conversa clínica</h3>
+              <p>
+                Entendimento profundo da sua história,
+                rotina, queixas e objetivos reais.
+              </p>
+            </div>
+
+            <div className={styles.stepCard}>
+              <span className={styles.stepNumber}>02</span>
+              <h3>Avaliação de movimento</h3>
+              <p>
+                Testes de função, controle motor e
+                capacidade real de carga.
+              </p>
+            </div>
+
+            <div className={styles.stepCard}>
+              <span className={styles.stepNumber}>03</span>
+              <h3>Explicação clara</h3>
+              <p>
+                Você entende o que está acontecendo,
+                sem termos vagos ou promessas.
+              </p>
+            </div>
+
+            <div className={styles.stepCard}>
+              <span className={styles.stepNumber}>04</span>
+              <h3>Direcionamento honesto</h3>
+              <p>
+                Indicamos o melhor caminho — inclusive
+                se não for seguir tratamento.
+              </p>
+            </div>
+          </div>
+
+          <div className={styles.aboutFooter}>
+            <p className={styles.leadLight}>
+              Você sai sabendo exatamente onde está,
+              o que precisa ser feito e se faz sentido seguir.
+            </p>
+
+            <button
+              className={styles.ctaButton}
+              onClick={() => window.open("https://wa.me/554831974163", "_blank")}
+            >
+              Agendar avaliação
+            </button>
+
+            <p className={styles.ctaSubtitle}>
+              Sem obrigação de continuidade. Só clareza.
+            </p>
+          </div>
+        </div>
+      </section>
+
 
       {/* INSTAGRAM */}
       <section className={`${styles.cardLight}`}>
@@ -738,6 +462,7 @@ export default function HeroSection() {
 
         <InstagramFeed />
       </section>
+
 
       {/* RODAPÉ */}
       <footer className={styles.footer}>
@@ -766,8 +491,8 @@ export default function HeroSection() {
             <div className={styles.footerColumn}>
               <h4>Entre em Contato</h4>
               <div className={styles.contactInfo}>
-                {contactInfo.map((item, index) => (
-                  <div key={index} className={styles.contactItem}>
+                {contactInfo.map((item) => (
+                  <div key={item.label} className={styles.contactItem}>
                     <i className={item.icon}></i>
                     <div>
                       <span className={styles.contactLabel}>{item.label}</span>
@@ -775,6 +500,7 @@ export default function HeroSection() {
                     </div>
                   </div>
                 ))}
+
               </div>
             </div>
 
@@ -799,11 +525,13 @@ export default function HeroSection() {
           <div className={styles.footerBottom}>
             {/* Redes sociais */}
             <div className={styles.footerSocial}>
-              {socialLinks.map((social, index) => {
-                const Icon = social.icon;
+              {/* ================= REDES SOCIAIS ================= */}
+              {socialLinks.map((social) => {
+                const Icon = social.icon
 
                 return (
                   <motion.a
+                    key={social.label}
                     href={social.url}
                     className={styles.socialLink}
                     aria-label={social.label}
@@ -814,15 +542,15 @@ export default function HeroSection() {
                         enviarEventoGA("click_whatsapp_liberacao", {
                           origem: "footer",
                           pagina: "home"
-                        });
+                        })
                       }
                     }}
                   >
                     <Icon size={20} />
                   </motion.a>
-
-                );
+                )
               })}
+
             </div>
 
             {/* Copyright e links legais */}
