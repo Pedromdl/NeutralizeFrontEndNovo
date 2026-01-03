@@ -185,72 +185,72 @@ export default function HeroSection() {
 
   return (
     <>
-{/* HERO SECTION */}
-<section className={styles.hero}>
-  {/* Background Image */}
-  <motion.img
-    className={styles.imgHero}
-    onLoad={(e) => e.target.classList.add(styles.loaded)}
-    src="/images/liberacao.png"
-    alt="liberacao"
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    transition={{ duration: 1.2 }}
-  />
-
-  {/* Overlay */}
-  <motion.div
-    className={styles.overlay}
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    transition={{ duration: 0.8 }}
-  />
-
-  {/* Content */}
-  <div className={styles.container}>
-    {/* Left */}
-    <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, delay: 0.2 }}
-      className={styles.left}
-    >
-      {/* Logo da empresa */}
-      <motion.div
-        className={styles.logoContainer}
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-      >
-        <img 
-          src= {LogoHero}
-          alt="Logo da empresa" 
-          className={styles.logo}
+      {/* HERO SECTION */}
+      <section className={styles.hero}>
+        {/* Background Image */}
+        <motion.img
+          className={styles.imgHero}
+          onLoad={(e) => e.target.classList.add(styles.loaded)}
+          src="/images/liberacao/5.jpeg"
+          alt="liberacao"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.9 }}
+          transition={{ duration: 1.2 }}
         />
-      </motion.div>
 
-      <motion.h1
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
-      >
-        Encontre seu <br />
-        <motion.span
+        {/* Overlay */}
+        <motion.div
+          className={styles.overlay}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-        >
-          equilíbrio interno
-        </motion.span>
-      </motion.h1>
+          transition={{ duration: 0.8 }}
+        />
+
+        {/* Content */}
+        <div className={styles.container}>
+          {/* Left */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className={styles.left}
+          >
+            {/* Logo da empresa */}
+            <motion.div
+              className={styles.logoContainer}
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <img
+                src={LogoHero}
+                alt="Logo da empresa"
+                className={styles.logo}
+              />
+            </motion.div>
+
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              Tratamento manual <br />
+              <motion.span
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.6 }}
+              >
+                para dor muscular e recuperação esportiva
+              </motion.span>
+            </motion.h1>
 
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.8 }}
             >
-              Sessões personalizadas focadas em movimento, consciência corporal e
-              performance. Cuide do corpo com ciência e intenção.
+              Atendimento individual para quem sente dor, 
+              sobrecarga muscular ou busca recuperação esportiva com confiança.
             </motion.p>
 
             <motion.div
@@ -458,7 +458,7 @@ export default function HeroSection() {
           <div className={styles.images}>
             <div className={styles.imagesTop}>
               <motion.img
-                src="/images/liberacao2.jpg"
+                src="/images/liberacao/1.jpeg"
                 alt="Liberação miofascial 1"
                 variants={imageVariants}
                 initial="hidden"
@@ -467,7 +467,7 @@ export default function HeroSection() {
                 whileHover={{ scale: 1.03 }}
               />
               <motion.img
-                src="/images/liberacao3.jpg"
+                src="/images/liberacao/2.jpeg"
                 alt="Liberação miofascial 2"
                 variants={imageVariants}
                 initial="hidden"
@@ -478,15 +478,12 @@ export default function HeroSection() {
               />
             </div>
 
-            <motion.div
-              className={styles.imagesBottom}
-              variants={imageVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-            >
-              <img src="/images/liberacao4.jpg" alt="Liberação miofascial 3" />
+            <motion.div className={styles.imagesBottom}>
+              <img
+                src="/images/liberacao/liberacao5.jpg"
+                alt="Liberação miofascial"
+                className={styles.imageZoom}
+              />
             </motion.div>
           </div>
 
