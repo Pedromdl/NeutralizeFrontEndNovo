@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { useAgenda } from '../hooks/useAgenda';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 import CalendarDay from '../components/Calendario/CalendarDay';
+import CalendarThreeDays from '../components/Calendario/CalendarThreeDays';
 import CalendarWeek from '../components/Calendario/CalendarWeek';
 import CalendarMonth from '../components/Calendario/CalendarMonth';
 import ModalCalendario from '../components/Calendario/ModalCalendario';
@@ -18,14 +20,14 @@ function addDays(date, amount) {
 function formatHeaderDate(date, view) {
   return view === 'day'
     ? date.toLocaleDateString('pt-BR', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-      })
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    })
     : date.toLocaleDateString('pt-BR', {
-        month: 'long',
-        year: 'numeric',
-      });
+      month: 'long',
+      year: 'numeric',
+    });
 }
 
 export default function Agenda() {
@@ -122,17 +124,19 @@ export default function Agenda() {
   };
 
   /* Navegação */
-  function handlePrev() {
-    if (view === 'day') setCurrentDate(addDays(currentDate, -1));
-    if (view === 'week') setCurrentDate(addDays(currentDate, -7));
-    if (view === 'month') setCurrentDate(addDays(currentDate, -30));
-  }
+function handlePrev() {
+  if (view === 'day') setCurrentDate(addDays(currentDate, -1));
+  if (view === 'three') setCurrentDate(addDays(currentDate, -3));
+  if (view === 'week') setCurrentDate(addDays(currentDate, -7));
+  if (view === 'month') setCurrentDate(addDays(currentDate, -30));
+}
 
-  function handleNext() {
-    if (view === 'day') setCurrentDate(addDays(currentDate, 1));
-    if (view === 'week') setCurrentDate(addDays(currentDate, 7));
-    if (view === 'month') setCurrentDate(addDays(currentDate, 30));
-  }
+function handleNext() {
+  if (view === 'day') setCurrentDate(addDays(currentDate, 1));
+  if (view === 'three') setCurrentDate(addDays(currentDate, 3));
+  if (view === 'week') setCurrentDate(addDays(currentDate, 7));
+  if (view === 'month') setCurrentDate(addDays(currentDate, 30));
+}
 
   function handleToday() {
     setCurrentDate(new Date());
@@ -143,9 +147,9 @@ export default function Agenda() {
       {/* HEADER */}
       <div className="agenda-header">
         <div className="agenda-nav">
-          <button onClick={handlePrev}>◀</button>
+          <button onClick={handlePrev}><ChevronLeft size={14} /></button>
           <button onClick={handleToday}>Hoje</button>
-          <button onClick={handleNext}>▶</button>
+          <button onClick={handleNext}><ChevronRight size={14} /></button>
         </div>
 
         <div className="agenda-date">
@@ -156,6 +160,9 @@ export default function Agenda() {
           <div className="agenda-view-desktop">
             <button className={view === 'day' ? 'active' : ''} onClick={() => setView('day')}>
               Dia
+            </button>
+            <button className={view === 'three' ? 'active' : ''} onClick={() => setView('three')}>
+              3 Dias
             </button>
             <button className={view === 'week' ? 'active' : ''} onClick={() => setView('week')}>
               Semana
@@ -171,6 +178,7 @@ export default function Agenda() {
             onChange={(e) => setView(e.target.value)}
           >
             <option value="day">Dia</option>
+            <option value="three">3 Dias</option>
             <option value="week">Semana</option>
             <option value="month">Mês</option>
           </select>
@@ -186,6 +194,15 @@ export default function Agenda() {
       {/* CALENDÁRIOS */}
       {view === 'day' && (
         <CalendarDay
+          events={events}
+          date={currentDate}
+          onEventClick={handleEventClick}
+          onDateClick={handleDateClick}
+        />
+      )}
+
+      {view === 'three' && (
+        <CalendarThreeDays
           events={events}
           date={currentDate}
           onEventClick={handleEventClick}

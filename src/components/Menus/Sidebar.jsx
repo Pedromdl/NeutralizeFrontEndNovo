@@ -47,6 +47,13 @@ function Sidebar() {
 
         <ul className="menu">
 
+
+          <li>
+            <NavLink to="/homepage" className={({ isActive }) => (isActive ? 'ativo' : '')}>
+              <House size={20} />
+              {aberto && <span>Início</span>}
+            </NavLink>
+          </li>
           <li>
             <NavLink to="/usuarios" className={({ isActive }) => (isActive ? 'ativo' : '')}>
               <Users size={20} />
@@ -66,13 +73,13 @@ function Sidebar() {
             </NavLink>
           </li>
           <li>
-            <NavLink to="/agendamentos" className={({ isActive }) => (isActive ? 'ativo' : '')}>
+            <NavLink to="/calendario" className={({ isActive }) => (isActive ? 'ativo' : '')}>
               <CalendarDays size={20} />
               {aberto && <span>Agenda</span>}
             </NavLink>
           </li>
 
-          {/* 🔹 Financeiro só aparece se is_staff */}
+          {/* 🔹 Financeiro só aparece se is_staff
           {user?.is_staff && (
             <li>
               <NavLink to="/financeiro" className={({ isActive }) => (isActive ? 'ativo' : '')}>
@@ -80,7 +87,7 @@ function Sidebar() {
                 {aberto && <span>Financeiro</span>}
               </NavLink>
             </li>
-          )}
+          )} */}
 
           <li>
             <NavLink to="/configuracoes" className={({ isActive }) => (isActive ? 'ativo' : '')}>

@@ -12,6 +12,7 @@
   cursor: pointer;
   padding: 8px;
   border-radius: 50%;
+  margin-right: 0px;
   transition: all 0.2s ease;
   position: relative;
   color: #666;

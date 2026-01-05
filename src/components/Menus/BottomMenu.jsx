@@ -5,19 +5,14 @@ import '../css/BottomMenu.css';
 import Logo from '../../images/logo3.png';
 
 // 🔹 Ícones do lucide-react
-import { 
-  House, 
-  Users, 
-  BarChart3, 
-  CalendarDays, 
-  Cog, 
-  FileText, 
-  User, 
-  Bell, 
+import {
+  House,
+  Users,
+  BarChart3,
+  CalendarDays,
+  Cog,
+  User,
   CircleX,
-  ClipboardList,
-  Dumbbell,
-  History,
   Link
 } from 'lucide-react';
 
@@ -32,42 +27,6 @@ function BottomMenu() {
 
   // 🔹 Lista de opções do menu de configurações
   const configItems = [
-    {
-      title: "Pré-Avaliações",
-      description: "Modelos de avaliações físicas",
-      icon: <FileText size={20} color="#282829" />,
-      path: '/configuracoes/pre-avaliacoes',
-    },
-    {
-      title: "Testes Pré-Padronizados",
-      description: "Configure testes e protocolos",
-      icon: <ClipboardList size={20} color="#282829" />,
-      path: '/configuracoes/testes-pre-padronizados',
-    },
-    {
-      title: "Banco de Exercícios",
-      description: "Biblioteca de exercícios",
-      icon: <Dumbbell size={20} color="#282829" />,
-      path: '/bancoexercicios',
-    },
-    {
-      title: "Treinos Executados",
-      description: "Visualize treinos realizados",
-      icon: <History size={20} color="#282829" />,
-      path: '/treinosexecutados',
-    },
-    {
-      title: "Integrações",
-      description: "Conecte com outras plataformas",
-      icon: <Link size={20} color="#282829" />,
-      path: '/integracoes',
-    },
-        {
-      title: "Usuários",
-      description: "Gerencie usuários da clínica",
-      icon: <Users size={20} color="#282829" />,
-      path: '/banco-usuarios',
-    },
     {
       title: "Dados da Conta",
       description: "Informações pessoais",
@@ -85,6 +44,11 @@ function BottomMenu() {
           <img src={Logo} alt="Logo" />
         </div>
 
+        <NavLink to="/homepage" className={({ isActive }) => (isActive ? 'ativo' : '')}>
+          <House size={20} color="#fff" />
+          <span>Início</span>
+        </NavLink>
+
         <NavLink to="/usuarios" className={({ isActive }) => (isActive ? 'ativo' : '')}>
           <Users size={20} color="#fff" />
           <span>Usuários</span>
@@ -95,7 +59,7 @@ function BottomMenu() {
           <span>Avaliação</span>
         </NavLink>
 
-        <NavLink to="/agendamentos" className={({ isActive }) => (isActive ? 'ativo' : '')}>
+        <NavLink to="/calendario" className={({ isActive }) => (isActive ? 'ativo' : '')}>
           <CalendarDays size={20} color="#fff" />
           <span>Agenda</span>
         </NavLink>
@@ -112,11 +76,11 @@ function BottomMenu() {
           <p className="bottomsheet-subtitle">
             Gerencie as configurações do sistema
           </p>
-          
+
           <ul className="bottomsheet-list">
             {configItems.map((item, index) => (
               <li key={index}>
-                <button 
+                <button
                   onClick={() => irPara(item.path)}
                   className="config-menu-btn"
                 >
@@ -132,7 +96,7 @@ function BottomMenu() {
                 </button>
               </li>
             ))}
-            
+
             {/* 🔹 Botão Fechar */}
             <li className="fechar-item">
               <button onClick={() => setIsOpen(false)} className="fechar-btn">

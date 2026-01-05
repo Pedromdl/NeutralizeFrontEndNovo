@@ -31,7 +31,6 @@ export default function PrivateRoute({ children }) {
   if (loading) {
     return (
       <LoadingSpinner
-        message="Verificando autenticação..."
         fullScreen={true}
         size="medium"
         showTimeout={isTimeout}

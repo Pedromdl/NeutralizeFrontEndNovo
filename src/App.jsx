@@ -60,6 +60,7 @@ import AssinaturaDetalhes from './components/AssinaturaDetalhes.jsx';
 
 import StravaCallback from "./components/StravaCallback.jsx";
 import Agenda from "../src/pages/Agenda.jsx"
+import Homepage from './pages/Usuario/Homepage.jsx';
 
 
 function LayoutComSidebar({ children }) {
@@ -123,6 +124,7 @@ function AppRoutes() {
           <Routes>
             {/* ✅ PÁGINAS SEMPRE LIBERADAS */}
             <Route path="/" element={<Home />} />
+            <Route path="/homepage" element={<Homepage />} />
             <Route path="/perfil" element={<Profile />} />
             <Route path="/usuarios" element={<Usuarios />} /> {/* 🔥 AGORA LIBERADA */}
             <Route path="/orientacao" element={<Orientacao />} />

@@ -37,6 +37,7 @@ body {
   flex-direction: column;
   overflow-y: auto;
   padding-bottom: 80px; /* 🔹 ESPAÇO PARA BOTTOM MENU */
+  background-color: #f1f5f9;
 }
 
 .conteudo {
@@ -60,7 +61,6 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 20px;
 }
 
 .logo {
@@ -467,6 +467,8 @@ button.black:hover {
 .read-the-docs {
   color: #888;
 }
+
+
 
 @keyframes fadeIn {
   from { opacity: 0; transform: scale(0.95); }

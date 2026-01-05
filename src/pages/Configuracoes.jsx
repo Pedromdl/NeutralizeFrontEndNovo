@@ -1,14 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { 
-  Settings, 
-  FileText, 
-  ClipboardList, 
-  Dumbbell, 
-  Link, 
+  Settings,  
   User, 
-  Users,
-  History, // Ícone para Treinos Executados
-  ChevronRight
 } from 'lucide-react';
 import '../components/css/Configuracoes.css';
 
@@ -17,47 +10,11 @@ export default function Configuracoes() {
 
   const configItems = [
     {
-      title: "Cadastro de Avaliações Pré-Padronizadas",
-      description: "Gerencie modelos de avaliações físicas",
-      icon: <FileText size={24} />,
-      path: '/configuracoes/pre-avaliacoes',
-    },
-    {
-      title: "Cadastro de Testes Pré-Padronizados",
-      description: "Configure testes e protocolos padrão",
-      icon: <ClipboardList size={24} />,
-      path: '/configuracoes/pre-testes',
-    },
-    {
-      title: "Banco de Exercícios",
-      description: "Gerencie sua biblioteca de exercícios",
-      icon: <Dumbbell size={24} />,
-      path: '/bancoexercicios',
-    },
-    {
-      title: "Treinos Executados",
-      description: "Visualize e analise treinos realizados",
-      icon: <History size={24} />,
-      path: '/treinosexecutados',
-    },
-    {
-      title: "Integrações",
-      description: "Conecte com outras plataformas",
-      icon: <Link size={24} />,
-      path: '/paciente/integracoes',
-    },
-    {
       title: "Dados da Conta",
       description: "Gerencie suas informações pessoais",
       icon: <User size={24} />,
       path: '/perfil',
     },
-    {
-      title: "Usuários",
-      description: "Gerencie usuários da clínica",
-      icon: <Users size={24} />,
-      path: '/banco-usuarios',
-    }
   ];
 
   return (

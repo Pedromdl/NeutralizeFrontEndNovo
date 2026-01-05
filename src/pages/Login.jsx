@@ -24,8 +24,8 @@ export default function Login() {
   // -------------------------------------------------
   const redirectByRole = (role) => {
     const routes = {
-      admin: "/usuarios",
-      profissional: "/usuarios",
+      admin: "/homepage",
+      profissional: "/homepage",
       paciente: "/paciente",
     };
     return routes[role] || "/";
