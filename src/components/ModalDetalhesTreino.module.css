@@ -1,0 +1,200 @@
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background: #ffffff;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modalHeader {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Título centralizado de verdade */
+.modalHeader h2 {
+  grid-column: 2;
+  margin: 0;
+  margin-bottom: 0px;
+  text-align: center;
+  font-size: 1.4rem;
+  color: #1f2937;
+}
+
+/* Botão sempre à direita */
+.btnFechar {
+  grid-column: 3;
+  justify-self: end;
+    background: none;
+    border: none;
+}
+
+.btnFechar:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.modalInfoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  padding: 24px;
+  background: #f9fafb;
+}
+
+.infoCard {
+  display: flex;
+  justify-content: center;;
+  align-items: center;           /* 🔑 centraliza tudo verticalmente */
+  gap: 10px;
+  background: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  min-height: 64px;              /* 🔑 equaliza altura dos cards */
+}
+
+/* Ícone */
+.infoCard svg {
+  flex-shrink: 0;                /* 🔑 impede o SVG de "encolher" */
+  color: #3b82f6;
+}
+
+/* Container do texto */
+.infoCard > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;       /* 🔑 centraliza label + value */
+  line-height: 1.2;
+}
+
+/* Label (título) */
+.infoCard label {
+  font-size: 0.7rem;
+  color: #6b7280;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+/* Valor */
+.infoCard span {
+  font-size: 0.95rem;
+  color: #111827;
+  font-weight: 500;
+}
+
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .modalContent {
+    margin: 12px;
+  }
+
+  .modalInfoGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =======================
+   EXERCÍCIOS
+======================= */
+
+.exerciciosSection {
+  padding: 24px;
+}
+
+.exerciciosSection h3 {
+  margin-bottom: 16px;
+  color: #1f2937;
+}
+
+.exerciciosList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Card do Exercício */
+.exercicioCard {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.exercicioHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.exercicioHeader h4 {
+  margin: 0;
+  font-size: 1rem;
+  color: #111827;
+}
+
+.rpeBadge {
+  background: #eef2ff;
+  color: #3730a3;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* Card interno de Séries */
+.seriesCard {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.seriesHeader {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b7280;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+/* Grid das séries */
+.seriesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px;
+}
+
+.serieItem {
+    display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 8px;
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.serieNumero {
+  font-weight: 600;
+  color: #374151;
+}
+

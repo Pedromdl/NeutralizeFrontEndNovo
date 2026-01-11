@@ -202,6 +202,12 @@ export default function TreinosExecutados() {
         <div className="busca-section-com-controles">
           <div className="busca-wrapper-com-controles">
             <div className="busca-input-com-controles">
+              {!loading && (
+                <>
+                  {buscaInput && ` • Filtrado por: "${buscaInput}"`}
+                </>
+              )}
+
               <div className="search-input-wrapper">
                 <Search size={20} />
                 <input
@@ -243,9 +249,14 @@ export default function TreinosExecutados() {
 
             <div className="busca-info">
               <span>
-                {loading ? 'Carregando...' : `${treinos.length} de ${totalTreinos} treinos`}
-                {buscaInput && ` • Filtrado por: "${buscaInput}"`}
+                {!loading && (
+                  <>
+                    {`${treinos.length} de ${totalTreinos} treinos`}
+                    {buscaInput && ` • Filtrado por: "${buscaInput}"`}
+                  </>
+                )}
               </span>
+
             </div>
           </div>
         </div>

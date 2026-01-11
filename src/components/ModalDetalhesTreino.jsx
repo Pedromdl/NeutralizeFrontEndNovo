@@ -1,6 +1,6 @@
 // components/ModalDetalhesTreino.jsx
-import { X, User, Dumbbell, Calendar, Clock, BarChart } from 'lucide-react';
-import './ModalDetalhesTreino.css';
+import { X, User, Dumbbell, Calendar, Clock } from 'lucide-react';
+import styles from './ModalDetalhesTreino.module.css';
 
 export default function ModalDetalhesTreino({ treino, onClose }) {
   if (!treino) return null;
@@ -12,95 +12,107 @@ export default function ModalDetalhesTreino({ treino, onClose }) {
     return horas > 0 ? `${horas}h ${minutos}m` : `${minutos}m`;
   };
 
-  const formatarData = (dataString) => {
-    // 🔹 REMOVEMOS AS HORAS - apenas data
-    return new Date(dataString).toLocaleDateString('pt-BR');
-  };
+  const formatarData = (dataString) =>
+    new Date(dataString).toLocaleDateString('pt-BR');
+
+  const formatarCarga = (carga) => Number(carga) || 0;
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        {/* Header do Modal */}
-        <div className="modal-header">
-          <h2 style={{ margin: 0 }}>Detalhes do Treino</h2>
-          <button className="btn-fechar" onClick={onClose}>
+    <div className={styles.modalOverlay} onClick={onClose}>
+      <div
+        className={styles.modalContent}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className={styles.modalHeader}>
+          <h2>Detalhes do Treino</h2>
+          <button className={styles.btnFechar} onClick={onClose}>
             <X size={20} />
           </button>
         </div>
 
-        {/* Informações Principais */}
-        <div className="modal-info-grid">
-          <div className="info-card">
-            <User size={20} />
+        {/* Info principal */}
+        <div className={styles.modalInfoGrid}>
+          <div className={styles.infoCard}>
+            <User size={18} />
             <div>
               <label>Paciente</label>
               <span>{treino.paciente_nome || 'N/A'}</span>
             </div>
           </div>
-          
-          <div className="info-card">
-            <Dumbbell size={20} />
+
+          <div className={styles.infoCard}>
+            <Dumbbell size={18} />
             <div>
               <label>Treino</label>
               <span>{treino.treino_nome || 'N/A'}</span>
             </div>
           </div>
-          
-          <div className="info-card">
-            <Calendar size={20} />
+
+          <div className={styles.infoCard}>
+            <Calendar size={18} />
             <div>
-              {/* 🔹 MUDAMOS O LABEL TAMBÉM */}
               <label>Data</label>
               <span>{formatarData(treino.data)}</span>
             </div>
           </div>
-          
+
           {treino.finalizado && (
-            <div className="info-card">
-              <Clock size={20} />
+            <div className={styles.infoCard}>
+              <Clock size={18} />
               <div>
-                <label>Tempo Total</label>
+                <label>Tempo</label>
                 <span>{formatarTempo(treino.tempo_total)}</span>
               </div>
             </div>
           )}
         </div>
 
-        {/* Lista de Exercícios */}
-        {treino.exercicios && treino.exercicios.length > 0 && (
-          <div className="exercicios-section">
-            <h3>Exercícios Realizados ({treino.exercicios.length})</h3>
-            <div className="exercicios-list">
+        {/* Exercícios */}
+        {treino.exercicios?.length > 0 && (
+          <div className={styles.exerciciosSection}>
+            <h3>Exercícios Executados</h3>
+
+            <div className={styles.exerciciosList}>
               {treino.exercicios.map((exercicio, index) => (
-                <div key={exercicio.id || index} className="exercicio-card">
-                  <div className="exercicio-header">
-                    <h4>{exercicio.exercicio_nome || `Exercício ${index + 1}`}</h4>
+                <div
+                  key={exercicio.id || index}
+                  className={styles.exercicioCard}
+                >
+                  {/* Header do exercício */}
+                  <div className={styles.exercicioHeader}>
+                    <h4>{exercicio.exercicio_nome}</h4>
+
                     {exercicio.rpe && (
-                      <span className="rpe-badge">RPE: {exercicio.rpe}</span>
+                      <span className={styles.rpeBadge}>
+                        RPE {exercicio.rpe}
+                      </span>
                     )}
                   </div>
-                  
-                  {/* Séries */}
-                  {exercicio.seriess && exercicio.seriess.length > 0 && (
-                    <div className="series-list">
-                      <h5>Séries:</h5>
-                      <div className="series-grid">
-                        {exercicio.seriess.map((serie, serieIndex) => (
-                          <div key={serieIndex} className="serie-item">
-                            <span>Série {serie.numero}</span>
+
+                  {/* Card de Séries */}
+                  {exercicio.seriess?.length > 0 && (
+                    <div className={styles.seriesCard}>
+                      <div className={styles.seriesHeader}>
+                        Séries Realizadas
+                      </div>
+
+                      <div className={styles.seriesGrid}>
+                        {exercicio.seriess.map((serie, i) => (
+                          <div
+                            key={i}
+                            className={styles.serieItem}
+                          >
+                            <span className={styles.serieNumero}>
+                              Série {serie.numero}
+                            </span>
                             <span>{serie.repeticoes} reps</span>
-                            <span>{serie.carga} kg</span>
+                            <span>
+                              {formatarCarga(serie.carga)} kg
+                            </span>
                           </div>
                         ))}
                       </div>
-                    </div>
-                  )}
-
-                  {/* Estatísticas do Exercício */}
-                  {exercicio.seriess && exercicio.seriess.length > 0 && (
-                    <div className="exercicio-stats">
-                      <span>Max reps: {Math.max(...exercicio.seriess.map(s => s.repeticoes))}</span>
-                      <span>Max carga: {Math.max(...exercicio.seriess.map(s => parseFloat(s.carga)))} kg</span>
                     </div>
                   )}
                 </div>
@@ -108,19 +120,6 @@ export default function ModalDetalhesTreino({ treino, onClose }) {
             </div>
           </div>
         )}
-
-        {/* Ações do Modal */}
-        <div className="modal-actions">
-          <button className="btn-secundario" onClick={onClose}>
-            Fechar
-          </button>
-          {treino.finalizado && treino.paciente_id && (
-            <button className="btn-primario">
-              <BarChart size={16} />
-              Ver Evolução Completa
-            </button>
-          )}
-        </div>
       </div>
     </div>
   );
