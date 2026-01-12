@@ -1,5 +1,5 @@
 import { Edit, Trash2, User, Calendar, Repeat, CheckCircle } from 'lucide-react';
-import UserSearch from '../UserSearch';
+import UserSearch from '../../../components/UserSearch';
 
 export default function EventoModal({
   aberto,

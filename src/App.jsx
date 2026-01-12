@@ -15,19 +15,19 @@ import ProtegidoPorAssinatura from './components/ProtegidoPorAssinatura.jsx';
 
 // Pages
 import Home from './pages/Home.jsx';
-import Login from './pages/Login.jsx';
-import Register from './pages/Register.jsx';
-import RegistrarClinica from './pages/RegistrarClinica.jsx';
+import Login from './pages/Login/Login.jsx';
+import Cadastro from './pages/Cadastro/Cadastro.jsx';
+import Register from './pages/Registro/Register.jsx';
+import RegistrarClinica from './pages/RegistroClinica/RegistrarClinica.jsx';
 import Profile from './pages/Profile.jsx';
 import Configuracoes from './pages/Configuracoes.jsx';
 
 import Usuarios from './pages/Usuario/Usuarios.jsx';
 import BancoUsuarios from './pages/Usuario/BancoUsuarios.jsx'
-import Avaliacao from './pages/Avaliacao.jsx';
+import Avaliacao from './pages/Avaliacao/Avaliacao.jsx';
 import PreAvaliacoes from './pages/Configuracoes/PreAvaliacoes.jsx';
 import PreTestes from './pages/Configuracoes/PreTestes.jsx';
 import Agendamentos from './pages/Calendario/Agendamentos.jsx';
-import Cadastro from './pages/Cadastro.jsx';
 import Orientacao from './pages/Usuario/Orientacao.jsx';
 import TreinoDetalhe from './pages/Usuario/TreinoDetalhe.jsx';
 import PastaDetalhe from './pages/Usuario/PastaDetalhe.jsx';
@@ -52,14 +52,14 @@ import Integracoes from './pages/Integracoes/Integracoes.jsx';
 import LiberacaoMiofascial from './pages/LiberacaoMiofascial.jsx';
 
 import AssinaturaInfo from './pages/AssinaturaInfo.jsx';
-import TermosUso from "./pages/TermosUso.jsx";
-import PoliticaPrivacidade from './pages/PoliticaPrivacidade.jsx';
+import TermosUso from "./pages/TermosUso/TermosUso.jsx";
+import PoliticaPrivacidade from './pages/PoliticaPrivacidade/PoliticaPrivacidade.jsx';
 
 import ListaPlanos from './components/ListaPlanos.jsx';
 import AssinaturaDetalhes from './components/AssinaturaDetalhes.jsx';
 
 import StravaCallback from "./components/StravaCallback.jsx";
-import Agenda from "../src/pages/Agenda.jsx"
+import Agenda from "./pages/Agenda/Agenda.jsx"
 import Homepage from './pages/Usuario/Homepage.jsx';
 
 

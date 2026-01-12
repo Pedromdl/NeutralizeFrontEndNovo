@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
-import UserSearch from '../components/UserSearch.jsx';
+import UserSearch from '../../components/UserSearch.jsx';
 
-import FormMobilidade from '../components/Avaliacao/FormMobilidade.jsx';
-import FormForca from '../components/Avaliacao/FormForca.jsx';
-import FormFuncao from '../components/Avaliacao/FormFuncao.jsx';
-import FormEstabilidade from '../components/Avaliacao/FormEstabilidade.jsx';
-import FormDor from '../components/Avaliacao/FormDor.jsx';
-import FormText from '../components/Avaliacao/FormText.jsx';
+import FormMobilidade from '../../components/Avaliacao/FormMobilidade.jsx';
+import FormForca from '../../components/Avaliacao/FormForca.jsx';
+import FormFuncao from '../../components/Avaliacao/FormFuncao.jsx';
+import FormEstabilidade from '../../components/Avaliacao/FormEstabilidade.jsx';
+import FormDor from '../../components/Avaliacao/FormDor.jsx';
+import FormText from '../../components/Avaliacao/FormText.jsx';
 
-import '../components/css/Avaliacao.css';
+import './Avaliacao.css';
 
 // Objeto para mapear as chaves para nomes amigáveis
 const NOMES_SECOES = {
@@ -52,15 +52,7 @@ function CadastrarDados() {
     return salvoId ? JSON.parse(salvoId) : null;
   });
 
-  // Carregar dados do paciente ao iniciar (apenas ID foi salvo)
-  useEffect(() => {
-    if (pacienteId) {
-      fetch(`${import.meta.env.VITE_API_URL}/api/usuarios/${pacienteId}/`)
-        .then(res => res.json())
-        .then(data => setPacienteSelecionado(data))
-        .catch(err => console.error('Erro ao carregar paciente:', err));
-    }
-  }, [pacienteId]);
+
 
   const handleSelecionarPaciente = (paciente) => {
     // Salvar apenas o ID no localStorage (segurança/LGPD)

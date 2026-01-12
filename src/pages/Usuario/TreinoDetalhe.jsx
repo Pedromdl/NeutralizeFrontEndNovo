@@ -19,6 +19,9 @@ export default function TreinoDetalhe() {
   const [treinoSelecionado, setTreinoSelecionado] = useState(null)
   const [exercicioSelecionadoParaEditar, setExercicioSelecionadoParaEditar] = useState(null)
 
+  const [treinoEditandoId, setTreinoEditandoId] = useState(null)
+  const [novoNomeTreino, setNovoNomeTreino] = useState('')
+
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
@@ -110,6 +113,32 @@ export default function TreinoDetalhe() {
   }
 
   // =======================
+  // 🔹 RENOMEAR TREINO
+  // =======================
+  const salvarNomeTreino = async (treinoId) => {
+    if (!novoNomeTreino.trim()) return
+
+    try {
+      const res = await axios.patch(
+        `${import.meta.env.VITE_API_URL}/api/treinos/${treinoId}/`,
+        { nome: novoNomeTreino }
+      )
+
+      setTreinosSecao(prev =>
+        prev.map(t =>
+          t.id === treinoId ? { ...t, nome: res.data.nome } : t
+        )
+      )
+
+      setTreinoEditandoId(null)
+      setNovoNomeTreino('')
+    } catch (err) {
+      console.error(err)
+      alert('Erro ao renomear treino')
+    }
+  }
+
+  // =======================
   // 🔹 MODAL
   // =======================
   const abrirModalAdicionar = (treino) => {
@@ -126,7 +155,6 @@ export default function TreinoDetalhe() {
 
   // =======================
   // 🔹 ATUALIZAR ESTADO APÓS SALVAR
-  // ✔️ suporta edição OU batch
   // =======================
   const atualizarEstadoAposSalvar = (resultado) => {
     const exerciciosSalvos = Array.isArray(resultado)
@@ -137,7 +165,6 @@ export default function TreinoDetalhe() {
       prev.map(t => {
         if (t.id !== treinoSelecionado.id) return t
 
-        // edição individual
         if (exercicioSelecionadoParaEditar) {
           return {
             ...t,
@@ -147,7 +174,6 @@ export default function TreinoDetalhe() {
           }
         }
 
-        // adição em lote
         return {
           ...t,
           exerciciosDoTreino: [
@@ -174,11 +200,11 @@ export default function TreinoDetalhe() {
         prev.map(t =>
           t.id === treinoId
             ? {
-              ...t,
-              exerciciosDoTreino: t.exerciciosDoTreino.filter(
-                e => e.id !== exercicioId
-              )
-            }
+                ...t,
+                exerciciosDoTreino: t.exerciciosDoTreino.filter(
+                  e => e.id !== exercicioId
+                )
+              }
             : t
         )
       )
@@ -225,7 +251,36 @@ export default function TreinoDetalhe() {
       </Card>
 
       {treinosSecao.map(t => (
-        <Card key={t.id} title={t.nome || 'Treino sem nome'} size="al">
+        <Card key={t.id} size="al">
+          <div className="treino-header">
+            {treinoEditandoId === t.id ? (
+              <>
+                <input
+                  className="input"
+                  value={novoNomeTreino}
+                  onChange={e => setNovoNomeTreino(e.target.value)}
+                  placeholder="Nome do treino"
+                />
+                <button onClick={() => salvarNomeTreino(t.id)}>Salvar</button>
+                <button onClick={() => setTreinoEditandoId(null)}>
+                  <X size={16} />
+                </button>
+              </>
+            ) : (
+              <>
+                <h3>{t.nome || 'Treino sem nome'}</h3>
+                <button
+                  onClick={() => {
+                    setTreinoEditandoId(t.id)
+                    setNovoNomeTreino(t.nome)
+                  }}
+                >
+                  <Edit size={16} />
+                </button>
+              </>
+            )}
+          </div>
+
           <div className="treino-header-botoes">
             <button
               onClick={() =>
@@ -243,61 +298,57 @@ export default function TreinoDetalhe() {
 
             <button onClick={() => duplicarTreino(t)}>Duplicar</button>
           </div>
-{t.expandido && (
-  <>
-    {t.exerciciosDoTreino.length > 0 ? (
-        <div class="tabela-exercicios-wrapper">
 
-      <div className="tabela-exercicios">
+          {t.expandido && (
+            <>
+              {t.exerciciosDoTreino.length > 0 ? (
+                <div className="tabela-exercicios-wrapper">
+                  <div className="tabela-exercicios">
+                    <div className="tabela-header">
+                      <div>Exercício</div>
+                      <div>Séries</div>
+                      <div>Reps</div>
+                      <div>Carga</div>
+                      <div>Obs.</div>
+                      <div>Ações</div>
+                    </div>
 
-        {/* Cabeçalho */}
-        <div className="tabela-header">
-          <div>Exercício</div>
-          <div>Séries</div>
-          <div>Reps</div>
-          <div>Carga</div>
-          <div>Obs.</div>
-          <div>Ações</div>
-        </div>
+                    {t.exerciciosDoTreino.map(ex => (
+                      <div key={ex.id} className="tabela-linha">
+                        <div>{ex.orientacao_detalhes?.titulo}</div>
+                        <div>{ex.series_planejadas}</div>
+                        <div>{ex.repeticoes_planejadas}</div>
+                        <div>{ex.carga_planejada}</div>
+                        <div style={{ padding: '15px' }}>
+                          {ex.observacao || '-'}
+                        </div>
 
-        {/* Linhas */}
-        {t.exerciciosDoTreino.map(ex => (
-          <div key={ex.id} className="tabela-linha">
-            <div>{ex.orientacao_detalhes?.titulo}</div>
-            <div>{ex.series_planejadas}</div>
-            <div>{ex.repeticoes_planejadas}</div>
-            <div>{ex.carga_planejada}</div>
-            <div style={{padding: '15px', boxSizing: 'border-box'}}>{ex.observacao || '-'}</div>
+                        <div className="tabela-acoes">
+                          <button onClick={() => abrirModalEditar(ex, t)}>
+                            <Edit size={18} />
+                          </button>
+                          <button onClick={() => excluirExercicio(ex.id, t.id)}>
+                            <X size={18} />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <p style={{ opacity: 0.6 }}>
+                  Nenhum exercício adicionado.
+                </p>
+              )}
 
-            <div className="tabela-acoes">
-              <button onClick={() => abrirModalEditar(ex, t)}>
-                <Edit size={18} />
+              <button
+                onClick={() => abrirModalAdicionar(t)}
+                style={{ marginTop: '1rem' }}
+              >
+                Adicionar Exercício
               </button>
-
-              <button onClick={() => excluirExercicio(ex.id, t.id)}>
-                <X size={18} />
-              </button>
-            </div>
-          </div>
-          
-        ))}
-      </div>
-      </div>
-    ) : (
-      <p style={{ opacity: 0.6 }}>
-        Nenhum exercício adicionado.
-      </p>
-    )}
-
-    <button
-      onClick={() => abrirModalAdicionar(t)}
-      style={{ marginTop: '1rem' }}
-    >
-      Adicionar Exercício
-    </button>
-  </>
-)}
-
+            </>
+          )}
         </Card>
       ))}
 

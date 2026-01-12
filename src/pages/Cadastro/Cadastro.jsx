@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
-import styles from '../components/css/Cadastro.module.css';
+import styles from './Cadastro.module.css';
 
 function CadastrarPaciente() {
   const [formData, setFormData] = useState({

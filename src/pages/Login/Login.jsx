@@ -3,9 +3,9 @@ import { useLocation } from "react-router-dom";
 
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
-import "../components/css/Login.css";
-import Logo from "../images/logo.png";
+import { AuthContext } from "../../context/AuthContext";
+import "./Login.css";
+import Logo from "../../images/logo.png";
 
 export default function Login() {
   const location = useLocation();

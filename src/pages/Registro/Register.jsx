@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../components/css/Login.css';
-import Logo from '../images/logo.png';
+import './Register.css';
+import Logo from '../../images/logo.png';
 
 export default function RegisterPacienteApp() {
   const [form, setForm] = useState({

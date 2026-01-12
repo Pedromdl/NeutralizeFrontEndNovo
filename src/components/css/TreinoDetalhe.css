@@ -35,6 +35,15 @@
 /* =========================================================
    HEADER DO TREINO
    ========================================================= */
+
+.treino-header {
+    display: flex;
+    justify-content: center !important;
+    align-items: center;
+    gap: 10px;
+    flex-direction: row;
+}
+
 .treino-header-botoes {
   display: flex;
   justify-content: space-between;

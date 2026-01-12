@@ -1,5 +1,5 @@
 import { parseLocalDateTime } from './date'
-import { getStatusStyle } from '../../utils/eventStatus'
+import { getStatusStyle } from '../../../utils/eventStatus'
 
 const HOUR_HEIGHT = 60 // TEM que bater com o CSS
 

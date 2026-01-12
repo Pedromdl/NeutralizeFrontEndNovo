@@ -1,14 +1,13 @@
 import { useState } from 'react';
-import { useAgenda } from '../hooks/useAgenda';
+import { useAgenda } from '../../hooks/useAgenda';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-import CalendarDay from '../components/Calendario/CalendarDay';
-import CalendarThreeDays from '../components/Calendario/CalendarThreeDays';
-import CalendarWeek from '../components/Calendario/CalendarWeek';
-import CalendarMonth from '../components/Calendario/CalendarMonth';
-import ModalCalendario from '../components/Calendario/ModalCalendario';
-
-import '../components/Calendario/calendar.css';
+import CalendarDay from './Calendario/CalendarDay';
+import CalendarThreeDays from './Calendario/CalendarThreeDays';
+import CalendarWeek from './Calendario/CalendarWeek';
+import CalendarMonth from './Calendario/CalendarMonth';
+import ModalCalendario from './Calendario/ModalCalendario';
+import './Calendario/calendar.css';
 
 /* Utils */
 function addDays(date, amount) {

@@ -1,8 +1,8 @@
 import { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
-import { AuthContext } from "../context/AuthContext"; // contexto de autenticação
-import "./TermosUso.css"; // mesmo CSS usado para os cards e markdown
+import { AuthContext } from "../../context/AuthContext"; // contexto de autenticação
+import "../TermosUso/TermosUso.css"; // mesmo CSS usado para os cards e markdown
 
 const API_URL = import.meta.env.VITE_API_URL;
 

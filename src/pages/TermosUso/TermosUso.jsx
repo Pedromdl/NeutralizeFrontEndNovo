@@ -2,7 +2,7 @@ import { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from "../../context/AuthContext";
 import "./TermosUso.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
