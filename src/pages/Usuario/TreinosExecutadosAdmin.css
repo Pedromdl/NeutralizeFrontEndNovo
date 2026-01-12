@@ -139,6 +139,12 @@
    HEADER + STATUS
 ========================================================= */
 
+.treino-status {
+  display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
 .treino-header {
   display: flex;
   justify-content: space-between;
@@ -196,6 +202,7 @@
 
 .info-label {
   font-size: 0.7rem;
+  text-align: left;
   color: #6b7280;
   text-transform: uppercase;
   letter-spacing: 0.5px;
