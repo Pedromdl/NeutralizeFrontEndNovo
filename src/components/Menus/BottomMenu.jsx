@@ -45,27 +45,27 @@ function BottomMenu() {
         </div>
 
         <NavLink to="/homepage" className={({ isActive }) => (isActive ? 'ativo' : '')}>
-          <House size={20} color="#fff" />
+          <House size={24} color="#fff" />
           <span>Início</span>
         </NavLink>
 
         <NavLink to="/usuarios" className={({ isActive }) => (isActive ? 'ativo' : '')}>
-          <Users size={20} color="#fff" />
+          <Users size={24} color="#fff" />
           <span>Usuários</span>
         </NavLink>
 
         <NavLink to="/avaliacao" className={({ isActive }) => (isActive ? 'ativo' : '')}>
-          <BarChart3 size={20} color="#fff" />
+          <BarChart3 size={24} color="#fff" />
           <span>Avaliação</span>
         </NavLink>
 
         <NavLink to="/calendario" className={({ isActive }) => (isActive ? 'ativo' : '')}>
-          <CalendarDays size={20} color="#fff" />
+          <CalendarDays size={24} color="#fff" />
           <span>Agenda</span>
         </NavLink>
 
         <button className="bottom-menu-extra" onClick={() => setIsOpen(true)}>
-          <Cog size={20} color="#fff" />
+          <Cog size={24} color="#fff" />
           <span>Config.</span>
         </button>
       </nav>

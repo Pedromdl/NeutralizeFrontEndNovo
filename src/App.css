@@ -36,7 +36,8 @@ body {
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  padding-bottom: 80px; /* 🔹 ESPAÇO PARA BOTTOM MENU */
+  padding-bottom: 80px;
+  /* 🔹 ESPAÇO PARA BOTTOM MENU */
   background-color: #f1f5f9;
 }
 
@@ -51,7 +52,8 @@ body {
   background-color: #f1f5f9;
   box-sizing: border-box;
   flex: 1;
-  min-height: calc(100vh - 80px); /* 🔹 CONSIDERA O BOTTOM MENU */
+  min-height: calc(100vh - 80px);
+  /* 🔹 CONSIDERA O BOTTOM MENU */
 }
 
 /* ==============================
@@ -163,7 +165,7 @@ body {
   border-radius: 8px;
   padding: 1rem;
   border: 1px solid #ddd;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 /* ==============================
@@ -185,7 +187,6 @@ body {
 ================================ */
 button {
   padding: 0.5rem 1rem;
-  margin-right: 0.5rem;
   border: 2px solid #ccc;
   background-color: #f3f3f3;
   color: #333;
@@ -227,6 +228,22 @@ button.black:hover {
   cursor: pointer;
   font-weight: 500;
   transition: all 0.2s ease;
+}
+
+.btn-icon {
+  padding: 0.5rem 0.5rem;
+  border: 0px solid #ccc;
+  background-color: #fff;
+  color: #333;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-icon:hover {
+  background-color: #e0e0e0;
+  color: black;
 }
 
 /* ==============================
@@ -321,7 +338,7 @@ button.black:hover {
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -337,7 +354,7 @@ button.black:hover {
   border-radius: 10px;
   width: 100%;
   max-width: 400px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   animation: fadeIn 0.2s ease-in-out;
 }
 
@@ -471,8 +488,15 @@ button.black:hover {
 
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 /* ==============================
@@ -484,7 +508,7 @@ button.black:hover {
     gap: 1rem;
     padding: 0.5rem;
   }
-  
+
   .conteudo {
     padding: 15px;
     padding-bottom: 80px;
@@ -495,9 +519,10 @@ button.black:hover {
   .app {
     flex-direction: row;
   }
-  
+
   .main-area {
-    padding-bottom: 1rem; /* Remove espaço extra no desktop */
+    padding-bottom: 1rem;
+    /* Remove espaço extra no desktop */
   }
 }
 
@@ -505,11 +530,11 @@ button.black:hover {
   .data-avaliacao-card {
     max-width: 300px;
   }
-  
+
   .grafico-container {
     height: 450px;
   }
-  
+
   .dashboard-grid {
     grid-template-columns: repeat(1, 1fr);
   }
@@ -520,7 +545,7 @@ button.black:hover {
   .card-xl {
     grid-column: span 12;
   }
-  
+
   .conteudo {
     padding: 15px;
     padding-bottom: 80px;

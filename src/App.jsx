@@ -47,7 +47,7 @@ import TreinosSecaoPaciente from './pages/Pacientes/TreinoSecaoPaciente.jsx';
 import HistoricodeTreinos from './pages/Pacientes/HistoricodeTreinos.jsx';
 import Financeiro from './pages/Financeiro.jsx';
 import Teste from './pages/Teste.jsx';
-import RelatorioInterativo from './pages/RelatorioInterativo.jsx';
+import RelatorioInterativo from './pages/Usuario/RelatorioInterativo.jsx';
 import Integracoes from './pages/Integracoes/Integracoes.jsx';
 import LiberacaoMiofascial from './pages/LiberacaoMiofascial.jsx';
 

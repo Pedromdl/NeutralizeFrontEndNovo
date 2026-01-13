@@ -269,13 +269,13 @@ export default function TreinoDetalhe() {
             ) : (
               <>
                 <h3>{t.nome || 'Treino sem nome'}</h3>
-                <button
+                <button className="btn-icon"
                   onClick={() => {
                     setTreinoEditandoId(t.id)
                     setNovoNomeTreino(t.nome)
                   }}
                 >
-                  <Edit size={16} />
+                  <Edit size={20} />
                 </button>
               </>
             )}

@@ -11,8 +11,10 @@
   bottom: 0;
   width: 100%;
   z-index: 1000;
-  height: 60px;
+  height: 80px;
   box-sizing: border-box;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
 }
 
 /* Logo */

@@ -3,15 +3,15 @@ import { useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import axios from 'axios';
 
-import Card from '../components/Card';
-import FiltroData from '../components/Dashboard/FiltroData';
-import GraficoForca from '../components/Dashboard/GraficoForca';
-import GraficoMobilidade from '../components/Dashboard/GraficoMobilidade';
-import GraficoEstabilidade from '../components/Dashboard/GraficoEstabilidade';
-import GraficoTesteDor from '../components/Dashboard/GraficoTestesDor';
-import GraficoTesteFuncao from '../components/Dashboard/GraficoTestesFuncao';
-import DadosUsuario from './Usuario/DadosUsuario'
-import logo from '../images/logo3.png';
+import Card from '../../components/Card';
+import FiltroData from '../../components/Dashboard/FiltroData';
+import GraficoForca from '../../components/Dashboard/GraficoForca';
+import GraficoMobilidade from '../../components/Dashboard/GraficoMobilidade';
+import GraficoEstabilidade from '../../components/Dashboard/GraficoEstabilidade';
+import GraficoTesteDor from '../../components/Dashboard/GraficoTestesDor';
+import GraficoTesteFuncao from '../../components/Dashboard/GraficoTestesFuncao';
+import DadosUsuario from './DadosUsuario'
+import logo from '../../images/logo3.png';
 
 const containerAnimacao = {
   initial: { opacity: 0, y: 30 },

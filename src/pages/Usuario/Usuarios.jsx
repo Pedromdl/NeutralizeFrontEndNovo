@@ -215,7 +215,7 @@ function Usuarios() {
                 valorSelecionado={dataSelecionada}
                 onChange={setDataSelecionada}
               />
-              <div className="pdf-button" style={{ marginTop: '12px', fontSize: '12px' }}>
+              <div className="pdf-button" style={{ marginTop: '12px', fontSize: '12px', display: 'flex', gap: '10px', justifyContent: 'center' }}>
                 <GerarRelatorio
                   usuarioId={usuarioSelecionado.id}
                   dataSelecionada={dataSelecionada}

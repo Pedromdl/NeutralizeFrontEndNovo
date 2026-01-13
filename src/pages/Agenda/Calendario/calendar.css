@@ -65,7 +65,8 @@
 
   overflow: hidden;
   display: -webkit-box;
-  -webkit-line-clamp: 2; /* número de linhas */
+  -webkit-line-clamp: 2;
+  /* número de linhas */
   -webkit-box-orient: vertical;
   line-clamp: 2;
 }
@@ -93,7 +94,8 @@
 }
 
 .day-column.today-column {
-  background-color: #edecea; /* azul bem claro */
+  background-color: #edecea;
+  /* azul bem claro */
 }
 
 
@@ -107,6 +109,7 @@
   font-size: 16px;
   font-weight: 600;
 }
+
 .calendar-week {
   display: flex;
   flex-direction: column;
@@ -116,7 +119,8 @@
 
 .calendar-week-header {
   display: grid;
-  grid-template-columns: 50px repeat(3, 1fr); /* 3 dias */
+  grid-template-columns: 50px repeat(3, 1fr);
+  /* 3 dias */
 }
 
 .calendar-week-time-column {
@@ -135,14 +139,15 @@
 }
 
 .calendar-week-day-header.today {
-    background: #282829;
-    border-radius: 6px;
-    color: #fff;
+  background: #282829;
+  border-radius: 6px;
+  color: #fff;
 }
 
 .calendar-week-body {
   display: grid;
-  grid-template-columns: 50px repeat(3, 1fr); /* 3 dias */
+  grid-template-columns: 50px repeat(3, 1fr);
+  /* 3 dias */
   position: relative;
 }
 
@@ -228,13 +233,14 @@
 }
 
 .agenda-header {
-  display: grid;
+  display: flex;
   grid-template-columns: auto 1fr auto;
   align-items: center;
   padding: 15px 12px;
   border-bottom: 1px solid #eee;
   gap: 12px;
   margin-bottom: 10px;
+  justify-content: space-between;
 }
 
 /* NAV: ◀ Hoje ▶ */
@@ -271,6 +277,7 @@
 
 .agenda-view-desktop button {
   padding: 6px 12px;
+  margin-left: 10px;
   font-size: 18px;
   border-radius: 8px;
   border: 1px solid #d1d5db;
@@ -323,7 +330,8 @@
   .agenda-nav button {
     padding: 4px 8px;
     font-size: 14px;
-    min-height: 0px;;
+    min-height: 0px;
+    ;
 
 
   }
