@@ -40,8 +40,8 @@
 .btnFechar {
   grid-column: 3;
   justify-self: end;
-    background: none;
-    border: none;
+  background: none;
+  border: none;
 }
 
 .btnFechar:hover {
@@ -59,26 +59,33 @@
 
 .infoCard {
   display: flex;
-  justify-content: center;;
-  align-items: center;           /* 🔑 centraliza tudo verticalmente */
+  justify-content: center;
+  ;
+  align-items: center;
+  /* 🔑 centraliza tudo verticalmente */
   gap: 10px;
   background: #ffffff;
   border-radius: 8px;
   border: 1px solid #e5e7eb;
-  min-height: 64px;              /* 🔑 equaliza altura dos cards */
+  min-height: 64px;
+  /* 🔑 equaliza altura dos cards */
+  padding: 0rem 1rem;
+  box-sizing: border-box;
 }
 
 /* Ícone */
 .infoCard svg {
-  flex-shrink: 0;                /* 🔑 impede o SVG de "encolher" */
+  flex-shrink: 0;
+  /* 🔑 impede o SVG de "encolher" */
   color: #3b82f6;
 }
 
 /* Container do texto */
-.infoCard > div {
+.infoCard>div {
   display: flex;
   flex-direction: column;
-  justify-content: center;       /* 🔑 centraliza label + value */
+  justify-content: center;
+  /* 🔑 centraliza label + value */
   line-height: 1.2;
 }
 
@@ -183,7 +190,7 @@
 }
 
 .serieItem {
-    display: flex;
+  display: flex;
   flex-direction: column;
   background: #ffffff;
   border: 1px solid #e5e7eb;
@@ -197,4 +204,3 @@
   font-weight: 600;
   color: #374151;
 }
-

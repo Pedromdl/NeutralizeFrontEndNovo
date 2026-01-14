@@ -172,7 +172,6 @@ body {
    FORMULÁRIOS E INPUTS
 ================================ */
 .input {
-  width: 300px;
   padding: 8px;
   border: 2px solid #ccc;
   color: #000;
@@ -498,6 +497,32 @@ button.black:hover {
     transform: scale(1);
   }
 }
+
+.dropdown-exercicios {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  margin-top: 4px;
+  padding: 4px 0;
+}
+
+.dropdown-exercicios li {
+  padding: 0.6rem 0.8rem;
+  cursor: pointer;
+}
+
+.dropdown-exercicios li:hover {
+  background-color: #f8f9fa;
+}
+
 
 /* ==============================
    RESPONSIVO

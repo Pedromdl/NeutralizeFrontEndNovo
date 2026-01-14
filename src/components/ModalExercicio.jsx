@@ -15,6 +15,12 @@ function ModalExercicio({
   const [repeticoes, setRepeticoes] = useState(10)
   const [carga, setCarga] = useState(0)
   const [loading, setLoading] = useState(false)
+  const [buscaExercicio, setBuscaExercicio] = useState('')
+  const [mostrarDropdown, setMostrarDropdown] = useState(false)
+  const exerciciosFiltrados = exerciciosDisponiveis.filter(ex =>
+    ex.titulo.toLowerCase().includes(buscaExercicio.toLowerCase())
+  )
+
 
   // 🔥 NOVO: buffer local de exercícios
   const [listaExercicios, setListaExercicios] = useState([])
@@ -24,17 +30,18 @@ function ModalExercicio({
   useEffect(() => {
     if (!isOpen) return
 
-    // sempre limpa a lista ao abrir
     setListaExercicios([])
 
     if (editando) {
       setExercicioSelecionado(exercicioAtual.orientacao_detalhes || null)
+      setBuscaExercicio(exercicioAtual.orientacao_detalhes?.titulo || '')
       setObservacao(exercicioAtual.observacao || '')
       setSeries(exercicioAtual.series_planejadas || 1)
       setRepeticoes(exercicioAtual.repeticoes_planejadas || 10)
       setCarga(exercicioAtual.carga_planejada || 0)
     } else {
       setExercicioSelecionado(null)
+      setBuscaExercicio('')
       setObservacao('')
       setSeries(1)
       setRepeticoes(10)
@@ -69,9 +76,9 @@ function ModalExercicio({
 
   const handleRemoverDaLista = (indexToRemove) => {
     setListaExercicios(prev =>
-        prev.filter((_, index) => index !== indexToRemove)
+      prev.filter((_, index) => index !== indexToRemove)
     )
-    }
+  }
 
 
   // 💾 salva todos (batch)
@@ -138,26 +145,44 @@ function ModalExercicio({
         <h2>{editando ? 'Editar Exercício' : 'Adicionar Exercícios'}</h2>
 
         <div className="modal-form">
-          <label>
+          <label style={{ position: 'relative' }}>
             Exercício
-            <select
-              value={exercicioSelecionado?.id || ''}
+            <input
+              type="text"
+              placeholder="Buscar exercício..."
+              value={buscaExercicio}
               onChange={(e) => {
-                const ex = exerciciosDisponiveis.find(
-                  item => item.id === Number(e.target.value)
-                )
-                setExercicioSelecionado(ex || null)
-              }}
-            >
-              <option value="">Selecione um exercício</option>
-              {exerciciosDisponiveis.map(ex => (
-                <option key={ex.id} value={ex.id}>
-                  {ex.titulo}
-                </option>
-              ))}
-            </select>
-          </label>
+                const value = e.target.value
 
+                setBuscaExercicio(value)
+                setExercicioSelecionado(null)
+
+                if (value.trim().length > 0) {
+                  setMostrarDropdown(true)
+                } else {
+                  setMostrarDropdown(false)
+                }
+              }}
+
+            />
+
+            {mostrarDropdown && exerciciosFiltrados.length > 0 && (
+              <ul className="dropdown-exercicios">
+                {exerciciosFiltrados.map(ex => (
+                  <li
+                    key={ex.id}
+                    onClick={() => {
+                      setExercicioSelecionado(ex)
+                      setBuscaExercicio(ex.titulo)
+                      setMostrarDropdown(false)
+                    }}
+                  >
+                    {ex.titulo}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </label>
           <div className="modal-inputs">
             <label>
               Séries
@@ -205,34 +230,34 @@ function ModalExercicio({
           <div className="lista-exercicios">
             <h4>Exercícios adicionados</h4>
 
-{listaExercicios.map((ex, index) => (
-  <div key={index} className="lista-item-wrapper">
-    <div className="lista-item">
-      <div className="lista-info">
-        <strong>
-          {
-            exerciciosDisponiveis.find(o => o.id === ex.orientacao)?.titulo
-          }
-        </strong>
-        <span>
-          {ex.series_planejadas}x{ex.repeticoes_planejadas} • {ex.carga_planejada}kg
-        </span>
-      </div>
-    </div>
+            {listaExercicios.map((ex, index) => (
+              <div key={index} className="lista-item-wrapper">
+                <div className="lista-item">
+                  <div className="lista-info">
+                    <strong>
+                      {
+                        exerciciosDisponiveis.find(o => o.id === ex.orientacao)?.titulo
+                      }
+                    </strong>
+                    <span>
+                      {ex.series_planejadas}x{ex.repeticoes_planejadas} • {ex.carga_planejada}kg
+                    </span>
+                  </div>
+                </div>
 
-    <button
-      className="btn-remover"
-      style={{alignSelf: 'center', marginTop: '0', padding: '0.5 1'}}
-      onClick={() => handleRemoverDaLista(index)}
-      title="Remover exercício"
-    >
-      ✕
-    </button>
-  </div>
-))}
+                <button
+                  className="btn-remover"
+                  style={{ alignSelf: 'center', marginTop: '0', padding: '0.5 1' }}
+                  onClick={() => handleRemoverDaLista(index)}
+                  title="Remover exercício"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
 
           </div>
-          
+
         )}
 
         <div className="modal-botoes">

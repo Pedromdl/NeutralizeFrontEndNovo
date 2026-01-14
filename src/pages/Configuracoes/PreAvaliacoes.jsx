@@ -128,7 +128,7 @@ export default function PreAvaliacoes() {
             <ArrowLeft size={20} />
             Voltar
           </button>
-          
+
           <div className="header-actions">
             <button className="btn-nova" onClick={novaAvaliacao}>
               <Plus size={20} />
@@ -138,7 +138,7 @@ export default function PreAvaliacoes() {
         </div>
 
         {erro && <div className="erro-mensagem">{erro}</div>}
-        
+
         {loading ? (
           <div className="loading-state">
             <div className="loading-spinner"></div>
@@ -163,8 +163,8 @@ export default function PreAvaliacoes() {
                 value={opcoesSelect.find(opt => opt.value === avaliacaoSelecionada?.id)}
                 styles={{
                   container: (base) => ({ ...base, marginBottom: "0" }),
-                  control: (base) => ({ 
-                    ...base, 
+                  control: (base) => ({
+                    ...base,
                     borderRadius: "8px",
                     border: "2px solid #e2e8f0",
                     padding: "4px 8px"
@@ -180,14 +180,11 @@ export default function PreAvaliacoes() {
                   <h3>
                     {avaliacaoSelecionada ? "Editando Pré-Avaliação" : "Nova Pré-Avaliação"}
                   </h3>
-                  {avaliacaoSelecionada && (
-                    <span className="avaliacao-id">ID: {avaliacaoSelecionada.id}</span>
-                  )}
                 </div>
 
                 {/* Título */}
                 <div className="input-group">
-                  <label htmlFor="titulo">Título da Pré-Avaliação</label>
+                  <label htmlFor="titulo">Título</label>
                   <input
                     id="titulo"
                     type="text"
@@ -200,7 +197,6 @@ export default function PreAvaliacoes() {
 
                 {/* Conteúdo */}
                 <div className="input-group">
-                  <label htmlFor="conteudo">Conteúdo da Pré-Avaliação</label>
                   <ReactQuill
                     id="conteudo"
                     theme="snow"
@@ -212,26 +208,20 @@ export default function PreAvaliacoes() {
 
                 {/* Botões de ação */}
                 <div className="acoes-botoes">
-                  <div className="botoes-esquerda">
-                    {avaliacaoSelecionada && (
-                      <button className="btn-excluir" onClick={excluirAvaliacao}>
-                        <Trash2 size={18} />
-                        Excluir
-                      </button>
-                    )}
-                  </div>
-                  
-                  <div className="botoes-direita">
-                    <button className="btn-resetar" onClick={cancelarEdicao}>
-                      Cancelar
+                  {avaliacaoSelecionada && (
+                    <button className="btn-excluir" onClick={excluirAvaliacao}>
+                      <Trash2 size={18} />
+                      Excluir
                     </button>
-                    <button className="btn-salvar" onClick={salvarAvaliacao}>
-                      <Save size={18} />
-                      {avaliacaoSelecionada ? "Salvar Alterações" : "Criar Pré-Avaliação"}
-                    </button>
-                  </div>
+                  )}
+
+                  <button className="btn-salvar" onClick={salvarAvaliacao}>
+                    <Save size={18} />
+                    {avaliacaoSelecionada ? "Salvar" : "Criar Pré-Avaliação"}
+                  </button>
                 </div>
               </div>
+
             )}
 
             {/* Estado vazio */}

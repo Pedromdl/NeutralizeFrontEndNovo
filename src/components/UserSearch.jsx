@@ -8,12 +8,16 @@ function UserSearch({ onSelect, modoModal = false, valorInicial = '' }) {
   const [resultados, setResultados] = useState([]);
   const [mostrarDropdown, setMostrarDropdown] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [selecionado, setSelecionado] = useState(false);
 
   useEffect(() => {
     setInputValue(valorInicial);
   }, [valorInicial]);
 
   useEffect(() => {
+
+      if (selecionado) return; // 👈 trava a busca após seleção
+
     const buscarUsuarios = async () => {
       if (inputValue.length === 0) {
         setResultados([]);
@@ -51,8 +55,10 @@ function UserSearch({ onSelect, modoModal = false, valorInicial = '' }) {
           type="text"
           placeholder="Buscar usuário..."
           value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onFocus={() => resultados.length > 0 && setMostrarDropdown(true)}
+          onChange={(e) => {
+            setSelecionado(false);
+            setInputValue(e.target.value);
+          }} 
           onBlur={() => setTimeout(() => setMostrarDropdown(false), 150)}
           className={styles.searchInput}
         />
@@ -70,6 +76,7 @@ function UserSearch({ onSelect, modoModal = false, valorInicial = '' }) {
             <li
               key={usuario.id}
               onClick={() => {
+                setSelecionado(true);
                 setInputValue(usuario.nome);
                 setMostrarDropdown(false);
                 onSelect?.(usuario);

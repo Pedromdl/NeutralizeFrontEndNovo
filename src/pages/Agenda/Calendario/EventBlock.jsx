@@ -34,11 +34,33 @@ export default function EventBlock({ event, onEventClick, width = 100, left = 0 
       }}
       onClick={(e) => {
         e.stopPropagation()
-        onEventClick(event)
+
+        const rect = e.currentTarget.getBoundingClientRect()
+
+        const MODAL_WIDTH = 320
+        const GAP = 8
+        const MARGIN = 8
+
+        let modalLeft = rect.right + GAP
+        const modalTop = rect.top + window.scrollY
+
+        // 👉 TESTE CORRETO
+        if (modalLeft + MODAL_WIDTH > window.innerWidth - MARGIN) {
+          modalLeft = rect.left - MODAL_WIDTH - GAP
+        }
+
+        // 👉 segurança extra
+        if (modalLeft < MARGIN) {
+          modalLeft = MARGIN
+        }
+
+        onEventClick(event, {
+          top: modalTop,
+          left: modalLeft,
+        })
       }}
     >
       <strong>{event.title}</strong>
-
     </div>
   )
 }

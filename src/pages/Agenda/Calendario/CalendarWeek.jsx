@@ -72,20 +72,30 @@ export default function CalendarWeek({ events, setEvents, date, updateEvento, on
               key={index}
               className={`day-column ${isToday ? 'today-column' : ''}`}
               onDragOver={e=>e.preventDefault()}
-              onClick={e=>{
-                if(e.target===e.currentTarget){
-                  const bounding = e.currentTarget.getBoundingClientRect();
-                  const offsetY = e.clientY - bounding.top;
-                  const hour = Math.floor(offsetY/HOUR_HEIGHT);
-                  const minutes = Math.floor(((offsetY%HOUR_HEIGHT)/HOUR_HEIGHT)*60);
-                  const SNAP=15;
-                  const snapped = Math.round(minutes/SNAP)*SNAP;
-                  let startH = hour, startM = snapped;
-                  if(startM>=60){ startM=0; startH+=1; }
-                  let endH = startH+1; if(endH>=24) endH=23;
-                  onDateClick(dayDate.toISOString().slice(0,10),`${String(startH).padStart(2,'0')}:${String(startM).padStart(2,'0')}`,`${String(endH).padStart(2,'0')}:${String(startM).padStart(2,'0')}`);
-                }
-              }}
+onClick={(e) => {
+  if (e.target === e.currentTarget) {
+    const bounding = e.currentTarget.getBoundingClientRect()
+    const offsetY = e.clientY - bounding.top
+
+    const hour = Math.floor(offsetY / HOUR_HEIGHT)
+    const minutes = Math.floor(((offsetY % HOUR_HEIGHT) / HOUR_HEIGHT) * 60)
+
+    const SNAP = 15
+    const snapped = Math.round(minutes / SNAP) * SNAP
+
+    const startH = hour
+    const startM = snapped
+    const endH = startH + 1
+
+    onDateClick(
+      dayDate.toISOString().slice(0, 10),
+      `${String(startH).padStart(2, '0')}:${String(startM).padStart(2, '0')}`,
+      `${String(endH).padStart(2, '0')}:${String(startM).padStart(2, '0')}`,
+      e // 🔥 ISSO
+    )
+  }
+}}
+
               onDrop={e=>{
                 const eventId = e.dataTransfer.getData('text/plain');
                 const bounding = e.currentTarget.getBoundingClientRect();

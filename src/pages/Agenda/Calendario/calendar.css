@@ -275,6 +275,136 @@
   gap: 8px;
 }
 
+/* HEADER FIXO */
+.modal-header-fixed {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 10;
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.view-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #444;
+}
+
+.event-popover {
+  position: fixed;
+  width: 360px;
+  max-height: 80vh;
+  border-radius: 12px;
+  z-index: 1000;
+  
+}
+
+.event-popover {
+  position: absolute;
+  z-index: 1000;
+
+  opacity: 0;
+  transform: translateY(6px) scale(0.98);
+  pointer-events: none;
+
+  animation: popover-in 140ms ease-out forwards;
+}
+
+@keyframes popover-in {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+  }
+}
+
+.event-popover.mobile-fullscreen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.modal-mobile {
+  width: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 0;
+  background: #fff;
+}
+
+
+.view-icon {
+  width: 20px;
+  min-width: 20px;
+  height: 20px;
+  color: #5f6368; /* Google-like */
+}
+
+
+/* CONTEÚDO */
+.modal-content {
+  display: flex;
+  padding: 0.5rem;
+  flex-direction: column;
+  box-shadow: 0 0px 0px rgba(0, 0, 0, 0.25);
+}
+
+/* LINHA ÍCONE + INPUT */
+.modal-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 4px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* ÍCONES */
+.modal-icon {
+  width: 18px;
+  height: 18px;
+  color: #6b7280;
+  flex-shrink: 0;
+}
+
+/* INPUT LIMPO */
+.modal-input {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 14px;
+  background: transparent;
+}
+
+/* SELECT LIMPO */
+.modal-input select {
+  border: none;
+}
+
+/* CHECKBOX INLINE */
+.checkbox-inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+/* AÇÕES */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 12px;
+}
+
+
 .agenda-view-desktop button {
   padding: 6px 12px;
   margin-left: 10px;
@@ -408,20 +538,18 @@
 }
 
 .google-calendar-modal {
-  font-size: 14px;
-  background: #fff;
+  background: #ffffff;
   border-radius: 12px;
-  padding: 20px 25px;
-  width: 400px;
-  gap: 10px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  width: 420px;
+  max-height: 90vh;
+
   display: flex;
   flex-direction: column;
-  transition: all 0.3s ease;
-  overflow-y: auto;
-  /* ativa scroll vertical interno */
 
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+  overflow: hidden; /* 🔑 essencial p/ header fixo */
 }
+
 
 .google-calendar-modal h3 {
   display: flex;

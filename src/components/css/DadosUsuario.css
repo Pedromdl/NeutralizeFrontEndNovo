@@ -217,11 +217,8 @@
 
 /* Cartões de seção */
 .secao-card {
-  background: #ffffff;
-  padding: 1.5rem;
-  border-radius: 14px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  border: 1px solid #eee;
+  padding: 1rem;
+
 }
 
 .secao-card h3 {
@@ -267,7 +264,6 @@
 .usuario-secoes .linha-dado label {
   font-weight: 600;
   color: #555;
-  flex: 0 0 140px; /* Largura fixa para labels */
   margin-right: 1rem;
 }
 
@@ -387,7 +383,6 @@
 .botoes-edicao button {
   padding: 0.6rem 1.4rem;
   border-radius: 6px;
-  border: none;
   cursor: pointer;
   font-weight: 500;
   transition: all 0.2s ease;
@@ -598,8 +593,4 @@ button:disabled {
 .form-select,
 button {
   transition: all 0.2s ease;
-}
-
-.secao-card:hover {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }

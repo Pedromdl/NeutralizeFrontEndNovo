@@ -10,6 +10,38 @@ import ModalCalendario from './Calendario/ModalCalendario';
 import './Calendario/calendar.css';
 
 /* Utils */
+
+
+function getPanelPosFromClick(e, options = {}) {
+  const {
+    width = 360,
+    height = 420,
+    gap = 8,
+  } = options
+
+  let left = e.clientX + gap
+  let top = e.clientY + window.scrollY
+
+  // se estourar à direita
+  if (left + width > window.innerWidth) {
+    left = e.clientX - width - gap
+  }
+
+  // se estourar embaixo
+  if (top + height > window.scrollY + window.innerHeight) {
+    top = window.scrollY + window.innerHeight - height - gap
+  }
+
+  left = Math.max(gap, left)
+  top = Math.max(gap, top)
+
+  return { top, left }
+}
+
+function isMobile() {
+  return window.innerWidth <= 768
+}
+
 function addDays(date, amount) {
   const d = new Date(date);
   d.setDate(d.getDate() + amount);
@@ -62,9 +94,13 @@ export default function Agenda() {
     repeticoes: 0,
   });
 
+const [draftEvent, setDraftEvent] = useState(null)
+const [panelPos, setPanelPos] = useState(null)
+
   /* Handlers */
-  const handleEventClick = (ev) => {
-    setEventoSelecionado(ev);
+  const handleEventClick = (ev, position) => {
+    setEventoSelecionado(ev)
+    setPanelPos(position)
 
     setForm({
       paciente: ev.extendedProps.paciente || null,
@@ -78,32 +114,46 @@ export default function Agenda() {
       repetir: ev.extendedProps.repetir || false,
       frequencia: ev.extendedProps.frequencia || 'nenhuma',
       repeticoes: ev.extendedProps.repeticoes || 0,
-    });
+    })
 
-    setEditando(false);
-    setModalAberto(true);
-  };
+    setEditando(false)
+    setModalAberto(true)
+  }
+const handleDateClick = (date, start, end, e) => {
+  setEventoSelecionado(null)
 
-  const handleDateClick = (dateStr, startTime = '09:00', endTime = '10:00') => {
-    setEventoSelecionado(null);
+  setForm({
+    paciente: null,
+    paciente_nome: '',
+    tipo: '',
+    status: 'pendente',
+    data: date,
+    hora_inicio: start,
+    hora_fim: end,
+    responsavel: '',
+    repetir: false,
+    frequencia: 'nenhuma',
+    repeticoes: 0,
+  })
 
-    setForm({
-      paciente: null,
-      paciente_nome: '',
-      tipo: '',
-      status: 'pendente',
-      data: dateStr,
-      hora_inicio: startTime,
-      hora_fim: endTime,
-      responsavel: '',
-      repetir: false,
-      frequencia: 'nenhuma',
-      repeticoes: 0,
-    });
+  if (isMobile()) {
+    // 👇 mobile: centralizado
+    setPanelPos(null)
+  } else {
+    // 👇 desktop: baseado no clique
+    setPanelPos(
+      getPanelPosFromClick(e, {
+        width: 360,
+        height: 420,
+      })
+    )
+  }
 
-    setEditando(true);
-    setModalAberto(true);
-  };
+  setEditando(true)
+  setModalAberto(true)
+}
+
+
 
   const handleSave = async () => {
     if (eventoSelecionado) {
@@ -123,19 +173,19 @@ export default function Agenda() {
   };
 
   /* Navegação */
-function handlePrev() {
-  if (view === 'day') setCurrentDate(addDays(currentDate, -1));
-  if (view === 'three') setCurrentDate(addDays(currentDate, -3));
-  if (view === 'week') setCurrentDate(addDays(currentDate, -7));
-  if (view === 'month') setCurrentDate(addDays(currentDate, -30));
-}
+  function handlePrev() {
+    if (view === 'day') setCurrentDate(addDays(currentDate, -1));
+    if (view === 'three') setCurrentDate(addDays(currentDate, -3));
+    if (view === 'week') setCurrentDate(addDays(currentDate, -7));
+    if (view === 'month') setCurrentDate(addDays(currentDate, -30));
+  }
 
-function handleNext() {
-  if (view === 'day') setCurrentDate(addDays(currentDate, 1));
-  if (view === 'three') setCurrentDate(addDays(currentDate, 3));
-  if (view === 'week') setCurrentDate(addDays(currentDate, 7));
-  if (view === 'month') setCurrentDate(addDays(currentDate, 30));
-}
+  function handleNext() {
+    if (view === 'day') setCurrentDate(addDays(currentDate, 1));
+    if (view === 'three') setCurrentDate(addDays(currentDate, 3));
+    if (view === 'week') setCurrentDate(addDays(currentDate, 7));
+    if (view === 'month') setCurrentDate(addDays(currentDate, 30));
+  }
 
   function handleToday() {
     setCurrentDate(new Date());
@@ -230,6 +280,8 @@ function handleNext() {
         eventoSelecionado={eventoSelecionado}
         form={form}
         setForm={setForm}
+          panelPos={panelPos}   // 👈 AQUI
+
         onSave={handleSave}
         onDelete={handleDelete}
         onClose={() => {
