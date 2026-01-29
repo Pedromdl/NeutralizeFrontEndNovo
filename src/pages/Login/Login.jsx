@@ -153,7 +153,7 @@ export default function Login() {
   return (
     <div className="login-conteudo">
       <div className="card-login">
-        <img src={Logo} alt="Logo" className="logo" style={{ width: "250px" }} />
+        <img src={Logo} alt="Logo" className="logo" style={{ width: "100px" }} />
         <h2>Login</h2>
 
         {loading ? (
