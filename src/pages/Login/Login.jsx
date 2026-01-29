@@ -18,7 +18,7 @@ export default function Login() {
 
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
-f
+
   // -------------------------------------------------
   // FUNÇÃO CENTRALIZADA DE REDIRECIONAMENTO POR ROLE
   // -------------------------------------------------
