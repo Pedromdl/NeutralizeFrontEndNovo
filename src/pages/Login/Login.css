@@ -1,6 +1,6 @@
 .logo {
   display: block;
-  max-width: 250px; /* limita a largura */
+  max-width: 100px; /* limita a largura */
   height: auto; /* mantém proporção */
   margin: 0 auto 1rem auto; /* centraliza e dá margem embaixo */
 }
