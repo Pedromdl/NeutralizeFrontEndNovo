@@ -61,16 +61,17 @@ export default function SessaoDetalhe() {
   return (
     <div style={{ padding: 20, minHeight: '100vh', backgroundColor: '#f1f5f9' }}>
       <Card title={`Sessão: ${formatarData(sessao.data)}`} size="al">
-        <button onClick={() => navigate(-1)} style={{ marginBottom: '1rem' }}>
-          ← Voltar
-        </button>
+
 
         <h3>{sessao.titulo}</h3>
 
         <ReactQuill theme="snow" value={conteudo} onChange={setConteudo} />
 
-        <div style={{ marginTop: '1rem' }}>
+        <div style={{ marginTop: '1rem', justifySelf: 'right', display: 'flex', gap: '1rem' }}>
           <button onClick={salvar}>Salvar</button>
+          <button onClick={() => navigate(-1)}>
+            ← Voltar
+          </button>
         </div>
       </Card>
     </div>

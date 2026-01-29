@@ -39,11 +39,6 @@ function BottomMenu() {
   return (
     <>
       <nav className="bottom-menu">
-        {/* 🔹 Logo à esquerda */}
-        <div className="bottom-menu-logo">
-          <img src={Logo} alt="Logo" />
-        </div>
-
         <NavLink to="/homepage" className={({ isActive }) => (isActive ? 'ativo' : '')}>
           <House size={24} color="#fff" />
           <span>Início</span>

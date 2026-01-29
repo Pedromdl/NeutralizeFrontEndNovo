@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useAgenda } from '../../hooks/useAgenda';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -79,6 +79,8 @@ export default function Agenda() {
   const [modalAberto, setModalAberto] = useState(false);
   const [eventoSelecionado, setEventoSelecionado] = useState(null);
   const [editando, setEditando] = useState(false);
+  const ignoreNextClickRef = useRef(false)
+
 
   const [form, setForm] = useState({
     paciente: null,
@@ -94,11 +96,14 @@ export default function Agenda() {
     repeticoes: 0,
   });
 
-const [draftEvent, setDraftEvent] = useState(null)
-const [panelPos, setPanelPos] = useState(null)
+  const [draftEvent, setDraftEvent] = useState(null)
+  const [panelPos, setPanelPos] = useState(null)
 
   /* Handlers */
   const handleEventClick = (ev, position) => {
+
+    if (modalAberto) return;
+
     setEventoSelecionado(ev)
     setPanelPos(position)
 
@@ -119,39 +124,45 @@ const [panelPos, setPanelPos] = useState(null)
     setEditando(false)
     setModalAberto(true)
   }
-const handleDateClick = (date, start, end, e) => {
-  setEventoSelecionado(null)
 
-  setForm({
-    paciente: null,
-    paciente_nome: '',
-    tipo: '',
-    status: 'pendente',
-    data: date,
-    hora_inicio: start,
-    hora_fim: end,
-    responsavel: '',
-    repetir: false,
-    frequencia: 'nenhuma',
-    repeticoes: 0,
-  })
+  const handleDateClick = (date, start, end, e) => {
+    if (ignoreNextClickRef.current) {
+      ignoreNextClickRef.current = false // libera para o próximo
+      return
+    }
+    // ⛔ se já tem modal aberto, ignora
+    if (modalAberto) return
 
-  if (isMobile()) {
-    // 👇 mobile: centralizado
-    setPanelPos(null)
-  } else {
-    // 👇 desktop: baseado no clique
-    setPanelPos(
-      getPanelPosFromClick(e, {
-        width: 360,
-        height: 420,
-      })
-    )
+    setEventoSelecionado(null)
+
+    setForm({
+      paciente: null,
+      paciente_nome: '',
+      tipo: '',
+      status: 'pendente',
+      data: date,
+      hora_inicio: start,
+      hora_fim: end,
+      responsavel: '',
+      repetir: false,
+      frequencia: 'nenhuma',
+      repeticoes: 0,
+    })
+
+    if (isMobile()) {
+      setPanelPos(null)
+    } else {
+      setPanelPos(
+        getPanelPosFromClick(e, {
+          width: 360,
+          height: 420,
+        })
+      )
+    }
+
+    setEditando(true)
+    setModalAberto(true)
   }
-
-  setEditando(true)
-  setModalAberto(true)
-}
 
 
 
@@ -280,11 +291,12 @@ const handleDateClick = (date, start, end, e) => {
         eventoSelecionado={eventoSelecionado}
         form={form}
         setForm={setForm}
-          panelPos={panelPos}   // 👈 AQUI
+        panelPos={panelPos}   // 👈 AQUI
 
         onSave={handleSave}
         onDelete={handleDelete}
         onClose={() => {
+          ignoreNextClickRef.current = true   // 👈 trava
           setModalAberto(false);
           setEditando(false);
         }}

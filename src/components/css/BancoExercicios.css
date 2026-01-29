@@ -21,6 +21,11 @@
   border-radius: 4px;
 }
 
+.banco-exercicios-acoes {
+  display: flex;
+  gap: 10px;
+}
+
 /* Spinner e texto */
 .banco-exercicios-spinner {
   display: flex;
@@ -177,8 +182,22 @@
 
 .modal-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* título no centro + botão na direita */
   align-items: center;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.modal-header h3 {
+  margin: 0;
+  text-align: center;
+  flex: 1; /* ocupa todo o espaço restante */
+}
+
+.modal-header button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
 }
 
 .modal-body input,

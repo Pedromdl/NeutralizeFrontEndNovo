@@ -62,6 +62,9 @@ import StravaCallback from "./components/StravaCallback.jsx";
 import Agenda from "./pages/Agenda/Agenda.jsx"
 import Homepage from './pages/Usuario/Homepage.jsx';
 
+import CRM from './pages/CRM/crm.jsx';
+import Kanban from './pages/CRM/Kanban.jsx';
+
 
 function LayoutComSidebar({ children }) {
   const location = useLocation();
@@ -94,7 +97,7 @@ function LayoutComSidebar({ children }) {
 function AppRoutes() {
   const location = useLocation();
   const rotasSemLayout = [
-    '/login', '/register', '/registro-clinica', '/politica-privacidade',
+    '/login', '/nova-conta', '/registro-clinica', '/politica-privacidade',
     '/termos-de-uso', '/teste', '/liberacao-miofascial', '/strava/callback'
   ];
 
@@ -104,7 +107,7 @@ function AppRoutes() {
     return (
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/nova-conta" element={<Register />} />
         <Route path="/registro-clinica" element={<RegistrarClinica />} />
         <Route path="/teste" element={<Teste />} />
         <Route path="/relatorio/:token" element={<RelatorioInterativo />} />
@@ -142,7 +145,9 @@ function AppRoutes() {
             <Route path="/paciente/secao/:secaoId" element={<TreinosSecaoPaciente />} />
             <Route path="/paciente/historico" element={<HistoricodeTreinos />} />
             <Route path="/treinosexecutados" element={<TreinosExecutadosAdmin />} />
-            <Route path="/paciente/integracoes" element={<Integracoes />} />
+            <Route path="/integracoes" element={<Integracoes />} />
+            <Route path="/crm" element={<CRM />} />
+            <Route path="/kanban" element={<Kanban />} />
 
             {/* 🚫 PÁGINAS BLOQUEADAS se trial expirado */}
             <Route

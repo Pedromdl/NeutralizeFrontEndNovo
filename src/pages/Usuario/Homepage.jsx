@@ -16,6 +16,7 @@ export default function Homepage() {
   const [totalPacientes, setTotalPacientes] = useState(null);
 
   const navigate = useNavigate();
+  
 
 const configItems = [
   {
@@ -23,38 +24,47 @@ const configItems = [
     description: "Gerencie modelos de avaliações físicas",
     icon: <FileText size={22} />,
     path: "/configuracoes/pre-avaliacoes",
+    adminOnly: false, // qualquer usuário vê
   },
   {
     title: "Cadastro de Testes Pré-Padronizados",
     description: "Configure testes e protocolos padrão",
     icon: <ClipboardList size={22} />,
     path: "/configuracoes/pre-testes",
+    adminOnly: true, // só admins veem
   },
   {
     title: "Banco de Exercícios",
     description: "Gerencie sua biblioteca de exercícios",
     icon: <Dumbbell size={22} />,
     path: "/bancoexercicios",
+    adminOnly: false,
   },
   {
     title: "Treinos Executados",
     description: "Visualize e analise treinos realizados",
     icon: <History size={22} />,
     path: "/treinosexecutados",
+    adminOnly: false,
   },
   {
     title: "Integrações",
     description: "Conecte com outras plataformas",
     icon: <Link size={22} />,
-    path: "/paciente/integracoes",
+    path: "/integracoes",
+    adminOnly: true,
   },
   {
     title: "Base de Dados - Usuários",
     description: "Gerencie usuários da clínica",
     icon: <Users size={22} />,
     path: "/banco-usuarios",
+    adminOnly: true,
   },
 ];
+
+
+const adminItems = user.role === "admin" ? configItems : [];
 
 
   useEffect(() => {
@@ -150,29 +160,32 @@ const configItems = [
       <div className="secao-titulo">
         <h2>Acessos rápidos</h2>
       </div>
-<div className="category-grid">
-  {configItems.map((item, index) => (
-    <motion.div
-      key={item.path}
-      variants={cardVariants}
-      initial="hidden"
-      animate="visible"
-      transition={{ delay: 0.1 + index * 0.05, duration: 0.35 }}
-      onClick={() => navigate(item.path)}
-      style={{ cursor: "pointer" }}
-    >
-      <div className="config-card">
-        <div className="card-content">
-          <div className="card-icon">{item.icon}</div>
-          <div className="card-text">
-            <h3 className="card-title">{item.title}</h3>
-            <p className="card-description">{item.description}</p>
+      
+      <div className="category-grid">
+  {configItems
+    .filter(item => !item.adminOnly || user.role === "admin")
+    .map((item, index) => (
+      <motion.div
+        key={item.path}
+        variants={cardVariants}
+        initial="hidden"
+        animate="visible"
+        transition={{ delay: 0.1 + index * 0.05, duration: 0.35 }}
+        onClick={() => navigate(item.path)}
+        style={{ cursor: "pointer" }}
+      >
+        <div className="config-card">
+          <div className="card-content">
+            <div className="card-icon">{item.icon}</div>
+            <div className="card-text">
+              <h3 className="card-title">{item.title}</h3>
+              <p className="card-description">{item.description}</p>
+            </div>
           </div>
+          <div className="card-hover-effect"></div>
         </div>
-        <div className="card-hover-effect"></div>
-      </div>
-    </motion.div>
-  ))}
+      </motion.div>
+    ))}
 </div>
 
     </div>

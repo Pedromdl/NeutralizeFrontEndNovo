@@ -4,7 +4,14 @@ import axios from 'axios'
 import Card from '../../components/Card'
 import LoadingSpinner from '../../components/LoadingSpinner'
 import "../../components/css/TreinoDetalhe.css"
-import { Edit, X } from 'lucide-react'
+import {
+  Edit,
+  X,
+  Copy,
+  ChevronRight,
+  ChevronDown,
+  Plus
+} from 'lucide-react'
 import ModalExercicio from '../../components/ModalExercicio'
 
 export default function TreinoDetalhe() {
@@ -12,15 +19,17 @@ export default function TreinoDetalhe() {
 
   const [secao, setSecao] = useState(null)
   const [treinosSecao, setTreinosSecao] = useState([])
-  const [treinoNome, setTreinoNome] = useState('')
   const [exerciciosDisponiveis, setExerciciosDisponiveis] = useState([])
+
+  const [novoTreinoAtivo, setNovoTreinoAtivo] = useState(false)
+  const [novoNomeTreino, setNovoNomeTreino] = useState('')
+
+  const [treinoEditandoId, setTreinoEditandoId] = useState(null)
+  const [nomeEdicao, setNomeEdicao] = useState('')
 
   const [modalAberto, setModalAberto] = useState(false)
   const [treinoSelecionado, setTreinoSelecionado] = useState(null)
   const [exercicioSelecionadoParaEditar, setExercicioSelecionadoParaEditar] = useState(null)
-
-  const [treinoEditandoId, setTreinoEditandoId] = useState(null)
-  const [novoNomeTreino, setNovoNomeTreino] = useState('')
 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -69,12 +78,16 @@ export default function TreinoDetalhe() {
   // 🔹 CRIAR TREINO
   // =======================
   const criarTreino = async () => {
-    if (!treinoNome.trim()) return
+    if (!novoNomeTreino.trim()) {
+      setNovoTreinoAtivo(false)
+      setNovoNomeTreino('')
+      return
+    }
 
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/treinos/`,
-        { secao: id, nome: treinoNome }
+        { secao: id, nome: novoNomeTreino }
       )
 
       setTreinosSecao(prev => [
@@ -82,7 +95,8 @@ export default function TreinoDetalhe() {
         { ...res.data, expandido: false, exerciciosDoTreino: [] }
       ])
 
-      setTreinoNome('')
+      setNovoNomeTreino('')
+      setNovoTreinoAtivo(false)
     } catch (err) {
       console.error(err)
       alert('Erro ao criar treino')
@@ -116,12 +130,12 @@ export default function TreinoDetalhe() {
   // 🔹 RENOMEAR TREINO
   // =======================
   const salvarNomeTreino = async (treinoId) => {
-    if (!novoNomeTreino.trim()) return
+    if (!nomeEdicao.trim()) return
 
     try {
       const res = await axios.patch(
         `${import.meta.env.VITE_API_URL}/api/treinos/${treinoId}/`,
-        { nome: novoNomeTreino }
+        { nome: nomeEdicao }
       )
 
       setTreinosSecao(prev =>
@@ -131,7 +145,7 @@ export default function TreinoDetalhe() {
       )
 
       setTreinoEditandoId(null)
-      setNovoNomeTreino('')
+      setNomeEdicao('')
     } catch (err) {
       console.error(err)
       alert('Erro ao renomear treino')
@@ -154,7 +168,7 @@ export default function TreinoDetalhe() {
   }
 
   // =======================
-  // 🔹 ATUALIZAR ESTADO APÓS SALVAR
+  // 🔹 ATUALIZAR ESTADO
   // =======================
   const atualizarEstadoAposSalvar = (resultado) => {
     const exerciciosSalvos = Array.isArray(resultado)
@@ -186,8 +200,25 @@ export default function TreinoDetalhe() {
   }
 
   // =======================
-  // 🔹 EXCLUIR EXERCÍCIO
+  // 🔹 EXCLUSÕES
   // =======================
+  const excluirTreino = async (treinoId) => {
+    if (!window.confirm('Deseja excluir este treino?')) return
+
+    try {
+      await axios.delete(
+        `${import.meta.env.VITE_API_URL}/api/treinos/${treinoId}/`
+      )
+
+      setTreinosSecao(prev =>
+        prev.filter(t => t.id !== treinoId)
+      )
+    } catch (err) {
+      console.error(err)
+      alert('Erro ao excluir treino')
+    }
+  }
+
   const excluirExercicio = async (exercicioId, treinoId) => {
     if (!window.confirm('Deseja excluir este exercício?')) return
 
@@ -200,11 +231,11 @@ export default function TreinoDetalhe() {
         prev.map(t =>
           t.id === treinoId
             ? {
-                ...t,
-                exerciciosDoTreino: t.exerciciosDoTreino.filter(
-                  e => e.id !== exercicioId
-                )
-              }
+              ...t,
+              exerciciosDoTreino: t.exerciciosDoTreino.filter(
+                e => e.id !== exercicioId
+              )
+            }
             : t
         )
       )
@@ -217,72 +248,60 @@ export default function TreinoDetalhe() {
   // =======================
   // 🔹 ESTADOS
   // =======================
-  if (loading) {
-    return <LoadingSpinner message="Carregando treinos..." />
-  }
-
-  if (error) {
-    return (
-      <LoadingSpinner
-        message={error}
-        showTimeout
-        onRetry={() => window.location.reload()}
-      />
-    )
-  }
-
-  if (!secao) {
-    return <p>Seção não encontrada</p>
-  }
+  if (loading) return <LoadingSpinner message="Carregando treinos..." />
+  if (error) return <LoadingSpinner message={error} showTimeout />
 
   // =======================
   // 🔹 RENDER
   // =======================
   return (
     <div className="conteudo" style={{ gap: '20px' }}>
-      <Card title={secao.titulo} size="al">
-        <input
-          className="input"
-          value={treinoNome}
-          onChange={e => setTreinoNome(e.target.value)}
-          placeholder="Nome do treino"
-        />
-        <button onClick={criarTreino}>Salvar Treino</button>
-      </Card>
+      <Card
+        size="al"
+        title={
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}
+          >
+            <span>{secao?.titulo}</span>
+
+            <button
+              onClick={() => setNovoTreinoAtivo(true)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.4rem'
+              }}
+            >
+              <Plus size={16} />
+              Adicionar Treino
+            </button>
+          </div>
+        }
+      />
+
+      {novoTreinoAtivo && (
+        <Card size="al">
+          <input
+            className="input treino-input"
+            placeholder="Nome do treino"
+            value={novoNomeTreino}
+            autoFocus
+            onChange={e => setNovoNomeTreino(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && criarTreino()}
+            onBlur={criarTreino}
+          />
+        </Card>
+      )}
 
       {treinosSecao.map(t => (
         <Card key={t.id} size="al">
           <div className="treino-header">
-            {treinoEditandoId === t.id ? (
-              <>
-                <input
-                  className="input"
-                  value={novoNomeTreino}
-                  onChange={e => setNovoNomeTreino(e.target.value)}
-                  placeholder="Nome do treino"
-                />
-                <button onClick={() => salvarNomeTreino(t.id)}>Salvar</button>
-                <button onClick={() => setTreinoEditandoId(null)}>
-                  <X size={16} />
-                </button>
-              </>
-            ) : (
-              <>
-                <h3>{t.nome || 'Treino sem nome'}</h3>
-                <button className="btn-icon"
-                  onClick={() => {
-                    setTreinoEditandoId(t.id)
-                    setNovoNomeTreino(t.nome)
-                  }}
-                >
-                  <Edit size={20} />
-                </button>
-              </>
-            )}
-          </div>
-
-          <div className="treino-header-botoes">
             <button
+              className="btn-icon"
               onClick={() =>
                 setTreinosSecao(prev =>
                   prev.map(tr =>
@@ -293,10 +312,46 @@ export default function TreinoDetalhe() {
                 )
               }
             >
-              {t.expandido ? '▼' : '►'}
+              {t.expandido ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
             </button>
 
-            <button onClick={() => duplicarTreino(t)}>Duplicar</button>
+            {treinoEditandoId === t.id ? (
+              <input
+                className="input treino-input"
+                value={nomeEdicao}
+                onChange={e => setNomeEdicao(e.target.value)}
+                onBlur={() => salvarNomeTreino(t.id)}
+                autoFocus
+              />
+            ) : (
+              <h3>{t.nome || 'Treino sem nome'}</h3>
+            )}
+
+            <div className="treino-acoes">
+              <button
+                className="btn-icon"
+                onClick={() => {
+                  setTreinoEditandoId(t.id)
+                  setNomeEdicao(t.nome)
+                }}
+              >
+                <Edit size={18} />
+              </button>
+
+              <button
+                className="btn-icon"
+                onClick={() => duplicarTreino(t)}
+              >
+                <Copy size={18} />
+              </button>
+
+              <button
+                className="btn-icon danger"
+                onClick={() => excluirTreino(t.id)}
+              >
+                <X size={18} />
+              </button>
+            </div>
           </div>
 
           {t.expandido && (
@@ -336,9 +391,7 @@ export default function TreinoDetalhe() {
                   </div>
                 </div>
               ) : (
-                <p style={{ opacity: 0.6 }}>
-                  Nenhum exercício adicionado.
-                </p>
+                <p style={{ opacity: 0.6 }}>Nenhum exercício adicionado.</p>
               )}
 
               <button

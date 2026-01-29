@@ -10,19 +10,26 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const tokenLocal = localStorage.getItem('token');
+    const userLocal = localStorage.getItem('user');
+
     if (tokenLocal) {
       setToken(tokenLocal);
       axios.defaults.headers.common['Authorization'] = `Bearer ${tokenLocal}`;
-      // Opcional: buscar dados do usuário no backend
-      axios.get(`${import.meta.env.VITE_API_URL}/api/auth/profile/`)
-        .then(res => setUser(res.data))
-        .catch(() => {
-          setToken(null);
-          setUser(null);
-          localStorage.removeItem('token');
-          delete axios.defaults.headers.common['Authorization'];
-        })
-        .finally(() => setLoading(false));
+
+      if (userLocal) {
+        setUser(JSON.parse(userLocal));
+        setLoading(false);
+      } else {
+        axios.get(`${import.meta.env.VITE_API_URL}/api/auth/profile/`)
+          .then(res => {
+            setUser(res.data);
+            localStorage.setItem('user', JSON.stringify(res.data));
+          })
+          .catch(() => {
+            logout();
+          })
+          .finally(() => setLoading(false));
+      }
     } else {
       setLoading(false);
     }
@@ -30,13 +37,15 @@ export function AuthProvider({ children }) {
 
   const login = (token, userData) => {
     localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(userData));
     setToken(token);
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     setUser(userData);
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   };
 
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     setToken(null);
     setUser(null);
     delete axios.defaults.headers.common['Authorization'];

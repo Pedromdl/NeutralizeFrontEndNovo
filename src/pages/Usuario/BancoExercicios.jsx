@@ -9,7 +9,9 @@ import {
   ExternalLink,
   Plus,
   X,
-  Loader2 // ← Adicionando um ícone de spinner
+  Loader2,
+  Edit2,
+  Trash2, // ← Adicionando um ícone de spinner
 } from 'lucide-react';
 import "../../components/css/BancoExercicios.css";
 
@@ -21,7 +23,7 @@ export default function BancoExercicios() {
   const [debouncedSearch, setDebouncedSearch] = useState(searchTerm);
 
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(13);
   const [totalCount, setTotalCount] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [serverPagination, setServerPagination] = useState(true);
@@ -34,6 +36,9 @@ export default function BancoExercicios() {
     video_url: ''
   });
   const [adding, setAdding] = useState(false);
+
+  const [editingExercicio, setEditingExercicio] = useState(null);
+
 
   // 🔹 Debounce search
   useEffect(() => {
@@ -50,13 +55,11 @@ export default function BancoExercicios() {
       setLoading(true);
       setErro(null);
       try {
-        
+
         const res = await axios.get(
           `${import.meta.env.VITE_API_URL}/api/bancoexercicios/`,
           { params: { page, page_size: pageSize, search: debouncedSearch } }
         );
-
-        console.log("🔎 RES DATA:", res.data);
 
         if (res.data && Array.isArray(res.data.results)) {
           setServerPagination(true);
@@ -86,6 +89,56 @@ export default function BancoExercicios() {
     };
     fetch();
   }, [page, pageSize, debouncedSearch]);
+
+  const handleEditExercicio = (ex) => {
+    setEditingExercicio(ex);
+    setNewExercicio({
+      titulo: ex.titulo,
+      descricao: ex.descricao,
+      video_url: ex.video_url
+    });
+    setShowModal(true);
+  };
+
+  const handleUpdateExercicio = async () => {
+    if (!newExercicio.titulo.trim()) {
+      alert("Título é obrigatório!");
+      return;
+    }
+
+    setAdding(true);
+    try {
+      const res = await axios.put(
+        `${import.meta.env.VITE_API_URL}/api/bancoexercicios/${editingExercicio.id}/`,
+        newExercicio
+      );
+
+      setExercicios(prev =>
+        prev.map(ex => (ex.id === editingExercicio.id ? res.data : ex))
+      );
+
+      setShowModal(false);
+      setEditingExercicio(null);
+      setNewExercicio({ titulo: '', descricao: '', video_url: '' });
+    } catch (err) {
+      console.error(err);
+      alert('Erro ao atualizar exercício');
+    } finally {
+      setAdding(false);
+    }
+  };
+
+  const handleDeleteExercicio = async (id) => {
+    if (!window.confirm("Tem certeza que deseja excluir este exercício?")) return;
+
+    try {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/bancoexercicios/${id}/`);
+      setExercicios(prev => prev.filter(ex => ex.id !== id));
+    } catch (err) {
+      console.error(err);
+      alert('Erro ao excluir exercício');
+    }
+  };
 
   const handlePageSizeChange = (e) => {
     setPageSize(Number(e.target.value));
@@ -139,7 +192,11 @@ export default function BancoExercicios() {
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{ flex: 1 }}
           />
-          <button onClick={() => setShowModal(true)}>
+          <button onClick={() => {
+            setEditingExercicio(null);           // Limpa edição
+            setNewExercicio({ titulo: '', descricao: '', video_url: '' }); // Limpa campos
+            setShowModal(true);                  // Abre modal
+          }}>
             <Plus size={16} /> Adicionar
           </button>
         </div>
@@ -172,7 +229,8 @@ export default function BancoExercicios() {
                   <thead>
                     <tr>
                       <th>Exercício</th>
-                      <th>Descrição</th>
+                      <th>Funções</th> {/* ← Aqui o título da coluna de ícones */}
+
                     </tr>
                   </thead>
                   <tbody>
@@ -192,7 +250,20 @@ export default function BancoExercicios() {
                           )}
                           <span className="banco-exercicios-titulo">{ex.titulo || '-'}</span>
                         </td>
-                        <td data-label="Descrição">{ex.descricao || '-'}</td>
+                        <td data-label="Ações" className="banco-exercicios-acoes">
+                          <div
+                            title="Editar"
+                            onClick={() => handleEditExercicio(ex)}
+                          >
+                            <Edit2 size={20} />
+                          </div>
+                          <div
+                            title="Excluir"
+                            onClick={() => handleDeleteExercicio(ex.id)}
+                          >
+                            <Trash2 size={20} />
+                          </div>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -205,14 +276,14 @@ export default function BancoExercicios() {
         {/* 🔹 Paginação - sempre visível mas pode ser desabilitada durante loading */}
         <div className="banco-exercicios-paginacao-container">
           <div className="banco-exercicios-paginacao-botoes">
-            <button 
-              onClick={goFirst} 
+            <button
+              onClick={goFirst}
               disabled={page === 1 || loading}
             >
               <ChevronsLeft size={18} />
             </button>
-            <button 
-              onClick={goPrev} 
+            <button
+              onClick={goPrev}
               disabled={page === 1 || loading}
             >
               <ChevronLeft size={18} />
@@ -220,14 +291,14 @@ export default function BancoExercicios() {
             <span className="banco-exercicios-paginacao-text">
               Página {page} de {totalPages}
             </span>
-            <button 
-              onClick={goNext} 
+            <button
+              onClick={goNext}
               disabled={page === totalPages || loading}
             >
               <ChevronRight size={18} />
             </button>
-            <button 
-              onClick={goLast} 
+            <button
+              onClick={goLast}
               disabled={page === totalPages || loading}
             >
               <ChevronsRight size={18} />
@@ -237,8 +308,8 @@ export default function BancoExercicios() {
           <div className="banco-exercicios-paginacao-info">
             <label>
               Linhas:
-              <select 
-                value={pageSize} 
+              <select
+                value={pageSize}
                 onChange={handlePageSizeChange}
                 disabled={loading}
               >
@@ -260,8 +331,8 @@ export default function BancoExercicios() {
         <div className="modal-overlay">
           <div className="modal-banco-exercicios">
             <div className="modal-header">
-              <h3>Adicionar Exercício</h3>
-              <button onClick={() => setShowModal(false)}><X size={18} /></button>
+              <h3>{editingExercicio ? "Editar Exercício" : "Adicionar Exercício"}</h3>
+              <button onClick={() => setShowModal(false)}><X size={20} /></button>
             </div>
             <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               <input
@@ -283,8 +354,8 @@ export default function BancoExercicios() {
               />
             </div>
             <div className="modal-footer">
-              <button onClick={handleAddExercicio} disabled={adding}>
-                {adding ? "Adicionando..." : "Adicionar"}
+              <button onClick={editingExercicio ? handleUpdateExercicio : handleAddExercicio} disabled={adding}>
+                {adding ? (editingExercicio ? "Atualizando..." : "Adicionando...") : (editingExercicio ? "Atualizar" : "Adicionar")}
               </button>
               <button onClick={() => setShowModal(false)}>Cancelar</button>
             </div>

@@ -88,6 +88,7 @@ export default function Calendario({ onEventClick, onDateClick, calendarRef }) {
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
         initialView={initialView}
         slotDuration="01:00:00"
+        snapDuration="00:30:00"
         slotLabelInterval="01:00"
         slotMinTime="06:00:00"
         slotMaxTime="24:00:00"

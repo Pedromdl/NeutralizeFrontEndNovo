@@ -80,7 +80,7 @@ onClick={(e) => {
     const hour = Math.floor(offsetY / HOUR_HEIGHT)
     const minutes = Math.floor(((offsetY % HOUR_HEIGHT) / HOUR_HEIGHT) * 60)
 
-    const SNAP = 15
+    const SNAP = 30
     const snapped = Math.round(minutes / SNAP) * SNAP
 
     const startH = hour

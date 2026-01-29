@@ -5,7 +5,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import "./Login.css";
-import Logo from "../../images/logo.png";
+import Logo from "../../images/logo3.png";
 
 export default function Login() {
   const location = useLocation();
@@ -46,7 +46,7 @@ export default function Login() {
       const user = userRes.data;
 
       // Sobrescreve token antigo
-      localStorage.setItem("access", token);
+      localStorage.setItem("token", token);
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
       login(token, user); // atualiza contexto

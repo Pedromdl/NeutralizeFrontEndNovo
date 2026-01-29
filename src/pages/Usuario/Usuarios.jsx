@@ -363,7 +363,6 @@ function Usuarios() {
     <div className="conteudo">
       <div className="info-cards">
         <Card title="Busca de Usuários" size="md">
-          <p>Selecione para ver os gráficos de desempenho.</p>
           <UserSearch onSelect={handleSelecionaUsuario} />
           
           {usuarioSelecionado && (

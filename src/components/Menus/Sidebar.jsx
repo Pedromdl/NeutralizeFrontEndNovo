@@ -1,16 +1,26 @@
 import { useState, useEffect, useContext } from 'react';
 import '../css/Sidebar.css';
 import { NavLink } from 'react-router-dom';
-import Logo from '../../images/logo2.png';
+import LogoFallback from '../../images/logo2.png';
 
-// 🔹 Ícones do lucide-react
-import { House, Users, BarChart3, FileText, CalendarDays, Settings, DollarSign } from 'lucide-react';
+// 🔹 Ícones
+import {
+  House,
+  Users,
+  BarChart3,
+  FileText,
+  CalendarDays,
+  Settings,
+} from 'lucide-react';
 
-// 🔹 Contexto de autenticação
+// 🔹 Auth
 import { AuthContext } from '../../context/AuthContext';
 
 function Sidebar() {
-  const { user } = useContext(AuthContext); // pega o usuário logado
+  const { user, loading } = useContext(AuthContext);
+
+  useEffect(() => {
+  }, [user]);
 
   const [aberto, setAberto] = useState(true);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -24,9 +34,17 @@ function Sidebar() {
   const toggleSidebar = () => setAberto(!aberto);
   const handleOverlayClick = () => setAberto(false);
 
+  if (loading) return null;
+
+  // 🔹 Logo dinâmica da organização
+  const logoUrl =
+    user?.organizacao?.logo_url || LogoFallback;
+
   return (
     <>
-      {isMobile && aberto && <div className="overlay" onClick={handleOverlayClick}></div>}
+      {isMobile && aberto && (
+        <div className="overlay" onClick={handleOverlayClick} />
+      )}
 
       {!aberto && isMobile && (
         <button className="botao-toggle-global" onClick={toggleSidebar}>
@@ -41,53 +59,51 @@ function Sidebar() {
 
         {aberto && (
           <div className="sidebar-logo">
-            <img src={Logo} alt="Logo" style={{width: '200%'}}/>
+            <img
+              src={logoUrl || LogoFallback}
+              alt="Logo da organização"
+              onError={(e) => {
+                e.currentTarget.src = LogoFallback;
+              }}
+            />
           </div>
         )}
 
         <ul className="menu">
-
-
           <li>
             <NavLink to="/homepage" className={({ isActive }) => (isActive ? 'ativo' : '')}>
               <House size={20} />
               {aberto && <span>Início</span>}
             </NavLink>
           </li>
+
           <li>
             <NavLink to="/usuarios" className={({ isActive }) => (isActive ? 'ativo' : '')}>
               <Users size={20} />
               {aberto && <span>Usuários</span>}
             </NavLink>
           </li>
+
           <li>
             <NavLink to="/avaliacao" className={({ isActive }) => (isActive ? 'ativo' : '')}>
               <BarChart3 size={20} />
               {aberto && <span>Avaliação</span>}
             </NavLink>
           </li>
+
           <li>
             <NavLink to="/cadastro" className={({ isActive }) => (isActive ? 'ativo' : '')}>
               <FileText size={20} />
               {aberto && <span>Cadastro</span>}
             </NavLink>
           </li>
+
           <li>
             <NavLink to="/calendario" className={({ isActive }) => (isActive ? 'ativo' : '')}>
               <CalendarDays size={20} />
               {aberto && <span>Agenda</span>}
             </NavLink>
           </li>
-
-          {/* 🔹 Financeiro só aparece se is_staff
-          {user?.is_staff && (
-            <li>
-              <NavLink to="/financeiro" className={({ isActive }) => (isActive ? 'ativo' : '')}>
-                <DollarSign size={20} />
-                {aberto && <span>Financeiro</span>}
-              </NavLink>
-            </li>
-          )} */}
 
           <li>
             <NavLink to="/configuracoes" className={({ isActive }) => (isActive ? 'ativo' : '')}>

@@ -41,6 +41,21 @@ export default function EventoModal({
     ).padStart(2, '0')}`
   }
 
+  /* =========================
+      Trava scroll
+  ========================== */
+
+  useEffect(() => {
+  // trava scroll apenas no modo visualização
+  if (aberto && !editando) {
+    const originalOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+
+    return () => {
+      document.body.style.overflow = originalOverflow
+    }
+  }
+}, [aberto, editando])
 
   /* =========================
      Click fora → fechar
@@ -196,6 +211,25 @@ export default function EventoModal({
                   placeholder="Tipo do evento"
                 />
               </Row>
+
+              <Row icon={CheckCircle}>
+                <select
+                  value={form.status}
+                  onChange={(e) =>
+                    setForm((p) => ({
+                      ...p,
+                      status: e.target.value,
+                    }))
+                  }
+                  className="modal-input"
+                >
+                  <option value="pendente">Pendente</option>
+                  <option value="confirmado">Confirmado</option>
+                  <option value="realizado">Realizado</option>
+                  <option value="cancelado">Cancelado</option>
+                </select>
+              </Row>
+
 
               <Row icon={Calendar}>
                 <input

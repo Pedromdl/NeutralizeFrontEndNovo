@@ -52,28 +52,29 @@ export default function AvaliacaoDetalhe() {
       });
   };
 
-const baixarDocx = () => {
-  window.open(`${import.meta.env.VITE_API_URL}/api/anamnese/${avaliacaoId}/exportar-docx/`, '_blank');
-};
+  const baixarDocx = () => {
+    window.open(`${import.meta.env.VITE_API_URL}/api/anamnese/${avaliacaoId}/exportar-docx/`, '_blank');
+  };
 
   return (
     <div style={{ padding: 20, minHeight: '100vh', backgroundColor: '#f1f5f9' }}>
       <Card title={`Avaliação: ${formatarData(avaliacao.data_avaliacao)}`} size="al">
-        <button onClick={() => navigate(-1)} style={{ marginBottom: '1rem' }}>
-          ← Voltar
-        </button>
-
         <div>
           <ReactQuill theme="snow" value={conteudo} onChange={setConteudo} />
         </div>
 
-        <div style={{ marginTop: '5rem', display: 'flex', gap: '1rem' }}>
+        <div style={{ marginTop: '1rem', display: 'flex', justifySelf: 'right', gap: '1rem' }}>
+
           <button onClick={salvar}>
             Salvar
           </button>
-          <button onClick={baixarDocx} style={{ marginTop: '1rem', marginLeft: '1rem' }}>
-  Baixar DOCX
-</button>
+                    <button onClick={() => navigate(-1)}>
+            ← Voltar
+          </button>
+
+          <button onClick={baixarDocx}>
+            Baixar DOCX
+          </button>
         </div>
       </Card>
     </div>
