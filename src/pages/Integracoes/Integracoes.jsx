@@ -14,6 +14,8 @@ import {
     Tooltip,
     Legend,
 } from "recharts";
+import Contact from "../../../src/images/contatos.png";
+
 
 export default function Integracoes() {
     const [googleConnected, setGoogleConnected] = useState(false);
@@ -332,7 +334,7 @@ export default function Integracoes() {
                 <div className="integracao-card">
                     <div className="integracao-header">
                         <div className="integracao-header-left">
-                            <img src="/src/images/contatos.png" alt="Google Icon" style={{ width: '50px' }} />
+                            <img src={Contact} alt="Contact" style={{ width: "50px" }} />
                             <h2>Contatos do Google</h2>
                         </div>
 
