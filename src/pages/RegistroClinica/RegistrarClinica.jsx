@@ -13,6 +13,7 @@ export default function RegistrarClinica() {
     last_name: "",
     documento: "",
 
+
   });
 
   const [erros, setErros] = useState([]);
@@ -41,16 +42,22 @@ export default function RegistrarClinica() {
     }
 
     try {
+      const formData = new FormData();
+      formData.append("nome", form.nome_clinica);
+      formData.append("email", form.email);
+      formData.append("password", form.password);
+      formData.append("first_name", form.first_name);
+      formData.append("last_name", form.last_name);
+      formData.append("documento", form.documento);
+      if (form.logo_clinica) formData.append("logo", form.logo_clinica);
+
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/registrar-clinica/`,
+        formData,
         {
-          nome: form.nome_clinica,
-          email: form.email,
-          password: form.password,
-          first_name: form.first_name,
-          last_name: form.last_name,
-          documento: form.documento,
-
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         }
       );
 
@@ -72,6 +79,7 @@ export default function RegistrarClinica() {
     }
   };
 
+
   return (
     <div className="register-conteudo">
       <div className="card-register">
@@ -88,7 +96,7 @@ export default function RegistrarClinica() {
             onChange={handleChange}
             required
           />
-          
+
           <input
             type="text"
             name="documento"
@@ -132,6 +140,13 @@ export default function RegistrarClinica() {
             value={form.password}
             onChange={handleChange}
             required
+          />
+
+          <input
+            type="file"
+            name="logo_clinica"
+            accept="image/*"
+            onChange={(e) => setForm({ ...form, logo_clinica: e.target.files[0] })}
           />
 
           <button type="submit" style={{ marginTop: "1.5rem" }}>

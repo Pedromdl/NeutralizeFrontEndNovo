@@ -1,11 +1,9 @@
-import { useEffect, useState } from "react";
-import { formatarData } from "../../utils/dateUtils";
-import { diasDesde } from "../../utils/dateUtils";
+import { useEffect, useState, useMemo } from "react";
+import { formatarData, diasDesde } from "../../utils/dateUtils";
 import axios from "axios";
 import ModalKanban from "./ModalKanban";
 import "./Kanban.css";
 import { Archive } from "lucide-react";
-
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -52,16 +50,15 @@ export default function Kanban() {
     );
     setSelectedContact(null);
   };
+
   useEffect(() => {
     const closeMenu = () => setContextMenu(null);
     window.addEventListener("click", closeMenu);
     return () => window.removeEventListener("click", closeMenu);
   }, []);
 
-  // 👉 NOVA FUNÇÃO: abre o modal a partir do ID do contato
   const handleContextMenu = (e, contact) => {
     e.preventDefault();
-
     setContextMenu({
       x: e.clientX,
       y: e.clientY,
@@ -71,23 +68,17 @@ export default function Kanban() {
 
   const arquivarContato = async () => {
     const contact = contextMenu.contact;
-
+    setContacts(prev => prev.filter(c => c.id !== contact.id)); // update local
+    setContextMenu(null);
     try {
-      await axios.patch(
-        `${API_URL}/api/contacts/${contact.id}/`,
-        { arquivado: true }
-      );
-
-      setContacts(prev =>
-        prev.filter(c => c.id !== contact.id)
-      );
-
-      setContextMenu(null);
+      await axios.patch(`${API_URL}/api/contacts/${contact.id}/`, { arquivado: true });
     } catch (err) {
       console.error(err);
-      alert("Erro ao arquivar contato");
+      alert("Erro ao arquivar contato no backend");
+      setContacts(prev => [...prev, contact]); // re-add on error
     }
   };
+
   const openContactById = (id) => {
     const contact = contacts.find(c => c.id === id);
     if (contact) setSelectedContact(contact);
@@ -120,14 +111,12 @@ export default function Kanban() {
     return "";
   };
 
-  const groupedContacts = COLUMNS.reduce((acc, col) => {
-    acc[col.key] = contacts.filter(
-      c => c.status_relacional === col.key
-    );
-    return acc;
-  }, {});
-
-  if (loading) return <p>Carregando Kanban...</p>;
+  const groupedContacts = useMemo(() => {
+    return COLUMNS.reduce((acc, col) => {
+      acc[col.key] = contacts.filter(c => c.status_relacional === col.key);
+      return acc;
+    }, {});
+  }, [contacts]);
 
   return (
     <>
@@ -135,36 +124,44 @@ export default function Kanban() {
         {COLUMNS.map(column => (
           <div key={column.key} className="kanban-column">
             <h3>{column.label}</h3>
-
             <div className="kanban-cards">
-              {groupedContacts[column.key]?.map(contact => (
-                <div
-                  key={contact.id}
-                  className="kanban-card"
-                  onClick={() => setSelectedContact(contact)}
-                  onContextMenu={(e) => handleContextMenu(e, contact)}
-                >
-                  <div className="kanban-card-header">
-                    <div className="kanban-card-name">
-                      {contact.name}
+              {loading
+                ? Array(5).fill(0).map((_, i) => (
+                  <div key={i} className="kanban-card skeleton">
+                    <div className="kanban-card-header">
+                      <div className="kanban-card-name"></div>
+                      <span className="status-badge"></span>
                     </div>
-
-                    <span
-                      className="status-badge"
-                      style={{
-                        backgroundColor: STATUS_STYLES[contact.status_relacional]?.bg,
-                        color: STATUS_STYLES[contact.status_relacional]?.color,
-                      }}
-                    >
-                      {STATUS_STYLES[contact.status_relacional]?.label}
+                    <span className="ultimo-contato"></span>
+                  </div>
+                ))
+                : groupedContacts[column.key]?.map(contact => (
+                  <div
+                    key={contact.id}
+                    className="kanban-card"
+                    onClick={() => setSelectedContact(contact)}
+                    onContextMenu={(e) => handleContextMenu(e, contact)}
+                  >
+                    <div className="kanban-card-header">
+                      <div className="kanban-card-name">
+                        {contact.name}
+                      </div>
+                      <span
+                        className="status-badge"
+                        style={{
+                          backgroundColor: STATUS_STYLES[contact.status_relacional]?.bg,
+                          color: STATUS_STYLES[contact.status_relacional]?.color,
+                        }}
+                      >
+                        {STATUS_STYLES[contact.status_relacional]?.label}
+                      </span>
+                    </div>
+                    <span className="ultimo-contato">
+                      {getLabelUltimoContato(contact.data_ultimo_contato)}
                     </span>
                   </div>
-
-                  <span className="ultimo-contato">
-                    {getLabelUltimoContato(contact.data_ultimo_contato)}
-                  </span>
-                </div>
-              ))}
+                ))
+              }
             </div>
           </div>
         ))}
@@ -173,47 +170,40 @@ export default function Kanban() {
       {/* AÇÕES PLANEJADAS */}
       <div className="acoes-pendentes-card">
         <h3>Ações planejadas</h3>
-
-        {loadingAcoes ? (
-          <p>Carregando ações...</p>
-        ) : acoesPendentes.length === 0 ? (
-          <p>Nenhuma ação pendente 🎉</p>
-        ) : (
-          <div className="acoes-tabela">
-
-            <div className="acoes-header">
-              <div className="col-contato">Contato</div>
-              <div className="col-data">Data planejada</div>
-              <div className="col-prazo">Prazo</div>
+        {loadingAcoes
+          ? Array(3).fill(0).map((_, i) => (
+            <div key={i} className="acoes-row skeleton">
+              <div className="col-contato"></div>
+              <div className="col-data"></div>
+              <div className="col-prazo"></div>
             </div>
-
-            {acoesPendentes.map(acao => (
-              <div key={acao.id} className="acoes-row">
-
-                <div className="col-contato">
-                  <strong
-                    className="link-contato"
-                    onClick={() => openContactById(acao.pessoa)}
-                  >
-                    {acao.pessoa_name}
-                  </strong>
-                </div>
-
-                <div className="col-data">
-                  {formatarData(acao.data_planejada)}
-                </div>
-
-                <div
-                  className={`col-prazo ${diasAteAcao(acao.data_planejada) < 0 ? "atrasada" : ""
-                    }`}
-                >
-                  {getLabelDiasAteAcao(acao.data_planejada)}
-                </div>
-
+          ))
+          : acoesPendentes.length === 0
+            ? <p>Nenhuma ação pendente 🎉</p>
+            : <div className="acoes-tabela">
+              <div className="acoes-header">
+                <div className="col-contato">Contato</div>
+                <div className="col-data">Data planejada</div>
+                <div className="col-prazo">Prazo</div>
               </div>
-            ))}
-          </div>
-        )}
+              {acoesPendentes.map(acao => (
+                <div key={acao.id} className="acoes-row">
+                  <div className="col-contato">
+                    <strong
+                      className="link-contato"
+                      onClick={() => openContactById(acao.pessoa)}
+                    >
+                      {acao.pessoa_name}
+                    </strong>
+                  </div>
+                  <div className="col-data">{formatarData(acao.data_planejada)}</div>
+                  <div className={`col-prazo ${diasAteAcao(acao.data_planejada) < 0 ? "atrasada" : ""}`}>
+                    {getLabelDiasAteAcao(acao.data_planejada)}
+                  </div>
+                </div>
+              ))}
+            </div>
+        }
       </div>
 
       {selectedContact && (
@@ -223,19 +213,14 @@ export default function Kanban() {
           onStatusUpdated={updateStatusLocal}
         />
       )}
+
       {contextMenu && (
         <div
           className="context-menu"
-          style={{
-            top: contextMenu.y,
-            left: contextMenu.x,
-          }}
+          style={{ top: contextMenu.y, left: contextMenu.x }}
           onClick={(e) => e.stopPropagation()}
         >
-          <div
-            className="context-menu-item"
-            onClick={arquivarContato}
-          >
+          <div className="context-menu-item" onClick={arquivarContato}>
             <Archive size={16} />
             <span>Arquivar contato</span>
           </div>

@@ -702,6 +702,35 @@
   opacity: 0.85;
 }
 
+/* Skeleton Cards */
+.skeleton {
+  background-color: #e0e0e0;
+  border-radius: 6px;
+  padding: 8px;
+  margin-bottom: 8px;
+  animation: pulse 1.5s infinite;
+}
+
+.skeleton .kanban-card-name,
+.skeleton .status-badge,
+.skeleton .ultimo-contato,
+.skeleton .col-contato,
+.skeleton .col-data,
+.skeleton .col-prazo {
+  background-color: #ccc;
+  height: 12px;
+  width: 80%;
+  margin-bottom: 6px;
+  border-radius: 4px;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+
+
 @keyframes contextMenuIn {
   from {
     opacity: 0;

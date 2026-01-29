@@ -116,6 +116,7 @@
 .card-register form input[name="birth_date"],
 .card-register form input[name="password"],
 .card-register form input[name="re_password"],
+.card-register form input[name="logo_clinica"],
 .card-register form button {
   grid-column: span 2;
 }
