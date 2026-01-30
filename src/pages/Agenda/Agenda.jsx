@@ -177,12 +177,17 @@ export default function Agenda() {
     }
   };
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!eventoSelecionado) return;
-    await excluirEvento(eventoSelecionado.id);
+
+    // fecha modal imediatamente
     setModalAberto(false);
     setEditando(false);
+
+    // chama exclusão em background
+    excluirEvento(eventoSelecionado.id); // não precisa await
   };
+
 
   /* Navegação */
   function handlePrev() {
