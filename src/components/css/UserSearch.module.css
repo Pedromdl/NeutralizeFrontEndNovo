@@ -32,7 +32,6 @@
 
 .searchInput:focus {
   outline: none;
-  border-color: #b7de42;
   box-shadow: 0 0 0 3px rgba(183, 222, 66, 0.1);
 }
 

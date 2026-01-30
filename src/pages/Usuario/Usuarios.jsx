@@ -29,7 +29,7 @@ const containerAnimacao = {
 // Função para buscar com autenticação
 const fetchComAuth = async (url, options = {}) => {
   const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-  
+
   const headers = {
     'Content-Type': 'application/json',
     ...options.headers,
@@ -50,7 +50,7 @@ const fetchComAuth = async (url, options = {}) => {
     sessionStorage.removeItem('token');
     localStorage.removeItem('usuarioSelecionadoId');
     localStorage.removeItem('abaAtiva');
-    
+
     // Redirecionar para login se estiver em uma página protegida
     if (window.location.pathname !== '/login') {
       window.location.href = '/login';
@@ -72,94 +72,64 @@ function Usuarios() {
   const [abaAtiva, setAbaAtiva] = useState('');
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(null);
+  const [loadingUsuarioSelecionado, setLoadingUsuarioSelecionado] = useState(false);
+  
+
 
   // 🔁 Carrega usuário e aba do localStorage primeiro
-  useEffect(() => {
-    const carregarUsuarioSalvo = async () => {
-      try {
-        setCarregando(true);
-        setErro(null);
-        
-        // Verificar se usuário está autenticado
-        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-        if (!token) {
-          setErro('Usuário não autenticado');
-          setCarregando(false);
-          return;
-        }
-        
-        // 1. Verificar se há um ID na navegação (prioridade mais alta)
-        if (location.state?.pacienteId) {
-          const id = location.state.pacienteId;
-          const response = await fetchComAuth(`${import.meta.env.VITE_API_URL}/api/usuarios/${id}/`);
-          const data = await response.json();
-          setUsuarioSelecionado(data);
-          localStorage.setItem('usuarioSelecionadoId', JSON.stringify(id));
-          
-          // Definir aba se veio da navegação
-          if (location.state?.aba) {
-            setAbaAtiva(location.state.aba);
-            localStorage.setItem('abaAtiva', location.state.aba);
-          } else {
-            // Se não tem aba na navegação, tenta carregar do localStorage
-            const abaSalva = localStorage.getItem('abaAtiva');
-            if (abaSalva) {
-              setAbaAtiva(abaSalva);
-            } else {
-              setAbaAtiva('Dashboard');
-              localStorage.setItem('abaAtiva', 'Dashboard');
-            }
-          }
-          setCarregando(false);
-          return;
-        }
-        
-        // 2. Se não, verificar localStorage
-        const salvoId = localStorage.getItem('usuarioSelecionadoId');
-        if (salvoId) {
-          try {
-            const id = JSON.parse(salvoId);
-            const response = await fetchComAuth(`${import.meta.env.VITE_API_URL}/api/usuarios/${id}/`);
-            
-            if (response.ok) {
-              const data = await response.json();
-              setUsuarioSelecionado(data);
-              
-              // Carregar aba salva
-              const abaSalva = localStorage.getItem('abaAtiva');
-              if (abaSalva) {
-                setAbaAtiva(abaSalva);
-              } else {
-                setAbaAtiva('Dashboard');
-                localStorage.setItem('abaAtiva', 'Dashboard');
-              }
-            }
-          } catch (error) {
-            console.error('Erro ao carregar usuário:', error);
-            if (error.message === 'Não autorizado') {
-              setErro('Sessão expirada. Faça login novamente.');
-            } else {
-              setErro('Erro ao carregar usuário salvo');
-            }
-            localStorage.removeItem('usuarioSelecionadoId');
-          }
-        } else {
-          // Se não tem usuário salvo, define aba padrão se existir
-          const abaSalva = localStorage.getItem('abaAtiva');
-          if (abaSalva) {
-            setAbaAtiva(abaSalva);
-          }
-        }
-      } catch (error) {
-        console.error('Erro ao carregar dados:', error);
-        setErro('Erro ao carregar dados do servidor');
-      } finally {
-        setCarregando(false);
-      }
-    };
+ useEffect(() => {
+  const carregarUsuarioSalvo = async () => {
+    try {
+      setErro(null);
 
-    carregarUsuarioSalvo();
-  }, [location.state]);
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+      if (!token) {
+        setErro('Usuário não autenticado');
+        return;
+      }
+
+      // Prioridade: ID vindo da navegação
+      const pacienteId = location.state?.pacienteId || JSON.parse(localStorage.getItem('usuarioSelecionadoId') || 'null');
+      if (!pacienteId) return; // sem usuário selecionado
+
+      setLoadingUsuarioSelecionado(true); // inicia barra de loading
+      setUsuarioSelecionado(null); // limpa usuário anterior
+
+      const response = await fetchComAuth(`${import.meta.env.VITE_API_URL}/api/usuarios/${pacienteId}/`);
+      const data = await response.json();
+
+      // atraso artificial opcional para dev
+      setTimeout(() => {
+        setUsuarioSelecionado(data); // preenche dados do usuário
+        setLoadingUsuarioSelecionado(false); // finaliza barra
+      }, 0); // 0.8s de delay só para dev ver a barra
+
+      // Definir aba ativa
+      if (location.state?.aba) {
+        setAbaAtiva(location.state.aba);
+        localStorage.setItem('abaAtiva', location.state.aba);
+      } else {
+        const abaSalva = localStorage.getItem('abaAtiva');
+        if (abaSalva) {
+          setAbaAtiva(abaSalva);
+        } else {
+          setAbaAtiva('Dashboard');
+          localStorage.setItem('abaAtiva', 'Dashboard');
+        }
+      }
+
+      // salvar ID no localStorage
+      localStorage.setItem('usuarioSelecionadoId', JSON.stringify(pacienteId));
+    } catch (error) {
+      console.error('Erro ao carregar usuário salvo:', error);
+      setErro('Erro ao carregar dados do usuário');
+      localStorage.removeItem('usuarioSelecionadoId');
+      setLoadingUsuarioSelecionado(false);
+    }
+  };
+
+  carregarUsuarioSalvo();
+}, [location.state]);
 
   // Salvar aba quando mudar
   useEffect(() => {
@@ -170,21 +140,22 @@ function Usuarios() {
 
   const handleSelecionaUsuario = async (usuario) => {
     try {
-      // Buscar dados completos do usuário
+      setLoadingUsuarioSelecionado(true); // inicia a barra de loading
+      setUsuarioSelecionado(null); // limpa dados antigos
       const response = await fetchComAuth(`${import.meta.env.VITE_API_URL}/api/usuarios/${usuario.id}/`);
       const dataCompleta = await response.json();
-      
-      setUsuarioSelecionado(dataCompleta);
+      setUsuarioSelecionado(dataCompleta); // preenche os dados
       localStorage.setItem('usuarioSelecionadoId', JSON.stringify(usuario.id));
-      
-      // Se for a primeira vez selecionando um usuário, define Dashboard como aba ativa
+
       if (!abaAtiva || abaAtiva === '') {
         setAbaAtiva('Dashboard');
         localStorage.setItem('abaAtiva', 'Dashboard');
       }
     } catch (error) {
-      console.error('Erro ao selecionar usuário:', error);
+      console.error('Erro ao carregar usuário:', error);
       setErro('Erro ao carregar dados do usuário');
+    } finally {
+      setLoadingUsuarioSelecionado(false); // finaliza loading
     }
   };
 
@@ -321,17 +292,6 @@ function Usuarios() {
     }
   };
 
-  if (carregando) {
-    return (
-      <div className="conteudo">
-        <div className="info-cards">
-          <Card title="Carregando..." size="md">
-            <p>Carregando dados do usuário...</p>
-          </Card>
-        </div>
-      </div>
-    );
-  }
 
   if (erro) {
     return (
@@ -339,7 +299,7 @@ function Usuarios() {
         <div className="info-cards">
           <Card title="Erro" size="md">
             <p style={{ color: 'red' }}>{erro}</p>
-            <button 
+            <button
               onClick={() => window.location.href = '/login'}
               style={{
                 marginTop: '10px',
@@ -362,27 +322,58 @@ function Usuarios() {
   return (
     <div className="conteudo">
       <div className="info-cards">
-        <Card title="Busca de Usuários" size="md">
-          <UserSearch onSelect={handleSelecionaUsuario} />
-          
-          {usuarioSelecionado && (
-            <div style={{ 
-              marginTop: '15px', 
-              padding: '10px', 
-              background: '#f5f5f5', 
-              borderRadius: '5px',
-              border: '1px solid #ddd'
-            }}>
-              <div style={{ alignItems: 'center' }}>
-                <div>
-                  <p style={{ margin: 0, fontWeight: 'bold', fontSize: '14px' }}>Usuário atual:</p>
-                  <p style={{ margin: '5px 0 0 0', fontSize: '16px' }}>{usuarioSelecionado.nome}</p>
-                </div>
+<Card
+  title="Busca de Usuários"
+  size="md"
+  style={{ position: 'relative', overflow: 'hidden' }} // relative é fundamental
+>
+  <UserSearch onSelect={handleSelecionaUsuario} />
 
-              </div>
-            </div>
-          )}
-        </Card>
+  {/* Barra de loading na margem inferior */}
+  {loadingUsuarioSelecionado && (
+    <div
+      style={{
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        width: '100%',
+        height: '4px',
+        backgroundColor: '#e0e0e0', // fundo da barra
+      }}
+    >
+      <div
+        style={{
+          width: '100%',
+          height: '100%',
+          backgroundColor: '#b7de42', // barra azul animada
+          animation: 'loadingBar 1s linear infinite',
+        }}
+      />
+    </div>
+  )}
+
+  {usuarioSelecionado && (
+    <div style={{
+      marginTop: '15px',
+      padding: '10px',
+      background: '#f5f5f5',
+      borderRadius: '5px',
+      border: '1px solid #ddd'
+    }}>
+      <p style={{ margin: 0, fontWeight: 'bold', fontSize: '14px' }}>Usuário atual:</p>
+      <p style={{ margin: '5px 0 0 0', fontSize: '16px' }}>{usuarioSelecionado.nome}</p>
+    </div>
+  )}
+
+  {/* animação da barra */}
+  <style>{`
+    @keyframes loadingBar {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+  `}</style>
+</Card>
+
 
         {usuarioSelecionado && (
           <Card title="Navegação" size="md">
