@@ -188,7 +188,6 @@ export default function Agenda() {
     excluirEvento(eventoSelecionado.id); // não precisa await
   };
 
-
   /* Navegação */
   function handlePrev() {
     if (view === 'day') setCurrentDate(addDays(currentDate, -1));
@@ -252,9 +251,9 @@ export default function Agenda() {
       </div>
 
       {loading && (
-        <p style={{ padding: '8px', color: '#666' }}>
-          Carregando eventos...
-        </p>
+        <div className="loading-bar-container">
+          <div className="loading-bar"></div>
+        </div>
       )}
 
       {/* CALENDÁRIOS */}
