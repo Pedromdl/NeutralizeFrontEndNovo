@@ -166,13 +166,15 @@ export default function Agenda() {
 
 
   const handleSave = async () => {
-    if (eventoSelecionado) {
-      await atualizarEvento(eventoSelecionado.id, form);
-    } else {
-      await criarEvento(form);
-    }
+    // Fecha modal instantaneamente
     setModalAberto(false);
     setEditando(false);
+
+    if (eventoSelecionado) {
+      atualizarEvento(eventoSelecionado.id, form); // não precisa await
+    } else {
+      criarEvento(form); // não precisa await
+    }
   };
 
   const handleDelete = async () => {
