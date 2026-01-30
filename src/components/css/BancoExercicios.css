@@ -140,25 +140,17 @@
   justify-content: center; /* centraliza o input */
 }
 
-.banco-exercicios-search input {
-  width: 100%;
-  max-width: 400px;
-  padding: 0.5rem 1rem;
-  border: 1px solid #ccc;
-  border-radius: 25px;
-  font-size: 0.95rem;
-  transition: all 0.2s ease;
-  outline: none;
+.label-banco {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
 }
 
-.banco-exercicios-search input:focus {
-  border-color: #b7de42;
-  box-shadow: 0 0 5px rgba(0,123,255,0.3);
-}
-
-.banco-exercicios-search input::placeholder {
-  color: #aaa;
-  font-style: italic;
+.select-banco {
+    background: transparent;
+    border-radius: 8px;
+    padding: 0.2rem;
+    border: 2px solid #d1d5db;
 }
 
 .modal-overlay {

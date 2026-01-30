@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './Register.css';
-import Logo from '../../images/logo.png';
+import Logo from '../../images/logo3.png';
 
 export default function RegisterPacienteApp() {
   const [form, setForm] = useState({
@@ -148,9 +148,8 @@ export default function RegisterPacienteApp() {
   return (
     <div className="register-conteudo">
       <div className="card-login">
-        <img src={Logo} alt="Logo" className="logo" style={{ width: '250px' }} />
+        <img src={Logo} alt="Logo" className="logo" style={{ width: '50px' }} />
         
-        <h2>Criar Conta</h2>
         <p style={{ textAlign: 'center', marginBottom: '1.5rem', color: '#666' }}>
           Somente pacientes já cadastrados na clínica podem criar conta.
         </p>

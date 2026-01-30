@@ -245,6 +245,19 @@ button.black:hover {
   color: black;
 }
 
+label {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+select {
+    background: transparent;
+    border-radius: 8px;
+    padding: 0.2rem;
+    border: 2px solid #d1d5db;
+}
+
 /* ==============================
    COMPONENTES ESPECÍFICOS
 ================================ */

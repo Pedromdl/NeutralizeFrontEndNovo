@@ -11,7 +11,6 @@ import './Calendario/calendar.css';
 
 /* Utils */
 
-
 function getPanelPosFromClick(e, options = {}) {
   const {
     width = 360,

@@ -187,6 +187,7 @@ export default function BancoExercicios() {
         <div className="banco-exercicios-search" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
           <input
             type="text"
+            className="search-input-wrapper"
             placeholder="Pesquisar exercício pelo nome..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -276,33 +277,33 @@ export default function BancoExercicios() {
         {/* 🔹 Paginação - sempre visível mas pode ser desabilitada durante loading */}
         <div className="banco-exercicios-paginacao-container">
           <div className="banco-exercicios-paginacao-botoes">
-            <button
+            <div
               onClick={goFirst}
               disabled={page === 1 || loading}
             >
-              <ChevronsLeft size={18} />
-            </button>
-            <button
+              <ChevronsLeft size={20} />
+            </div>
+            <div
               onClick={goPrev}
               disabled={page === 1 || loading}
             >
-              <ChevronLeft size={18} />
-            </button>
+              <ChevronLeft size={20} />
+            </div>
             <span className="banco-exercicios-paginacao-text">
               Página {page} de {totalPages}
             </span>
-            <button
+            <div
               onClick={goNext}
               disabled={page === totalPages || loading}
             >
-              <ChevronRight size={18} />
-            </button>
-            <button
+              <ChevronRight size={20} />
+            </div>
+            <div
               onClick={goLast}
               disabled={page === totalPages || loading}
             >
-              <ChevronsRight size={18} />
-            </button>
+              <ChevronsRight size={20} />
+            </div>
           </div>
 
           <div className="banco-exercicios-paginacao-info">

@@ -154,7 +154,6 @@ export default function Login() {
     <div className="login-conteudo">
       <div className="card-login">
         <img src={Logo} alt="Logo" className="logo" style={{ width: "100px" }} />
-        <h2>Login</h2>
 
         {loading ? (
           <div className="login-loading">
@@ -203,7 +202,7 @@ export default function Login() {
               <p style={{ color: '#666', fontSize: '0.9rem' }}>
                 Não tem uma conta?{' '}
                 <a 
-                  href="/register" 
+                  href="/nova-conta" 
                   style={{ 
                     color: '#4CAF50', 
                     textDecoration: 'none', 
@@ -212,7 +211,7 @@ export default function Login() {
                   }}
                   onClick={(e) => {
                     e.preventDefault();
-                    navigate('/register');
+                    navigate('/nova-conta');
                   }}
                   onMouseEnter={(e) => e.target.style.textDecoration = 'underline'}
                   onMouseLeave={(e) => e.target.style.textDecoration = 'none'}
