@@ -246,6 +246,7 @@
 /* NAV: ◀ Hoje ▶ */
 .agenda-nav {
   display: flex;
+  gap: 0.5rem;
 }
 
 .agenda-nav button {

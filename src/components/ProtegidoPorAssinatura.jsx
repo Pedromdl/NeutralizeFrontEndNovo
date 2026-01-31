@@ -8,9 +8,9 @@ export default function ProtegidoPorAssinatura({
 }) {
   const { precisaPagamento, loading } = useAssinatura();
 
-  if (loading) {
-    return <div>Carregando...</div>;
-  }
+if (loading) {
+  return null; // ou children direto
+}
 
   if (bloquearSeTrialExpirado && precisaPagamento) {
     return <ModalPagamento />;

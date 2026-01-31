@@ -173,12 +173,6 @@ export default function BancoExercicios() {
     }
   };
 
-  // REMOVER ESTAS LINHAS:
-  // if (loading) return <p>Carregando exercícios...</p>;
-  // if (erro) return <p>{erro}</p>;
-
-  // Em vez disso, vamos renderizar tudo e controlar o loading condicionalmente
-
   return (
     <div className="conteudo">
       <Card title="Banco de Exercícios" size="al">

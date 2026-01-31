@@ -325,7 +325,7 @@ export default function HeroSection() {
                 transition={{ delay: 0.6 }}
                 style={{ color: "white" }}
               >
-                <h3 style={{ color: "white", margin: "0 0 8px 0" }}>Agende uma avaliação</h3>
+                <h3 style={{ color: "white", margin: "0 0 8px 0" }}>Agende uma liberação</h3>
                 <p style={{ color: "rgba(255, 255, 255, 0.8)", fontSize: "14px", margin: 0 }}>
                   Preencha os dados e entraremos em contato.
                 </p>
