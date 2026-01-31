@@ -9,7 +9,7 @@ export default function ProtegidoPorAssinatura({
   const { precisaPagamento, loading } = useAssinatura();
 
 if (loading) {
-  return null; // ou children direto
+  return children; // ou children direto
 }
 
   if (bloquearSeTrialExpirado && precisaPagamento) {
