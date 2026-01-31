@@ -180,6 +180,7 @@ export default function BancoExercicios() {
         {/* 🔹 Pesquisador com botão de abrir modal */}
         <div className="banco-exercicios-search" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
           <input
+          
             type="text"
             className="search-input-wrapper"
             placeholder="Pesquisar exercício pelo nome..."

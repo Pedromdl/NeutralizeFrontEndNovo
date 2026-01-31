@@ -38,44 +38,44 @@ export default function BancoUsuarios() {
         }, 400);
         return () => clearTimeout(handler);
     }, [searchTerm]);
-// 🔹 Buscar usuários da API (SEM paginação do DRF)
-const fetchUsers = async () => {
-    setLoading(true);
-    setErro(null);
-    try {
-        const res = await axios.get(
-            `${import.meta.env.VITE_API_URL}/api/users/?ordering=${ordering}`
-        );
-
-        if (Array.isArray(res.data)) {
-            const lista = res.data;
-
-            // Filtrar pelo search
-            const filtrados = lista.filter(u =>
-                u.first_name?.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
-                u.email?.toLowerCase().includes(debouncedSearch.toLowerCase())
+    // 🔹 Buscar usuários da API (SEM paginação do DRF)
+    const fetchUsers = async () => {
+        setLoading(true);
+        setErro(null);
+        try {
+            const res = await axios.get(
+                `${import.meta.env.VITE_API_URL}/api/users/?ordering=${ordering}`
             );
 
-            setTotalCount(filtrados.length);
-            setTotalPages(Math.max(1, Math.ceil(filtrados.length / pageSize)));
+            if (Array.isArray(res.data)) {
+                const lista = res.data;
 
-            const start = (page - 1) * pageSize;
-            setUsuarios(filtrados.slice(start, start + pageSize));
-        } else {
-            setUsuarios([]);
+                // Filtrar pelo search
+                const filtrados = lista.filter(u =>
+                    u.first_name?.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+                    u.email?.toLowerCase().includes(debouncedSearch.toLowerCase())
+                );
+
+                setTotalCount(filtrados.length);
+                setTotalPages(Math.max(1, Math.ceil(filtrados.length / pageSize)));
+
+                const start = (page - 1) * pageSize;
+                setUsuarios(filtrados.slice(start, start + pageSize));
+            } else {
+                setUsuarios([]);
+            }
+        } catch (err) {
+            console.error(err);
+            setErro("Erro ao carregar usuários");
+        } finally {
+            setLoading(false);
         }
-    } catch (err) {
-        console.error(err);
-        setErro("Erro ao carregar usuários");
-    } finally {
-        setLoading(false);
-    }
-};
+    };
 
-// 🔹 Rodar sempre que filtros mudarem
-useEffect(() => {
-    fetchUsers();
-}, [page, pageSize, debouncedSearch, ordering]);
+    // 🔹 Rodar sempre que filtros mudarem
+    useEffect(() => {
+        fetchUsers();
+    }, [page, pageSize, debouncedSearch, ordering]);
 
 
     // 🔹 Controles de paginação
@@ -174,8 +174,8 @@ useEffect(() => {
         role: "paciente",
     });
 
-const [modalLoading, setModalLoading] = useState(false);
-const [modalError, setModalError] = useState("");
+    const [modalLoading, setModalLoading] = useState(false);
+    const [modalError, setModalError] = useState("");
 
     return (
         <div className="conteudo">
@@ -331,13 +331,14 @@ const [modalError, setModalError] = useState("");
                 )}
 
                 {/* 🔹 Pesquisar */}
-                <div className="banco-exercicios-search" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginBottom: '2rem' }}>
                     <input
+                        className="search-input-wrapper"
                         type="text"
                         placeholder="Pesquisar usuário..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        style={{ flex: 1 }}
+                        style={{ flex: 1, }}
                     />
 
                     <button

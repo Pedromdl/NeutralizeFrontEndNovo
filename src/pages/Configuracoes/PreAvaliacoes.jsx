@@ -124,10 +124,6 @@ export default function PreAvaliacoes() {
       <Card title="Pré-Avaliações" size="al">
         {/* Header */}
         <div className="pre-avaliacoes-header">
-          <button className="btn-voltar" onClick={() => navigate(-1)}>
-            <ArrowLeft size={20} />
-            Voltar
-          </button>
 
           <div className="header-actions">
             <button className="btn-nova" onClick={novaAvaliacao}>
@@ -176,11 +172,7 @@ export default function PreAvaliacoes() {
             {/* Editor */}
             {(modoEdicao || avaliacaoSelecionada) && (
               <div className="editor-section">
-                <div className="editor-header">
-                  <h3>
-                    {avaliacaoSelecionada ? "Editando Pré-Avaliação" : "Nova Pré-Avaliação"}
-                  </h3>
-                </div>
+
 
                 {/* Título */}
                 <div className="input-group">

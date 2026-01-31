@@ -186,8 +186,6 @@ export default function Integracoes() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [API_URL]);
 
-    if (loading) return <div className="integracoes-loading">Carregando integrações...</div>;
-
     // ===================== RENDER =====================
     return (
         <div className="integracao-page">
