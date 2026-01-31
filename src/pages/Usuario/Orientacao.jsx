@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import Card from '../../components/Card';
 import usePastas from '../../hooks/usePastas';
 import '../../components/css/Agendamentos.css';
+import { usePastasQuery } from '../../hooks/usePastasQuery';
+
 
 export default function OrientacoesComPastas({ usuarioId }) {
   const navigate = useNavigate();

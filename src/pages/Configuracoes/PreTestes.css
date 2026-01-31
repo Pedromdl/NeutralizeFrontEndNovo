@@ -57,6 +57,44 @@
   flex-wrap: wrap;
 }
 
+.pre-testes-wrapper {
+  position: relative;
+}
+
+.pre-testes-wrapper.loading {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.pre-testes-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.75);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pre-testes-spinner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+  font-weight: 500;
+}
+
+.spinner-icon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
 .form-teste input,
 .form-teste select {
   padding: 0.75rem;

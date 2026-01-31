@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Plus, Trash2, Edit3, Save, X, Filter } from 'lucide-react';
+import { Plus, Trash2, Edit3, Save, X, Filter, Loader2 } from 'lucide-react';
 import Card from '../../components/Card';
 import './PreTestes.css';
 
@@ -152,12 +152,25 @@ export default function TestesPrePadronizados() {
     return !CATEGORIAS_FIXAS.includes(teste.categoria_nome);
   };
 
-  if (loading) return <div className="loading">Carregando...</div>;
 
   return (
+
+    
     <div className="testes-pre-padronizados">
-      <Card title="Testes Pré-Padronizados" size="al">
-        {erro && <div className="erro">{erro}</div>}
+<Card title="Testes Pré-Padronizados" size="al">
+
+  {erro && <div className="erro">{erro}</div>}
+
+  <div className={`pre-testes-wrapper ${loading ? 'loading' : ''}`}>
+
+    {loading && (
+      <div className="pre-testes-overlay">
+        <div className="pre-testes-spinner">
+          <Loader2 size={32} className="spinner-icon" />
+          <span>Carregando...</span>
+        </div>
+      </div>
+    )}
 
         {/* Filtros */}
         <div className="filtros">
@@ -316,6 +329,7 @@ export default function TestesPrePadronizados() {
             <div className="cor categoria-editavel"></div>
             <span>Categorias editáveis</span>
           </div>
+        </div>
         </div>
       </Card>
     </div>
