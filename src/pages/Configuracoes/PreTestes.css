@@ -93,6 +93,26 @@
     transform: rotate(360deg);
   }
 }
+.filtros-com-acoes {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.filtro-esquerda {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-adicionar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+
 
 
 .form-teste input,
